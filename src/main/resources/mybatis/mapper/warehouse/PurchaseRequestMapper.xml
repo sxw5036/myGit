@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.procurement.PurchaseRequestDao">
+    <resultMap id="PurchaseRequestMap" type="com.lwxf.industry4.webapp.domain.entity.procurement.PurchaseRequest">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="storage_id" property="storageId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="PurchaseRequestDtoMap" type="com.lwxf.industry4.webapp.domain.dto.procurement.PurchaseRequestDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="storage_id" property="storageId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="productName" property="productName"/>
+        <result column="storageName" property="storageName"/>
+        <result column="creatorName" property="creatorName"/>
+    </resultMap>
+    <sql id="columns">
+id, name, storage_id, product_id, type, quantity, notes, creator, created, status, no
+</sql>
+    <sql id="columnDtos">
+r.id, r.name, r.storage_id, r.product_id, r.type, r.quantity, r.notes, r.creator, r.created, r.status, r.no,r.productName,s.name storageName,u.name creatorName
+</sql>
+
+    <select id="selectById" resultMap="PurchaseRequestMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   purchase_request
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="PurchaseRequestDtoMap">
+SELECT <include refid="columnDtos" />
+        FROM (SELECT r.*,p.name productName from purchase_request r left join product p on r.product_id = p.id
+        <where><trim prefixOverrides="AND">
+<if test="id != null">
+    r.id = #{id}
+</if>
+<if test="name != null">
+    AND r.name like  CONCAT('%',#{name},'%')
+</if>
+<if test="storageId != null">
+    AND r.storage_id = #{storageId}
+</if>
+<if test="productId != null">
+    AND r.product_id = #{productId}
+</if>
+<if test="type != null">
+    AND r.type = #{type}
+</if>
+<if test="quantity != null">
+    AND r.quantity = #{quantity}
+</if>
+<if test="notes != null">
+    AND r.notes = #{notes}
+</if>
+<if test="creator != null">
+    AND r.creator = #{creator}
+</if>
+<if test="created != null">
+    AND r.created = #{created}
+</if>
+<if test="status != null">
+    AND r.status = #{status}
+</if>
+<if test="no != null">
+    AND r.no like CONCAT('',#{no},'')
+</if>
+</trim></where>
+) r left join storage s on r.storage_id = s.id left join user u on r.creator = u.id
+</select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+purchase_request(id, name, storage_id, product_id, type, quantity, notes, creator, created, status, no)
+          VALUES(#{id}, #{name}, #{storageId}, #{productId}, #{type}, #{quantity}, #{notes}, #{creator}, #{created}, #{status}, #{no})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE purchase_request
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('name') and name != null">
+    name = #{name},
+</if>
+    <if test="_parameter.containsKey('type') and type != null">
+    type = #{type},
+</if>
+    <if test="_parameter.containsKey('quantity') and quantity != null">
+    quantity = #{quantity},
+</if>
+    <if test="_parameter.containsKey('notes')">
+    notes = #{notes},
+</if>
+    <if test="_parameter.containsKey('status') and status != null">
+    status = #{status}
+</if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   purchase_request
+WHERE  id = #{id}
+</delete>
+
+
+    <select id="findOneById" resultMap="PurchaseRequestDtoMap">
+        select <include refid="columnDtos"/> FROM (SELECT r.*,p.name productName from purchase_request r left join product p on r.product_id = p.id where r.id = #{id}) r left join storage s on r.storage_id = s.id left join user u on r.creator = u.id
+    </select>
+
+</mapper>

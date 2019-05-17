@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.supplier.SupplierProductDao">
+    <resultMap id="SupplierProductMap" type="com.lwxf.industry4.webapp.domain.entity.supplier.SupplierProduct">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="supplier_id" property="supplierId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="SupplierProductDtoMap" type="com.lwxf.industry4.webapp.domain.dto.supplier.SupplierProductDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="supplier_id" property="supplierId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="productName" property="productName"/>
+        <result column="companyName" property="companyName"/>
+        <result column="createName" property="createName"/>
+    </resultMap>
+    <sql id="columns">
+id, supplier_id, product_id, price, creator, created, notes
+</sql>
+    <sql id="columnDtos">
+s.id, s.supplier_id, s.product_id, s.price, s.creator, s.created, s.notes,s.productName,c.name companyName,s.createName
+</sql>
+
+    <select id="selectById" resultMap="SupplierProductMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   supplier_product
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="SupplierProductDtoMap">
+SELECT <include refid="columnDtos" />
+from      (select s.*,p.name productName
+FROM
+        (select s.*,u.name createName from supplier_product s left join user u on s.creator = u.id
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                s.id = #{id}
+            </if>
+            <if test="supplierId != null">
+                AND s.supplier_id = #{supplierId}
+            </if>
+            <if test="productId != null">
+                AND s.product_id = #{productId}
+            </if>
+            <if test="price != null">
+                AND s.price = #{price}
+            </if>
+            <if test="creator != null">
+                AND s.creator = #{creator}
+            </if>
+            <if test="created != null">
+                AND s.created = #{created}
+            </if>
+            <if test="notes != null">
+                AND s.notes = #{notes}
+            </if>
+        </trim></where>
+        )
+        s left join product p
+        on s.product_id = p.id
+        <if test="categoryId != null">
+            where p.product_category_id = #{categoryId}
+        </if>
+        ) s left join company c on s.supplier_id = c.id
+</select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+supplier_product(id, supplier_id, product_id, price, creator, created, notes)
+          VALUES(#{id}, #{supplierId}, #{productId}, #{price}, #{creator}, #{created}, #{notes})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE supplier_product
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('price') and price != null">
+    price = #{price},
+</if>
+    <if test="_parameter.containsKey('notes')">
+    notes = #{notes}
+</if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   supplier_product
+WHERE  id = #{id}
+</delete>
+
+
+    <select id="findOneBySupplierAndProductId" resultMap="SupplierProductMap">
+        select <include refid="columns"/> from supplier_product where supplier_id = #{id} and product_id = #{productId}
+    </select>
+
+    <select id="findListBySupplierAndProductIds" resultMap="SupplierProductDtoMap">
+        SELECT <include refid="columnDtos" />
+        from      (select s.*,p.name productName
+        FROM
+        (select s.*,u.name createName from supplier_product s left join user u on s.creator = u.id
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                AND s.supplier_id = #{id}
+            </if>
+            <if test="productIds != null and productIds.size>0">
+                AND s.product_id in
+                <foreach collection="productIds" item="productId" open="(" close=")" separator=",">
+                    #{productId}
+                </foreach>
+            </if>
+        </trim></where>
+        )
+        s left join product p
+        on s.product_id = p.id
+        ) s left join company c on s.supplier_id = c.id
+    </select>
+</mapper>

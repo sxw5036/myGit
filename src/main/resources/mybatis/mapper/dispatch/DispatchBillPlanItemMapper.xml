@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.dispatch.DispatchBillPlanItemDao">
+    <resultMap id="DispatchBillPlanItemMap" type="com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillPlanItem">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="dispatch_bill_plan_id" property="dispatchBillPlanId" jdbcType="CHAR" />
+        <result column="finished_stock_item_id" property="finishedStockItemId" jdbcType="CHAR" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="columns">
+id, dispatch_bill_plan_id, finished_stock_item_id, status
+</sql>
+
+    <select id="selectById" resultMap="DispatchBillPlanItemMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   dispatch_bill_plan_item
+WHERE  id = #{id}
+</select>
+    <select id="findByfinishedStockItemId" resultMap="DispatchBillPlanItemMap" parameterType="String">
+        SELECT <include refid="columns" />
+        FROM   dispatch_bill_plan_item
+        WHERE  finished_stock_item_id = #{finishedStockItemId}
+    </select>
+
+    <select id="findBydbpIdAndStatus" resultMap="DispatchBillPlanItemMap">
+        SELECT <include refid="columns" />
+        FROM   dispatch_bill_plan_item
+        WHERE  dispatch_bill_plan_id = #{dispatchBillPlanId}
+              and status=#{status}
+    </select>
+
+    <select id="selectByFilter" resultMap="DispatchBillPlanItemMap">
+SELECT <include refid="columns" />
+FROM   dispatch_bill_plan_item
+<where><trim prefixOverrides="AND">
+<if test="id != null">
+    id = #{id}
+</if>
+<if test="dispatchBillPlanId != null">
+    AND dispatch_bill_plan_id = #{dispatchBillPlanId}
+</if>
+<if test="finishedStockItemId != null">
+    AND finished_stock_item_id = #{finishedStockItemId}
+</if>
+<if test="status != null">
+    AND status = #{status}
+</if>
+</trim></where>
+
+</select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+dispatch_bill_plan_item(id, dispatch_bill_plan_id, finished_stock_item_id, status)
+                 VALUES(#{id}, #{dispatchBillPlanId}, #{finishedStockItemId}, #{status})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE dispatch_bill_plan_item
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('dispatchBillPlanId') and dispatchBillPlanId != null">
+    dispatch_bill_plan_id = #{dispatchBillPlanId},
+</if>
+    <if test="_parameter.containsKey('finishedStockItemId') and finishedStockItemId != null">
+    finished_stock_item_id = #{finishedStockItemId},
+</if>
+    <if test="_parameter.containsKey('status') and status != null">
+        status = #{status}
+</if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   dispatch_bill_plan_item
+WHERE  id = #{id}
+</delete>
+
+    <update id="updateStatusByFinishedItemId">
+        update dispatch_bill_plan_item set status = #{status} where finished_stock_item_id = #{finishedStockItemId}
+    </update>
+
+</mapper>

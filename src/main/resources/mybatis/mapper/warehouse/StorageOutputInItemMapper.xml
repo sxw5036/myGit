@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.warehouse.StorageOutputInItemDao">
+    <resultMap id="StorageOutputInItemMap" type="com.lwxf.industry4.webapp.domain.entity.warehouse.StorageOutputInItem">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="output_in_id" property="outputInId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="shelf" property="shelf" jdbcType="CHAR" />
+        <result column="column" property="column" jdbcType="TINYINT" />
+        <result column="tier" property="tier" jdbcType="TINYINT" />
+    </resultMap>
+    <resultMap id="StorageOutputInItemDtoMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.StorageOutputInItemDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="output_in_id" property="outputInId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="productName" property="productName"/>
+        <result column="shelf" property="shelf" jdbcType="CHAR" />
+        <result column="column" property="column" jdbcType="TINYINT" />
+        <result column="tier" property="tier" jdbcType="TINYINT" />
+    </resultMap>
+    <sql id="columns">
+id, output_in_id, product_id, price, quantity, shelf, `column`, tier
+</sql>
+    <sql id="columnsDto">
+s.id, s.output_in_id, s.product_id, s.price, s.quantity,p.name productName,s.shelf, s.column, s.tier
+    </sql>
+    <select id="selectById" resultMap="StorageOutputInItemMap" parameterType="String">
+        SELECT <include refid="columns" />
+        FROM   storage_output_in_item
+        WHERE  id = #{id}
+    </select>
+
+    <select id="selectByFilter" resultMap="StorageOutputInItemMap">
+        SELECT <include refid="columns" />
+        FROM   storage_output_in_item
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="outputInId != null">
+                AND output_in_id = #{outputInId}
+            </if>
+            <if test="productId != null">
+                AND product_id = #{productId}
+            </if>
+            <if test="price != null">
+                AND price = #{price}
+            </if>
+            <if test="quantity != null">
+                AND quantity = #{quantity}
+            </if>
+            <if test="shelf != null">
+                AND shelf = #{shelf}
+            </if>
+            <if test="column != null">
+                AND `column` = #{column}
+            </if>
+            <if test="tier != null">
+                AND tier = #{tier}
+            </if>
+        </trim></where>
+
+    </select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO
+storage_output_in_item(id, output_in_id, product_id, price, quantity, shelf, `column`, tier)
+                VALUES(#{id}, #{outputInId}, #{productId}, #{price}, #{quantity}, #{shelf}, #{column}, #{tier})
+</insert>
+
+    <update id="updateByMapContext">
+        UPDATE storage_output_in_item
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('shelf') and shelf != null">
+                shelf = #{shelf},
+            </if>
+            <if test="_parameter.containsKey('column') and column != null">
+                `column` = #{column},
+            </if>
+            <if test="_parameter.containsKey('tier') and tier != null">
+                tier = #{tier}
+            </if>
+        </trim></set>
+        WHERE  id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   storage_output_in_item
+WHERE  id = #{id}
+</delete>
+
+    <select id="findListByStorageOutputInId" resultMap="StorageOutputInItemDtoMap">
+        select <include refid="columnsDto"/> from product p RIGHT JOIN
+        storage_output_in_item s on s.product_id = p.id
+        <if test="_parameter !=null">
+            where s.output_in_id = #{id}
+        </if>
+    </select>
+</mapper>

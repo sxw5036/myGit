@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.procurement.PurchaseProductDao">
+    <resultMap id="PurchaseProductMap" type="com.lwxf.industry4.webapp.domain.entity.procurement.PurchaseProduct">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="purchase_id" property="purchaseId" jdbcType="CHAR" />
+        <result column="supplier_product_id" property="supplierProductId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="PurchaseProductDtoMap" type="com.lwxf.industry4.webapp.domain.dto.procurement.PurchaseProductDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="purchase_id" property="purchaseId" jdbcType="CHAR" />
+        <result column="supplier_product_id" property="supplierProductId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="productName" property="productName"/>
+        <result column="productId" property="productId"/>
+    </resultMap>
+    <sql id="columns">
+id, purchase_id, supplier_product_id, price, quantity, status, notes
+</sql>
+
+    <sql id="columnDtos">
+p.id, p.purchase_id, p.supplier_product_id, p.price, p.quantity, p.status, p.notes,prd.name productName,prd.id productId
+</sql>
+
+    <select id="selectById" resultMap="PurchaseProductMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   purchase_product
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="PurchaseProductMap">
+SELECT <include refid="columns" />
+FROM   purchase_product
+<where><trim prefixOverrides="AND">
+<if test="id != null">
+    id = #{id}
+</if>
+<if test="purchaseId != null">
+    AND purchase_id = #{purchaseId}
+</if>
+<if test="supplierProductId != null">
+    AND supplier_product_id = #{supplierProductId}
+</if>
+<if test="price != null">
+    AND price = #{price}
+</if>
+<if test="quantity != null">
+    AND quantity = #{quantity}
+</if>
+<if test="status != null">
+    AND status = #{status}
+</if>
+<if test="notes != null">
+    AND notes = #{notes}
+</if>
+</trim></where>
+
+</select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+purchase_product(id, purchase_id, supplier_product_id, price, quantity, status, notes)
+          VALUES(#{id}, #{purchaseId}, #{supplierProductId}, #{price}, #{quantity}, #{status}, #{notes})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE purchase_product
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('price') and price != null">
+    price = #{price},
+</if>
+    <if test="_parameter.containsKey('quantity') and quantity != null">
+    quantity = #{quantity},
+</if>
+    <if test="_parameter.containsKey('status')">
+    status = #{status},
+</if>
+    <if test="_parameter.containsKey('notes')">
+    notes = #{notes}
+</if>
+</trim></set>
+WHERE
+        id in
+        <foreach collection="id" item="productId" open="(" close=")" separator=","  >
+           #{productId}
+        </foreach>
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   purchase_product
+WHERE  id = #{id}
+</delete>
+
+
+    <select id="selectListByPurchaseId" resultMap="PurchaseProductDtoMap">
+        select <include refid="columnDtos"/> from (select p.*,product.product_id from purchase_product p left join supplier_product product on p.supplier_product_id = product.id where p.purchase_id = #{id})
+        p left join product prd on p.product_id = prd.id
+
+    </select>
+
+
+    <select id="findListByStatusAndPurchaseId" resultMap="PurchaseProductMap">
+        select <include refid="columns"/>from purchase_product where purchase_id = #{id} and status in
+        <foreach collection="status" separator="," open="(" close=")" item="statu">
+            #{statu}
+        </foreach>
+    </select>
+
+    <select id="findListByProductId" resultMap="PurchaseProductMap">
+        select <include refid="columns"/> from purchase_product where supplier_product_id = #{productId}
+    </select>
+</mapper>

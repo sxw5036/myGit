@@ -1,0 +1,68 @@
+package com.lwxf.industry4.webapp.bizservice.company;
+
+import java.util.List;
+import java.util.Map;
+import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
+import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.company.*;
+import com.lwxf.industry4.webapp.bizservice.base.BaseService;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
+import com.lwxf.industry4.webapp.domain.entity.company.Company;
+import com.lwxf.mybatis.utils.MapContext;
+
+
+/**
+ * 功能：
+ * 
+ * @author：dongshibo(F_baisi@163.com)
+ * @created：2018-12-05 11:24:07
+ * @version：2018 V1.0
+ * @company：老屋新房 Created with IntelliJ IDEA
+ */
+public interface CompanyService extends BaseService <Company, String> {
+
+	PaginatedList<CompanyDto> selectByFilter(PaginatedFilter paginatedFilter);
+
+	PaginatedList<CompanyDtoForApp> selectByFilterForApp(PaginatedFilter paginatedFilter);
+
+	Company selectByNo(String no);
+
+	List<Company> findShopList(String address);
+
+	/*
+	获取经销商订单数前五名的公司，F端app用
+	 */
+	List<String> getTop5CustOrdersCompaniesId(MapContext mapContext);
+
+	List<MonthsOrdersDto> findCompaniesOrdersCountMonthly(MapContext MapContext);
+
+	Map<String,String> findCompanyStatistics();
+
+	CompanyDto findCompanyById(String companyId);
+
+	CompanyInfoDtoForApp findCompanyByIdForApp(String companyId);
+
+	List<Company> findAllCompany(MapContext params);
+
+	List<Map<String,Object>> companyTypesStatistics();
+
+	int balancePlusForFactory(Double amount,Integer accountType);
+
+	int balanceMinusForFactory(Double amount,Integer accountType);
+
+    Map findBCompanyInfoById(String companyId);
+
+	List<Map> findByCityNameAndName(MapContext mapContext);
+
+	Map getCompanyInfoForApp(String companyId);
+
+	List<CompanyAccountDto> getCompanyAccountInfoForApp(String companyId);
+
+	Double getCompanyBalance(String companyId);
+
+
+	Company findCompanyByType(Integer type);
+
+    Integer findCompanyNumByOrderCreated(String beginTime, String endTime, String day);
+}

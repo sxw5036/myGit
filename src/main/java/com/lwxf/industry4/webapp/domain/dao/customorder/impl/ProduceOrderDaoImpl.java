@@ -1,0 +1,141 @@
+package com.lwxf.industry4.webapp.domain.dao.customorder.impl;
+
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+
+import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
+import com.github.miemiedev.mybatis.paginator.domain.PageList;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
+
+import com.lwxf.commons.utils.DateUtil;
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
+import com.lwxf.industry4.webapp.common.enums.customorder.ProduceOrderState;
+import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
+import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.customorder.ProduceOrderDto;
+import com.lwxf.mybatis.utils.MapContext;
+import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
+import com.lwxf.industry4.webapp.domain.dao.customorder.ProduceOrderDao;
+import com.lwxf.industry4.webapp.domain.entity.customorder.ProduceOrder;
+
+
+/**
+ * 功能：
+ * 
+ * @author：F_baisi(F_baisi@126.com)
+ * @created：2019-04-08 15:09:45
+ * @version：2019 V1.0
+ * @company：老屋新房 Created with IntelliJ IDEA
+ */
+@Repository("produceOrderDao")
+public class ProduceOrderDaoImpl extends BaseDaoImpl<ProduceOrder, String> implements ProduceOrderDao {
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public PaginatedList<ProduceOrder> selectByFilter(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("selectByFilter");
+		//
+		//  过滤查询参数
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<ProduceOrder> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public ProduceOrderDto findOneById(String id) {
+		String sqlId = this.getNamedSqlId("findOneById");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
+
+	@Override
+	public PaginatedList<ProduceOrderDto> findListByFilter(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findListByFilter");
+		//
+		//  过滤查询参数
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<ProduceOrderDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public List<ProduceOrder> findListByIds(List<String> ids) {
+		String sqlId = this.getNamedSqlId("findListByIds");
+		return this.getSqlSession().selectList(sqlId,ids);
+	}
+
+
+
+	@Override
+	public List<ProduceOrderDto> findListByOrderId(String id) {
+		String sqlId = this.getNamedSqlId("findListByOrderId");
+		return this.getSqlSession().selectList(sqlId,id);
+	}
+
+	@Override
+	public List<ProduceOrder> findIncompleteListByOrderId(String customOrderId) {
+		String sqlId = this.getNamedSqlId("findIncompleteListByOrderId");
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_ENTITY_STATE,Arrays.asList(ProduceOrderState.NOT_YET_BEGUN.getValue(),ProduceOrderState.IN_PRODUCTION.getValue()));
+		mapContext.put("orderId",customOrderId);
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public int updatePayByOrderIdAndWays(String orderId, List<Integer> ways) {
+		String sqlId = this.getNamedSqlId("updatePayByOrderIdAndWays");
+		MapContext mapContext = new MapContext();
+		mapContext.put("orderId",orderId);
+		mapContext.put("ways",ways);
+		return this.getSqlSession().update(sqlId,mapContext);
+	}
+
+	@Override
+	public List<ProduceOrder> findListByOrderIdAndWays(String id, List<Integer> ways) {
+		String sqlId = this.getNamedSqlId("findListByOrderIdAndWays");
+		MapContext mapContext = new MapContext();
+		mapContext.put("orderId",id);
+		mapContext.put("ways",ways);
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public int updateStateByIds(List<String> ids, int state) {
+		String sqlId = this.getNamedSqlId("updateStateByIds");
+		MapContext mapContext = new MapContext();
+		mapContext.put("ids",ids);
+		mapContext.put(WebConstant.KEY_ENTITY_STATE,state);
+		mapContext.put("actualTime",DateUtil.getSystemDate());
+		return this.getSqlSession().update(sqlId,mapContext);
+	}
+
+	@Override
+	public int updatePlanTimeByIds(Date planTime, List ids) {
+		String sqlId = this.getNamedSqlId("updatePlanTimeByIds");
+		MapContext mapContext = new MapContext();
+		mapContext.put("ids",ids);
+		mapContext.put("planTime",planTime);
+		return this.getSqlSession().update(sqlId,mapContext);
+	}
+
+	@Override
+	public PaginatedList<ProduceOrder> findProduceOrderList(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findProduceOrderList");
+		//
+		//  过滤查询参数
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<ProduceOrder> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public List<Map> findByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("findByOrderId");
+		return this.getSqlSession().selectList(sqlId,orderId);
+	}
+}

@@ -1,0 +1,719 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.financing.PaymentDao">
+    <resultMap id="PaymentMap" type="com.lwxf.industry4.webapp.domain.entity.financing.Payment">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="way" property="way" jdbcType="TINYINT" />
+        <result column="funds" property="funds" jdbcType="TINYINT" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="auditor" property="auditor" jdbcType="CHAR" />
+        <result column="audited" property="audited" jdbcType="TIMESTAMP" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="payee" property="payee" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
+        <result column="holder" property="holder" jdbcType="VARCHAR" />
+        <result column="holder_account" property="holderAccount" jdbcType="VARCHAR" />
+        <result column="deposit_bank" property="depositBank" jdbcType="VARCHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="PaymentMapDto" type="com.lwxf.industry4.webapp.domain.dto.financing.PaymentDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="way" property="way" jdbcType="TINYINT" />
+        <result column="funds" property="funds" jdbcType="TINYINT" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="auditor" property="auditor" jdbcType="CHAR" />
+        <result column="audited" property="audited" jdbcType="TIMESTAMP" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="payee" property="payee" jdbcType="CHAR" />
+        <result column="payeeName" property="payeeName" jdbcType="VARCHAR" />
+        <result column="auditorName" property="auditorName" jdbcType="VARCHAR" />
+        <result column="holder" property="holder" jdbcType="VARCHAR" />
+        <result column="holder_account" property="holderAccount" jdbcType="VARCHAR" />
+        <result column="deposit_bank" property="depositBank" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="dalType" property="dalType" jdbcType="TIMESTAMP" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="creatorName" property="creatorName"/>
+        <result column="TransferTime" property="transferTime"/>
+    </resultMap>
+
+    <resultMap id="PaymentMapDtoT" type="com.lwxf.industry4.webapp.domain.dto.financing.PaymentDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="way" property="way" jdbcType="TINYINT" />
+        <result column="funds" property="funds" jdbcType="TINYINT" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="auditor" property="auditor" jdbcType="CHAR" />
+        <result column="audited" property="audited" jdbcType="TIMESTAMP" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="payee" property="payee" jdbcType="CHAR" />
+        <result column="payeeName" property="payeeName" jdbcType="VARCHAR" />
+        <result column="auditorName" property="auditorName" jdbcType="VARCHAR" />
+        <result column="holder" property="holder" jdbcType="VARCHAR" />
+        <result column="holder_account" property="holderAccount" jdbcType="VARCHAR" />
+        <result column="deposit_bank" property="depositBank" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="dalType" property="dalType" jdbcType="TIMESTAMP" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="creatorName" property="creatorName"/>
+        <result column="TransferTime" property="transferTime"/>
+        <result column="orderNo" property="orderNo"/>
+        <result column="companyName" property="companyName"/>
+        <result column="customName" property="customName"/>
+        <result column="orderType" property="orderType"/>
+    </resultMap>
+
+    <resultMap id="PaymentDtoForApp" type="com.lwxf.industry4.webapp.domain.dto.financing.PaymentDtoForApp">
+    <id column="id" property="id" jdbcType="CHAR" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="funds" property="funds" jdbcType="TINYINT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <resultMap id="VerifyPaymentDto" type="com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.VerifyPaymentDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="order_id" property="orderId" jdbcType="VARCHAR" />
+        <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="creator_name" property="creatorName" jdbcType="VARCHAR" />
+        <result column="funds" property="funds" jdbcType="TINYINT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <resultMap id="FinanceCountDto" type="com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.FinanceCountDto">
+        <result column="order_handle_today" property="orderHandleToday" jdbcType="INTEGER" />
+        <result column="order_handle_monthly" property="orderHandleMonthly" jdbcType="INTEGER" />
+        <result column="chargebacks_today" property="chargebacksToday" jdbcType="DECIMAL" />
+        <result column="chargebacks_monthly" property="chargebacksMonthly" jdbcType="DECIMAL" />
+    </resultMap>
+    <resultMap id="VerifyDesignPriceDto" type="com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.VerifyDesignPriceDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="order_id" property="orderId" jdbcType="CHAR" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="order_type" property="orderType" jdbcType="VARCHAR" />
+        <result column="order_created" property="orderCreated" jdbcType="TIMESTAMP" />
+        <result column="estimated_delivery_date" property="estimatedDeliveryDate" jdbcType="TIMESTAMP" />
+        <result column="order_creator" property="orderCreator" jdbcType="VARCHAR" />
+        <result column="designer" property="designer" jdbcType="VARCHAR" />
+        <result column="factory_final_price" property="factoryFinalPrice" jdbcType="DECIMAL" />
+        <result column="company_balance" property="companyBalance" jdbcType="DECIMAL" />
+    </resultMap>
+    <resultMap id="VerifyOrderPriceDto" type="com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.VerifyOrderPriceDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="order_id" property="orderId" jdbcType="CHAR" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="order_type" property="orderType" jdbcType="VARCHAR" />
+        <result column="order_created" property="orderCreated" jdbcType="TIMESTAMP" />
+        <result column="estimated_delivery_date" property="estimatedDeliveryDate" jdbcType="TIMESTAMP" />
+        <result column="order_creator" property="orderCreator" jdbcType="VARCHAR" />
+        <result column="factory_final_price" property="factoryFinalPrice" jdbcType="DECIMAL" />
+        <result column="company_balance" property="companyBalance" jdbcType="DECIMAL" />
+    </resultMap>
+    <resultMap id="VerifyOutsourcePriceDto" type="com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.VerifyOutsourcePriceDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="order_id" property="orderId" jdbcType="CHAR" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
+        <result column="order_type" property="orderType" jdbcType="VARCHAR" />
+        <result column="order_created" property="orderCreated" jdbcType="TIMESTAMP" />
+        <result column="order_creator" property="orderCreator" jdbcType="VARCHAR" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="coordination_name" property="coordinationName" jdbcType="VARCHAR" />
+        <result column="out_source_amount" property="out_sourceAmount" jdbcType="DECIMAL" />
+        <result column="coordination_account" property="coordinationAccount" jdbcType="VARCHAR" />
+        <result column="coordination_bank" property="coordinationBank" jdbcType="VARCHAR" />
+        <result column="note" property="note" jdbcType="VARCHAR" />
+    </resultMap>
+    <!--财务 经销商列表页 -->
+    <resultMap id="CompanyFinanceListDto" type="com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto">
+        <id column="payment_id" property="paymentId" jdbcType="CHAR" />
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="funds" property="funds" jdbcType="TINYINT" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="way" property="way" jdbcType="TINYINT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creator" property="creator" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    </resultMap>
+    <!--财务 经销商详情页 -->
+    <resultMap id="CompanyFinanceInfoDto" type="com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto">
+        <result column="pay_time" property="payTime" jdbcType="TIMESTAMP" />
+        <result column="funds" property="funds" jdbcType="TINYINT" />
+        <result column="way" property="way" jdbcType="TINYINT" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="columns">
+id, no,type, way, funds, notes, creator, created, status, custom_order_id, auditor, audited, amount, payee, name, company_id, holder, holder_account, deposit_bank,pay_time
+</sql>
+    <sql id="columnDtos">
+p.id, p.no,p.type, p.way, p.funds, p.notes, p.creator, p.created, p.status, p.custom_order_id, p.auditor, p.audited, p.amount, p.payee, p.name, p.company_id, p.holder, p.holder_account, p.deposit_bank,p.pay_time,p.creatorName,u.name auditorName
+</sql>
+
+    <select id="selectById" resultMap="PaymentMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   payment
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="PaymentMapDto">
+        select <include refid="columnDtos" />
+        from
+        (SELECT p.*,u.name creatorName
+        FROM payment p left join user u on p.creator = u.id
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                p.id = #{id}
+            </if>
+            <if test="no != null">
+                AND p.no like CONCAT('%',#{no},'%')
+            </if>
+            <if test="type != null">
+                AND p.type in
+                <foreach collection="type" item="ty" open="(" close=")" separator=",">
+                    #{ty}
+                </foreach>
+            </if>
+            <if test="way != null">
+                AND p.way = #{way}
+            </if>
+            <if test="funds != null">
+                AND p.funds = #{funds}
+            </if>
+            <if test="notes != null">
+                AND p.notes = #{notes}
+            </if>
+            <if test="creator != null">
+                AND p.creator = #{creator}
+            </if>
+            <if test="created != null">
+                AND p.created = #{created}
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="customOrderId != null">
+                AND p.custom_order_id = #{customOrderId}
+            </if>
+            <if test="auditor != null">
+                AND p.auditor = #{auditor}
+            </if>
+            <if test="audited != null">
+                AND p.audited = #{audited}
+            </if>
+            <if test="amount != null">
+                AND p.amount = #{amount}
+            </if>
+            <if test="payee != null">
+                AND p.payee = #{payee}
+            </if>
+            <if test="name != null">
+                AND p.name = #{name}
+            </if>
+            <if test="companyId != null">
+                AND p.company_id = #{companyId}
+            </if>
+            <if test="holder != null">
+                AND p.holder = #{holder}
+            </if>
+            <if test="holderAccount != null">
+                AND p.holder_account = #{holderAccount}
+            </if>
+            <if test="depositBank != null">
+                AND p.deposit_bank = #{depositBank}
+            </if>
+        </trim></where>
+        ) p left join user u on p.auditor = u.id
+
+    </select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO
+payment(id, type,no, way, funds, notes, creator, created, status, custom_order_id, auditor, audited, amount, payee, name, company_id, holder, holder_account, deposit_bank,pay_time)
+ VALUES(#{id}, #{type},#{no}, #{way}, #{funds}, #{notes}, #{creator}, #{created}, #{status}, #{customOrderId}, #{auditor}, #{audited}, #{amount}, #{payee}, #{name}, #{companyId}, #{holder}, #{holderAccount}, #{depositBank},#{payTime})
+</insert>
+
+
+
+
+    <update id="updateByMapContext">
+        UPDATE payment
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('type') and type != null">
+                type = #{type},
+            </if>
+            <if test="_parameter.containsKey('no') and no != null">
+            no = #{no},
+        </if>
+            <if test="_parameter.containsKey('way') and way != null">
+                way = #{way},
+            </if>
+            <if test="_parameter.containsKey('funds') and funds != null">
+                funds = #{funds},
+            </if>
+            <if test="_parameter.containsKey('notes')">
+                notes = #{notes},
+            </if>
+            <if test="_parameter.containsKey('creator') and creator != null">
+                creator = #{creator},
+            </if>
+            <if test="_parameter.containsKey('created') and created != null">
+                created = #{created},
+            </if>
+            <if test="_parameter.containsKey('status') and status != null">
+                status = #{status},
+            </if>
+            <if test="_parameter.containsKey('customOrderId')">
+                custom_order_id = #{customOrderId},
+            </if>
+            <if test="_parameter.containsKey('auditor')">
+                auditor = #{auditor},
+            </if>
+            <if test="_parameter.containsKey('audited')">
+                audited = #{audited},
+            </if>
+            <if test="_parameter.containsKey('amount') and amount != null">
+                amount = #{amount},
+            </if>
+            <if test="_parameter.containsKey('payee') and payee != null">
+                payee = #{payee},
+            </if>
+            <if test="_parameter.containsKey('name')">
+                name = #{name},
+            </if>
+            <if test="_parameter.containsKey('companyId') and companyId != null">
+                company_id = #{companyId},
+            </if>
+            <if test="_parameter.containsKey('holder') and holder != null">
+                holder = #{holder},
+            </if>
+            <if test="_parameter.containsKey('holderAccount')">
+                holder_account = #{holderAccount},
+            </if>
+            <if test="_parameter.containsKey('depositBank')">
+                deposit_bank = #{depositBank}
+            </if>
+        </trim></set>
+        WHERE  id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   payment
+WHERE  id = #{id}
+</delete>
+
+    <select id="findByOrderId" resultMap="PaymentMapDto">
+        select
+        p.holder as payeeName, p.pay_time, p.amount,p.status,p.name,p.id
+        from payment p
+        where
+        p.custom_order_id = #{orderId}
+        and p.type = 0
+        order by p.created desc
+    </select>
+
+    <select id="findByPaymentId" resultMap="PaymentMapDto">
+        select
+        p.id,p.pay_time,p.way,p.holder as payeeName,p.notes,
+        p.amount,p.name,us.name as auditorName,p.audited,p.status
+        from payment p
+        left join user us on us.id = p.auditor
+        where p.id = #{paymentId}
+    </select>
+
+    <select id="findByPId" resultMap="PaymentMapDto">
+		select
+        dal.type as dalType,dal.created as TransferTime,p.pay_time,dal.amount as amount,
+        p.id,p.way, p.deposit_bank,p.holder_account,p.no,
+        p.holder,p.created,p.name,p.audited,
+        us.name as auditorName
+        from dealer_account_log dal
+        left join payment p on p.id = dal.resource_id
+        left join user us on us.id = p.auditor
+		where p.id = #{paymentId}
+    </select>
+
+
+    <select id="findByCompanyIdAndStatusAndType" resultMap="PaymentMap">
+        SELECT
+        id,amount,way,holder,status,custom_order_id,pay_time,type
+        from payment
+        <where><trim prefixOverrides="and">
+            <if test="companyId!=null">
+                AND company_id = #{companyId}
+            </if>
+            <if test="type!=null">
+                AND (type = ${type})
+            </if>
+            <if test="status!=null">
+                AND status = #{status}
+            </if>
+            <if test="created!=null">
+                AND created  like '%${created}%'
+            </if>
+            <if test="audited!=null">
+                AND audited like '%${audited}%'
+            </if>
+        </trim></where>
+        order by created desc
+    </select>
+
+    <select id="findByOrderIdAndStatus" resultMap="PaymentMap">
+        select
+        <include refid="columns"/>
+        from payment
+        where custom_order_id = #{orderId}
+        and status = #{status}
+
+    </select>
+
+    <update id="updateStatusByOrderIdAndFund">
+        UPDATE payment
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('type') and type != null">
+                type = #{type},
+            </if>
+            <if test="_parameter.containsKey('no') and no != null">
+                no = #{no},
+            </if>
+            <if test="_parameter.containsKey('way') and way != null">
+                way = #{way},
+            </if>
+            <if test="_parameter.containsKey('funds') and funds != null">
+                funds = #{funds},
+            </if>
+            <if test="_parameter.containsKey('notes')">
+                notes = #{notes},
+            </if>
+            <if test="_parameter.containsKey('creator') and creator != null">
+                creator = #{creator},
+            </if>
+            <if test="_parameter.containsKey('created') and created != null">
+                created = #{created},
+            </if>
+            <if test="_parameter.containsKey('status') and status != null">
+                status = #{status},
+            </if>
+            <if test="_parameter.containsKey('customOrderId')">
+                custom_order_id = #{customOrderId},
+            </if>
+            <if test="_parameter.containsKey('auditor')">
+                auditor = #{auditor},
+            </if>
+            <if test="_parameter.containsKey('audited')">
+                audited = #{audited},
+            </if>
+            <if test="_parameter.containsKey('amount') and amount != null">
+                amount = #{amount},
+            </if>
+            <if test="_parameter.containsKey('payee') and payee != null">
+                payee = #{payee},
+            </if>
+            <if test="_parameter.containsKey('payTime') and payTime != null">
+                pay_time = #{payTime},
+            </if>
+            <if test="_parameter.containsKey('name')">
+                name = #{name},
+            </if>
+            <if test="_parameter.containsKey('companyId') and companyId != null">
+                company_id = #{companyId},
+            </if>
+            <if test="_parameter.containsKey('holder') and holder != null">
+                holder = #{holder},
+            </if>
+            <if test="_parameter.containsKey('holderAccount')">
+                holder_account = #{holderAccount},
+            </if>
+            <if test="_parameter.containsKey('depositBank')">
+                deposit_bank = #{depositBank}
+            </if>
+        </trim></set>
+         where custom_order_id = #{orderId} and funds = #{funds}
+    </update>
+
+    <select id="findListByPaginateFilter" resultMap="PaymentMapDtoT">
+        select p.id, p.no,p.type, p.way, p.funds, p.notes, p.creator, p.created, p.status, p.custom_order_id, p.auditor, p.audited, p.amount, p.payee, p.name, p.company_id, p.holder, p.holder_account, p.deposit_bank,p.pay_time,
+        u.name creatorName,uu.name payeeName,uuu.name auditorName,o.no orderNo,c.name companyName,uuuu.name customName,o.type orderType
+        from payment p
+        left join user u on p.creator = u.id
+        left join user uu on p.payee = uu.id
+        left join user uuu on p.auditor = uuu.id
+        left join custom_order o on p.custom_order_id = o.id
+        left join company c on p.company_id=c.id
+        left join user uuuu on o.customer_id = uuuu.id
+        <where>
+            <trim prefixOverrides="and">
+                <if test="orderNo!=null">
+                    o.no like '%${orderNo}%'
+                </if>
+                <if test="type!=null">
+                    and p.type = ${type}
+                </if>
+                <if test="companyId!=null">
+                    and p.company_id = #{companyId}
+                </if>
+                <if test="status!=null">
+                    and p.status =
+                        #{statu}
+                </if>
+                <if test="fundsList!=null">
+                    and p.funds in
+                    <foreach collection="fundsList" item="funds" open="(" close=")" separator=",">
+                        #{funds}
+                    </foreach>
+                </if>
+            </trim>
+        </where>
+    </select>
+
+    <!--F端APP前台查询统计  companies:签约经销商数量  ,balance :余额, -->
+
+    <!--app端查询支付列表 -->
+    <select id="selectByFilterForApp" resultMap="PaymentDtoForApp">
+        SELECT created,pay_time,amount,funds
+        FROM   payment
+        WHERE  id = #{id}
+        Order by #{orderBy}
+    </select>
+
+
+    <select id="findByOrderIdAndTypeAndFundsAndStatus" resultMap="PaymentMapDto">
+        select
+        p.id, p.no,p.type, p.way, p.funds, p.notes, p.creator,
+        p.created, p.status, p.custom_order_id, u.name as auditorName, p.audited,
+        p.amount, p.payee, p.name, p.company_id,
+        p.holder, p.holder_account, p.deposit_bank,p.pay_time
+        from payment p
+        left join user u on u.id = p.auditor
+        <where><trim prefixOverrides="and">
+            <if test="type!=null">
+                p.type = #{type}
+            </if>
+            <if test="funds!=null">
+                and p.funds = #{funds}
+            </if>
+            <if test="orderId!=null">
+                and p.custom_order_id = #{orderId}
+            </if>
+            <if test="status!=null">
+                and p.status = #{status}
+            </if>
+        </trim></where>
+        limit 1
+    </select>
+
+    <select id="selectPaymentByCompanyIdForApp" resultMap="PaymentDtoForApp">
+        select id,created,funds,type,amount from payment where company_id =#{id}
+    </select>
+
+    <!-- F端APP 财务审核功能-->
+    <!-- 审核首页上测统计-->
+    <select id="selectFinanceCountForApp" resultMap="FinanceCountDto">
+        select
+        (select count(*) from payment where status = 1 and to_days(created) = to_days((now()))) as order_handle_today,
+        (select count(*) from payment where status = 1 and DATE_FORMAT(created, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )) as order_handle_monthly,
+        (select IFNULL(sum(amount),0) from payment where status = 1 and (type = 3 or type = 4) and to_days(created) = to_days((now()))) as chargebacks_today,
+        (select IFNULL(sum(amount),0) from payment where status = 1 and (type = 3 or type = 4) and DATE_FORMAT(created, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' )) as chargebacks_monthly
+    </select>
+    <!-- 审核首页下测列表-->
+    <select id="selectVerifyPaymentList" resultMap="VerifyPaymentDto">
+        select p.id,co.no as order_no,co.id as order_id,p.funds,c.name as company_name,u.name as creator_name,p.created from payment p
+        left join custom_order co on p.custom_order_id = co.id
+        left join company c on c.id = p.company_id
+        left join user u on u.id = co.creator
+        where p.status = 0 and (p.funds = 31 or p.funds =32)
+        order by created desc
+    </select>
+
+    <!--货款审核页面显示数据 -->
+    <select id="selectVerifyOrderPriceInfo" resultMap="VerifyOrderPriceDto">
+       select p.id,co.id as order_id,co.no as order_no,co.factory_final_price as factory_final_price,c.id as company_id,c.name as company_name,co.type as order_type,co.created as order_created,
+        u.name as order_creator,co.estimated_delivery_date,da.balance as company_balance
+        from payment p
+        left join custom_order co on co.id = p.custom_order_id
+        left join user u on u.id = co.creator
+        left join company c on c.id = co.company_id
+        left join dealer_account da on da.company_id=c.id
+        where p.id = #{paymentId} and da.type=1
+    </select>
+
+    <!--财务设计费审核页面数据 -->
+    <select id="selectVerifyDesignPriceInfo" resultMap="VerifyDesignPriceDto" >
+        select p.id,co.id as order_id,co.no as order_no,co.factory_final_price as factory_final_price,c.id as company_id,c.name as company_name,co.type as order_type,co.created as order_created,
+        u.name as order_creator,ud.name as designer,co.design_fee,co.estimated_delivery_date,da.balance as company_balance
+        from payment p
+        left join custom_order co on co.id = p.custom_order_id
+        left join custom_order_design cod on cod.custom_order_id = co.id
+        left join user u on u.id = co.creator
+        left join user ud on ud.id = cod.designer
+        left join company c on c.id = co.company_id
+        left join dealer_account da on da.company_id=c.id
+        where p.id = #{paymentId} and da.type=1
+    </select>
+    <!--财务外协费用审核页面数  暂时不用
+    <select id="selectVerifyOutsourcePriceInfo">
+        select p.id,co.id as order_id,co.no,co.amount,c.id as company_id,c.name as company_name,co.type,co.created as order_created,
+        u.name as order_creator,co.estimated_delivery_date,po.coordination_name,IFNULL(po.amount,0) as out_source_amount,
+        po.coordination_account,po.coordination_bank,po.notes
+        from payment p
+        left join custom_order co on co.id = p.custom_order_id
+        left join company c on c.id = co.company_id
+        left join user u on u.id = co.creator
+        left join produce_order po on po.custom_order_id= co.id
+        where p.id = {#pid}
+    </select>
+    -->
+    <!--审核货款 -->
+    <update id="verifyOrderPrice">
+        update payment set
+        amount = #{amount},
+        <if test="_parameter.containsKey('notes') and notes != null">
+            notes=#{notes},
+        </if>
+        <if test="_parameter.containsKey('pay_time') and pay_time != null">
+            pay_time=#{pay_time},
+        </if>
+        <if test="_parameter.containsKey('holder') and holder != null">
+            holder=#{holder},
+        </if>
+        status=1
+        where id = #{paymentId} and funds=#{funds}
+    </update>
+    <!--审核设计费 -->
+    <update id="verifyDesignPrice">
+        update payment set
+        amount = #{amount},
+        <if test="_parameter.containsKey('notes') and notes != null">
+            notes=#{notes},
+        </if>
+        <if test="_parameter.containsKey('pay_time') and pay_time != null">
+            pay_time=#{pay_time},
+        </if>
+        <if test="_parameter.containsKey('holder') and holder != null">
+            holder=#{holder},
+        </if>
+        status=1
+        where id = #{paymentId} and funds=#{funds}
+    </update>
+
+    <!--审核外协单 暂时不用
+    <update id="verifyOutsourcePrice">
+        update payment set
+        aamount = #{amount},
+        note=#{note},
+        pay_time =#{payTime},
+        status=1
+        where custom_order_id = '' and type = '' and funds=13
+    </update>
+    -->
+    <!--财务 经销商财务信息首页上测统计 -->
+    <select id="countCompanyFinance" resultType="java.util.HashMap">
+        select
+        IFNULL((select count(*) from company where type = 1 ),0) as signedCompany,
+        IFNULL((select sum(balance) from dealer_account da
+        left join company c on c.id = da.company_id
+       <![CDATA[  where c.type <>0),0) as company_balance, ]]>
+        IFNULL((select sum(amount)  from payment where type in(2,4) and status =1 and to_days(created) = to_days(now())),0)  as incomeToday,
+        IFNULL((select sum(amount) from payment where funds in(3) and status = 1 and to_days(created) = to_days(now())),0) as outlayToday
+    </select>
+    <!--财务 经销商财务信息列表 -->
+    <select id="selectCompanyFinanceList" resultMap="CompanyFinanceListDto">
+        select p.id as payment_id,
+        p.created,
+        IFNULL((select name from user where id=p.creator),'') as creator,
+        c.name as company_name,p.type,p.funds,p.amount,p.way,p.notes
+        from payment p,company c
+         <![CDATA[ where c.id=p.company_id and p.funds >=11 and p.funds <30  ]]>
+        <if test="beginTime!=null and beginTime!=''">
+            <![CDATA[   and DATE_FORMAT(p.created, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            <![CDATA[  and DATE_FORMAT(p.created, '%Y-%m-%d') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d')    ]]>
+        </if>
+        <if test="funds != null">
+            AND p.funds = #{funds}
+        </if>
+        <if test="companyName != null">
+            AND c.name like CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="type != null">
+            AND p.type = #{type}
+        </if>
+        <if test="id != null">
+            AND p.id = #{id}
+        </if>
+
+    </select>
+    <!--财务 经销商财务信息详情 -->
+    <select id="selectCompanyFinanceInfoByPaymentId" resultMap="CompanyFinanceInfoDto">
+        select c.name as company_name,p.type,p.funds,p.way,p.amount,p.created,p.notes,u.name
+        from payment p
+        left join company c on c.id=p.company_id
+        left join user u on u.id = p.creator and p.type in (2,4,5)
+        where p.id = #{paymentId}
+    </select>
+    <select id="findByOrderIdAndType" resultType="java.util.Map">
+        select
+        p.amount,p.audited,u.name as auditorName,
+        (case p.status
+        when 0 then '未审核'
+        when 1 then '已审核'
+        else '未知' end) status
+        from payment p
+        left join user u on u.id = p.auditor
+        where p.custom_order_id = #{orderId}
+        and p.type = #{type}
+        and p.funds = #{funds}
+    </select>
+    <select id="findByTypeAndCreated" resultType="java.math.BigDecimal">
+        select sum(amount)
+        from payment
+        <where><trim prefixOverrides="and">
+            <if test="beginTime!=null">
+                and created &gt;= #{beginTime}
+            </if>
+            <if test="endTime!=null">
+                and (created &lt;= #{endTime} or created like '%${endTime}%')
+            </if>
+            <if test="created!=null">
+                and created like '%${created}%'
+            </if>
+            and type = #{type}
+            and status = #{status}
+        </trim></where>
+    </select>
+
+</mapper>

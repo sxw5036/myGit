@@ -1,0 +1,245 @@
+package com.lwxf.industry4.webapp.domain.dao.user.impl;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
+import com.lwxf.industry4.webapp.domain.dto.user.UserAreaDto;
+import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
+import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dao.user.UserDao;
+import com.lwxf.industry4.webapp.domain.dto.user.UserAreaDto;
+import com.lwxf.industry4.webapp.domain.dto.user.UserDto;
+import com.lwxf.industry4.webapp.domain.entity.user.User;
+import com.lwxf.mybatis.utils.MapContext;
+import com.thoughtworks.xstream.core.util.ThreadSafeSimpleDateFormat;
+import org.springframework.stereotype.Component;
+
+import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
+import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
+import com.lwxf.industry4.webapp.domain.dao.user.UserDao;
+import com.lwxf.industry4.webapp.domain.dto.user.UserDto;
+import com.lwxf.industry4.webapp.domain.entity.user.User;
+import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
+import com.github.miemiedev.mybatis.paginator.domain.PageList;
+
+/**
+ * 功能：缓存示例实现
+ *
+ * @author：renzhongshan(d3shan@126.com)
+ * @create：2018-05-24 15:03:33
+ * @version：2018 1.0
+ * @company：老屋新房 Created with IntelliJ IDEA
+ */
+@Component("userDao")
+public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
+	@Override
+    public User selectByEmail(String email) {
+        String sqlId = this.getNamedSqlId("selectByEmail");
+        return this.getSqlSession().selectOne(sqlId, email);
+    }
+
+	@Override
+	public User findByMobile(String mobile) {
+		String sqlId = this.getNamedSqlId("findByMobile");
+		return this.getSqlSession().selectOne(sqlId, mobile);
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public PaginatedList<User> selectByFilter(PaginatedFilter paginatedFilter) {
+        String sqlId = this.getNamedSqlId("selectByFilter");
+        PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+        PageList<User> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+        return this.toPaginatedList(pageList);
+    }
+
+    @Override
+	public List<User> selectByUserIdList(List<String> userIdList) {
+		String sqlId = this.getNamedSqlId("selectByUserIdList");
+        return this.getSqlSession().selectList(sqlId, userIdList);
+    }
+
+    @Override
+	public List<UserDto> selectUserDtoListByUserIds(String[] userIds) {
+		String sqlId = this.getNamedSqlId("selectUserDtoListByUserIds");
+        return this.getSqlSession().selectList(sqlId, userIds);
+    }
+
+    @Override
+    public boolean isExistsByEmail(String email) {
+        String sqlId = this.getNamedSqlId("isExistsByEmail");
+        return this.getSqlSession().selectOne(sqlId, email);
+    }
+
+    @Override
+	public User selectByUserId(String userId) {
+		String sqlId = this.getNamedSqlId("selectByUserId");
+        return this.getSqlSession().selectOne(sqlId, userId);
+    }
+
+    @Override
+	public List<String> selectAllUserId() {
+		String sqlId = this.getNamedSqlId("selectAllUserId");
+		return this.getSqlSession().selectList(sqlId);
+	}
+
+	@Override
+	public User findByLoginName(String loginName) {
+		String sqlId = this.getNamedSqlId("findByLoginName");
+		return this.getSqlSession().selectOne(sqlId,loginName);
+	}
+    @Override
+    public List<User> findClerkListByStateAndRole(MapContext mapContext) {
+        String sqlId = this.getNamedSqlId("findClerkListByStateAndRole");
+        return this.getSqlSession().selectList(sqlId,mapContext);
+    }
+
+	@Override
+	public List<User> findUserInfoByUserIds(Collection<String> id) {
+		String sqlId = this.getNamedSqlId("findUserInfoByUserIds");
+		return this.getSqlSession().selectList(sqlId,id);
+	}
+
+	@Override
+	public int updateUserName(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("updateUserName");
+		return this.getSqlSession().update(sqlId, mapContext);
+	}
+
+	@Override
+	public Map<String, Object> findUserById(String id) {
+		String sqlId = this.getNamedSqlId("findUserById");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
+
+	@Override
+	public List<String> findIdByName(String name) {
+		String sqlId = this.getNamedSqlId("findIdByName");
+		return this.getSqlSession().selectList(sqlId, name);
+	}
+
+
+	@Override
+	public UserAreaDto selectUserAreaDtoById(String id) {
+		String sqlId = this.getNamedSqlId("selectUserAreaDtoById");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
+
+
+	@Override
+	public PaginatedList<User> findUserListByLikeName(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findUserListByLikeName");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<User> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+
+	@Override
+	public List<User> selectCompanyShopkeeperByCompanyIds(List ids,String roleKey) {
+		String sqlId = this.getNamedSqlId("selectCompanyShopkeeperByCompanyIds");
+		MapContext mapContext = new MapContext();
+		mapContext.put("ids",ids);
+		mapContext.put("key",roleKey);
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+
+	@Override
+	public UserAreaDto findUserMessageById(String userId) {
+		String sqlId = this.getNamedSqlId("findUserMessageById");
+		return this.getSqlSession().selectOne(sqlId,userId);
+	}
+
+	@Override
+	public UserAreaDto findCityNameByUID(String userId) {
+		String sqlId = this.getNamedSqlId("findCityNameByUID");
+		return this.getSqlSession().selectOne(sqlId,userId);
+	}
+
+	@Override
+	public List<Map<String, String>> findEmpIdAndEmpNameByCid(MapContext params) {
+		String sqlId = this.getNamedSqlId("findEmpIdAndEmpNameByCid");
+		return this.getSqlSession().selectList(sqlId,params);
+
+
+	}
+
+
+	@Override
+	public List<UserAreaDto> findCustomerByCompanyIdAndCustomer(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("findCustomerByCompanyIdAndCustomer");
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public List<User> findByUserIds(List<String> values) {
+		String sqlId = this.getNamedSqlId("findByUserIds");
+		return this.getSqlSession().selectList(sqlId,values);
+	}
+
+	@Override
+	public PaginatedList<UserAreaDto> findByClient(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findByClient");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<UserAreaDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public UserAreaDto findByUid(String userId) {
+		String sqlId = this.getNamedSqlId("findByUid");
+		return this.getSqlSession().selectOne(sqlId,userId);
+	}
+
+
+	@Override
+	public List<UserAreaDto> findCustInfoByCompanyIdAndStatus(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("findCustInfoByCompanyIdAndStatus");
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public PaginatedList<User> findEmpInfoByCompanyIdAndStatus(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findEmpInfoByCompanyIdAndStatus");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<User> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+
+
+	}
+	@Override
+	public PaginatedList<UserAreaDto> findShareMemberByPidAndStatusAndIdentity(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findShareMemberByPidAndStatusAndIdentity");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<UserAreaDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+
+	}
+
+	@Override
+	public Map factoryUserPersonalInfo(MapContext params) {
+		String sqlId = this.getNamedSqlId("factoryUserPersonalInfo");
+		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+	@Override
+	public List<MapContext> findFactoryUserDeptName(String companyId,String userId) {
+		MapContext map = MapContext.newOne();
+		map.put("companyId", companyId);
+		map.put("userId", userId);
+		String sqlId = this.getNamedSqlId("findFactoryUserDeptName");
+		return this.getSqlSession().selectList(sqlId, map);
+
+	}
+
+
+	@Override
+	public Map findFactoryUserAccountInfo(String companyId, String userId) {
+		String sqlId = this.getNamedSqlId("findFactoryUserAccountInfo");
+		return this.getSqlSession().selectOne(sqlId, userId);
+	}
+}

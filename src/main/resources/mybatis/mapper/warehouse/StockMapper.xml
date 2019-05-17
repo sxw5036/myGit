@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.warehouse.StockDao">
+    <resultMap id="StockMap" type="com.lwxf.industry4.webapp.domain.entity.warehouse.Stock">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="storage_id" property="storageId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="operator" property="operator" jdbcType="CHAR" />
+        <result column="operate_time" property="operateTime" jdbcType="TIMESTAMP" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="shelf" property="shelf" jdbcType="CHAR" />
+        <result column="column" property="column" jdbcType="TINYINT" />
+        <result column="tier" property="tier" jdbcType="TINYINT" />
+        <result column="pre_output" property="preOutput" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="StockDtoMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.StockDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="storage_id" property="storageId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="operator" property="operator" jdbcType="CHAR" />
+        <result column="operate_time" property="operateTime" jdbcType="TIMESTAMP" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="shelf" property="shelf" jdbcType="CHAR" />
+        <result column="column" property="column" jdbcType="TINYINT" />
+        <result column="tier" property="tier" jdbcType="TINYINT" />
+        <result column="storageName" property="storageName"/>
+        <result column="operatorName" property="operatorName"/>
+        <result column="productName" property="productName"/>
+        <result column="pre_output" property="preOutput" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="columns">
+id, storage_id, product_id, price, operator, operate_time, quantity, shelf, `column`, tier, pre_output
+</sql>
+    <sql id="columnDtos">
+s.id, s.storage_id, s.product_id, s.price, s.operator, s.operate_time,  s.quantity, s.shelf, s.column, s.tier,s.storageName,s.operatorName,p.name productName,s.pre_output
+</sql>
+    <select id="selectById" resultMap="StockMap" parameterType="String">
+        SELECT <include refid="columns" />
+        FROM   stock
+        WHERE  id = #{id}
+    </select>
+
+    <select id="selectByFilter" resultMap="StockMap">
+        SELECT <include refid="columns" />
+        FROM   stock
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="storageId != null">
+                AND storage_id = #{storageId}
+            </if>
+            <if test="productId != null">
+                AND product_id = #{productId}
+            </if>
+            <if test="price != null">
+                AND price = #{price}
+            </if>
+            <if test="operator != null">
+                AND operator = #{operator}
+            </if>
+            <if test="operateTime != null">
+                AND operate_time = #{operateTime}
+            </if>
+            <if test="quantity != null">
+                AND quantity = #{quantity}
+            </if>
+            <if test="shelf != null">
+                AND shelf = #{shelf}
+            </if>
+            <if test="column != null">
+                AND `column` = #{column}
+            </if>
+            <if test="tier != null">
+                AND tier = #{tier}
+            </if>
+            <if test="preOutput != null">
+                AND pre_output = #{preOutput}
+            </if>
+        </trim></where>
+
+    </select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO
+ stock(id, storage_id, product_id, price, operator, operate_time, quantity, shelf, `column`, tier, pre_output)
+VALUES(#{id}, #{storageId}, #{productId}, #{price}, #{operator}, #{operateTime}, #{quantity}, #{shelf}, #{column}, #{tier}, #{preOutput})
+</insert>
+
+    <update id="updateByMapContext">
+        UPDATE stock
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('price') and price != null">
+                price = #{price},
+            </if>
+            <if test="_parameter.containsKey('quantity') and quantity != null">
+                quantity = #{quantity},
+            </if>
+            <if test="_parameter.containsKey('shelf') and shelf != null">
+                shelf = #{shelf},
+            </if>
+            <if test="_parameter.containsKey('column') and column != null">
+                `column` = #{column},
+            </if>
+            <if test="_parameter.containsKey('tier') and tier != null">
+                tier = #{tier},
+            </if>
+            <if test="_parameter.containsKey('preOutput') and preOutput != null">
+                pre_output = #{preOutput}
+            </if>
+        </trim></set>
+        WHERE  id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   stock
+WHERE  id = #{id}
+</delete>
+
+    <select id="findListByFilter" resultMap="StockDtoMap">
+        select
+        <include refid="columnDtos"/> from
+        product p RIGHT JOIN
+        (SELECT s.*,u.name operatorName FROM user u RIGHT JOIN
+        (SELECT s.*,st.name storageName FROM stock s RIGHT join storage st on s.storage_id = st.id
+        where s.storage_id =#{id}
+        ) s ON u.id = s.operator
+        ) s ON p.id = s.product_id
+        <if test="name!=null">
+            where p.name like CONCAT("%",#{name},"%")
+        </if>
+    </select>
+
+
+    <select id="findOneByStorageIdAndProductId" resultMap="StockMap">
+        select <include refid="columns"/> from stock where product_id = #{productId} and storage_id =#{storageId}
+    </select>
+
+    <select id="findOneById" resultMap="StockDtoMap">
+        select
+        <include refid="columnDtos"/> from
+        product p RIGHT JOIN
+        (SELECT s.*,u.name operatorName FROM user u RIGHT JOIN
+        (SELECT s.*,st.name storageName FROM stock s RIGHT join storage st on s.storage_id = st.id
+        where s.id =#{id}) s ON u.id = s.operator
+        ) s ON p.id = s.product_id
+    </select>
+
+    <delete id="deleteByIdAndStockId">
+        delete from stock where id = #{stockId} and storage_id = #{id}
+    </delete>
+
+</mapper>

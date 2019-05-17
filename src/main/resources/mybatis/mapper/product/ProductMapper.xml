@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.product.ProductDao">
+    <resultMap id="ProductMap" type="com.lwxf.industry4.webapp.domain.entity.product.Product">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="product_category_id" property="productCategoryId" jdbcType="CHAR" />
+        <result column="product_material" property="productMaterial" jdbcType="VARCHAR" />
+        <result column="product_color" property="productColor" jdbcType="VARCHAR" />
+        <result column="product_spec" property="productSpec" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="unit" property="unit" jdbcType="TINYINT" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="thickness" property="thickness" jdbcType="INTEGER" />
+        <result column="factory_price" property="factoryPrice" jdbcType="DECIMAL" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+        <result column="series" property="series" jdbcType="VARCHAR" />
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+        <result column="is_lower_shelf" property="lowerShelf" jdbcType="BIT" />
+    </resultMap>
+    <resultMap id="ProductDtoMap" type="com.lwxf.industry4.webapp.domain.dto.product.ProductDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="product_category_id" property="productCategoryId" jdbcType="CHAR" />
+        <result column="product_material" property="productMaterial" jdbcType="VARCHAR" />
+        <result column="product_color" property="productColor" jdbcType="VARCHAR" />
+        <result column="product_spec" property="productSpec" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="unit" property="unit" jdbcType="TINYINT" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="thickness" property="thickness" jdbcType="INTEGER" />
+        <result column="factory_price" property="factoryPrice" jdbcType="DECIMAL" />
+        <result column="model" property="model" jdbcType="VARCHAR" />
+        <result column="series" property="series" jdbcType="VARCHAR" />
+        <result column="remarks" property="remarks" jdbcType="VARCHAR" />
+        <result column="is_lower_shelf" property="lowerShelf" jdbcType="BIT" />
+        <result column="categoryName" property="categoryName"/>
+        <result column="creatorName" property="creatorName"/>
+    </resultMap>
+    <sql id="columns">
+id, name, notes, product_category_id, product_material, product_color, product_spec, status, creator, created, unit, type, thickness, factory_price, model, series, remarks, is_lower_shelf
+</sql>
+
+    <sql id="columnsDTO">
+        p.id, p.name, p.notes, p.product_category_id, p.product_material, p.product_color, p.product_spec, p.status, p.creator, p.created, p.unit, p.type, p.thickness, p.factory_price, p.model, p.series, p.remarks, p.is_lower_shelf,p.creatorName,ca.name categoryName
+    </sql>
+    <select id="selectById" resultMap="ProductMap" parameterType="String">
+        SELECT
+        <include refid="columns"/>
+        FROM product
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByFilter" resultMap="ProductDtoMap">
+        SELECT <include refid="columnsDTO"/> from product_category ca RIGHT JOIN
+        (SELECT p.*,u.name creatorName from user u RIGHT JOIN product p on u.id = p.creator
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                p.id = #{id}
+            </if>
+            <if test="name != null">
+                AND p.name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="notes != null">
+                AND p.notes = #{notes}
+            </if>
+            <if test="categoryId != null">
+                AND p.product_category_id = #{categoryId}
+            </if>
+            <if test="productMaterial != null">
+                AND p.product_material like CONCAT('%',#{productMaterial},'%')
+            </if>
+            <if test="productColor != null">
+                AND p.product_color like CONCAT('%',#{productColor},'%')
+            </if>
+            <if test="productSpec != null">
+                AND p.product_spec like CONCAT('%',#{productSpec},'%')
+            </if>
+            <if test="status != null">
+                AND p.status = #{status}
+            </if>
+            <if test="creator != null">
+                AND p.creator = #{creator}
+            </if>
+            <if test="created != null">
+                AND p.created = #{created}
+            </if>
+            <if test="unit != null">
+                AND p.unit = #{unit}
+            </if>
+            <if test="type != null">
+                AND p.type = #{type}
+            </if>
+            <if test="thickness != null">
+                AND p.thickness = #{thickness}
+            </if>
+            <if test="factoryPrice != null">
+                AND p.factory_price = #{factoryPrice}
+            </if>
+            <if test="model != null">
+                AND p.model like CONCAT('%',#{model},'%')
+            </if>
+            <if test="series != null">
+                AND p.series = #{series}
+            </if>
+            <if test="remarks != null">
+                AND p.remarks = #{remarks}
+            </if>
+            <if test="lowerShelf != null">
+                AND p.is_lower_shelf = #{lowerShelf}
+            </if>
+        </trim></where>
+        ) p on ca.id = p.product_category_id
+    </select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO
+product(id, name, notes, product_category_id, product_material, product_color, product_spec, status, creator, created, unit, type, thickness, factory_price, model, series, remarks, is_lower_shelf)
+ VALUES(#{id}, #{name}, #{notes}, #{productCategoryId}, #{productMaterial}, #{productColor}, #{productSpec}, #{status}, #{creator}, #{created}, #{unit}, #{type}, #{thickness}, #{factoryPrice}, #{model}, #{series}, #{remarks}, #{lowerShelf})
+</insert>
+
+    <update id="updateByMapContext">
+        UPDATE product
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('name') and name != null">
+                name = #{name},
+            </if>
+            <if test="_parameter.containsKey('notes')">
+                notes = #{notes},
+            </if>
+            <if test="_parameter.containsKey('productCategoryId') and productCategoryId != null">
+                product_category_id = #{productCategoryId},
+            </if>
+            <if test="_parameter.containsKey('productMaterial')">
+                product_material = #{productMaterial},
+            </if>
+            <if test="_parameter.containsKey('productColor')">
+                product_color = #{productColor},
+            </if>
+            <if test="_parameter.containsKey('productSpec')">
+                product_spec = #{productSpec},
+            </if>
+            <if test="_parameter.containsKey('status') and status != null">
+                status = #{status},
+            </if>
+            <if test="_parameter.containsKey('unit') and unit != null">
+                unit = #{unit},
+            </if>
+            <if test="_parameter.containsKey('type')">
+                type = #{type},
+            </if>
+            <if test="_parameter.containsKey('thickness')">
+                thickness = #{thickness},
+            </if>
+            <if test="_parameter.containsKey('factoryPrice')">
+                factory_price = #{factoryPrice},
+            </if>
+            <if test="_parameter.containsKey('model') and model != null">
+                model = #{model},
+            </if>
+            <if test="_parameter.containsKey('series')">
+                series = #{series},
+            </if>
+            <if test="_parameter.containsKey('remarks')">
+                remarks = #{remarks},
+            </if>
+            <if test="_parameter.containsKey('lowerShelf') and lowerShelf != null">
+                is_lower_shelf = ${lowerShelf}
+            </if>
+        </trim></set>
+        WHERE  id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   product
+WHERE  id = #{id}
+</delete>
+
+
+    <select id="selectByCategoryId" resultMap="ProductMap">
+        select
+        <include refid="columns"/>
+        from product where product_category_id = #{id}
+    </select>
+
+    <select id="selectByColorId" resultMap="ProductMap">
+        select
+        <include refid="columns"/>
+        from product where product_color = #{id}
+    </select>
+
+    <select id="selectByMaterialId" resultMap="ProductMap">
+        select
+        <include refid="columns"/>
+        from product where product_material_id = #{id}
+    </select>
+
+    <select id="selectBySpecId" resultMap="ProductMap">
+        select
+        <include refid="columns"/>
+        from product where product_spec_id = #{id}
+    </select>
+
+    <select id="selectByModel" resultMap="ProductMap">
+        select
+        <include refid="columns"/>
+        from product where model = #{no}
+    </select>
+
+    <select id="selectProductDtoById" resultMap="ProductDtoMap">
+        SELECT <include refid="columnsDTO"/> from product_category ca RIGHT JOIN
+        (SELECT p.*,u.name creatorName from user u RIGHT JOIN
+        (SELECT p.* from product p where p.id = #{id}
+        ) p on u.id = p.creator
+        ) p on ca.id = p.product_category_id
+    </select>
+
+    <select id="findResourcesList" resultType="java.lang.String">
+        select DISTINCT(${resources}) from product
+        <where><trim prefixOverrides="AND">
+            ${resources} is not null
+            <if test="categoryId != null">
+                AND product_category_id = #{categoryId}
+            </if>
+            <if test="productMaterial != null">
+                AND product_material like CONCAT('%',#{productMaterial},'%')
+            </if>
+            <if test="productColor != null">
+                AND product_color like CONCAT('%',#{productColor},'%')
+            </if>
+            <if test="productSpec != null">
+                AND product_spec like CONCAT('%',#{productSpec},'%')
+            </if>
+            <if test="series != null">
+                AND series like CONCAT('%',#{series},'%')
+            </if>
+        </trim></where>
+    </select>
+</mapper>

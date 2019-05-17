@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.customorder.OrderProductDao">
+    <resultMap id="OrderProductMap" type="com.lwxf.industry4.webapp.domain.entity.customorder.OrderProduct">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="series" property="series" jdbcType="TINYINT" />
+        <result column="color" property="color" jdbcType="VARCHAR" />
+        <result column="door" property="door" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="created" property="created" jdbcType="DATE" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_user" property="updateUser" jdbcType="CHAR" />
+    </resultMap>
+    <resultMap id="OrderProductDtoMap" type="com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="series" property="series" jdbcType="TINYINT" />
+        <result column="color" property="color" jdbcType="VARCHAR" />
+        <result column="door" property="door" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="created" property="created" jdbcType="DATE" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="update_time" property="updateTime" jdbcType="DATE" />
+        <result column="update_user" property="updateUser" jdbcType="CHAR" />
+        <result column="creatorName" property="creatorName"/>
+        <result column="updateUserName" property="updateUserName"/>
+    </resultMap>
+
+    <sql id="columns">
+id, custom_order_id, type, series, color, door, notes, created, creator, update_time, update_user
+</sql>
+
+    <sql id="columnDtos">
+o.id, o.custom_order_id, o.type, o.series, o.color, o.door, o.notes, o.created, o.creator, o.update_time, o.update_user,u.name creatorName,uu.name updateUserName
+</sql>
+
+    <select id="selectById" resultMap="OrderProductMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   order_product
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="OrderProductMap">
+SELECT <include refid="columns" />
+FROM   order_product
+<where><trim prefixOverrides="AND">
+<if test="id != null">
+    id = #{id}
+</if>
+<if test="customOrderId != null">
+    AND custom_order_id = #{customOrderId}
+</if>
+<if test="type != null">
+    AND type = #{type}
+</if>
+<if test="series != null">
+    AND series = #{series}
+</if>
+<if test="color != null">
+    AND color = #{color}
+</if>
+<if test="door != null">
+    AND door = #{door}
+</if>
+<if test="notes != null">
+    AND notes = #{notes}
+</if>
+<if test="created != null">
+    AND created = #{created}
+</if>
+<if test="creator != null">
+    AND creator = #{creator}
+</if>
+<if test="updateTime != null">
+    AND update_time = #{updateTime}
+</if>
+<if test="updateUser != null">
+    AND update_user = #{updateUser}
+</if>
+</trim></where>
+
+</select>
+
+    <select id="findByOrderId" resultType="java.util.Map">
+        select
+        id,color,door,notes,
+        (case type
+        when 0 then '橱柜(J)'
+        when 1 then '衣柜(B)'
+        when 2 then '成品家具(J)'
+        when 3 then '电器(J)'
+        when 4 then '五金(J)'
+        when 5 then '样块(Y)'
+        ELSE '未知' END
+        ) type,
+        (case series
+        when 0 then '定制实木'
+        when 1 then '特供实木'
+        when 2 then '美克'
+        when 3 then '康奈 '
+        when 4 then '慧娜'
+        when 5 then '模压'
+        ELSE '未知' END
+        ) series
+        from order_product
+        where custom_order_id = #{orderId}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+order_product(id, custom_order_id, type, series, color, door, notes, created, creator, update_time, update_user)
+       VALUES(#{id}, #{customOrderId}, #{type}, #{series}, #{color}, #{door}, #{notes}, #{created}, #{creator}, #{updateTime}, #{updateUser})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE order_product
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('type') and type != null">
+    type = #{type},
+</if>
+    <if test="_parameter.containsKey('series') and series != null">
+    series = #{series},
+</if>
+    <if test="_parameter.containsKey('color')">
+    color = #{color},
+</if>
+    <if test="_parameter.containsKey('door')">
+    door = #{door},
+</if>
+    <if test="_parameter.containsKey('notes')">
+    notes = #{notes},
+</if>
+    <if test="_parameter.containsKey('updateTime')">
+    update_time = #{updateTime},
+</if>
+    <if test="_parameter.containsKey('updateUser')">
+    update_user = #{updateUser}
+</if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   order_product
+WHERE  id = #{id}
+</delete>
+    <select id="findOneById" resultMap="OrderProductDtoMap">
+      select <include refid="columnDtos"/> from order_product o left join user u on o.creator = u.id left join user uu on o.update_user = uu.id where o.id = #{id}
+    </select>
+
+    <select id="findListByOrderId" resultMap="OrderProductDtoMap">
+        select <include refid="columnDtos"/> from order_product o left join user u on o.creator = u.id left join user uu on o.update_user = uu.id where o.custom_order_id = #{id}
+    </select>
+
+</mapper>
+

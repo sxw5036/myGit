@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.customorder.CustomOrderDesignDao">
+    <resultMap id="CustomOrderDesignMap" type="com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderDesign">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="designer" property="designer" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="amendments" property="amendments" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR"/>
+        <result column="valuation" property="valuation" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <resultMap id="CustomOrderDesignMapDto" type="com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDesignDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="designName" property="designName" jdbcType="VARCHAR" />
+        <result column="designMobile" property="designMobile" jdbcType="VARCHAR" />
+        <result column="designer" property="designer" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR"/>
+        <result column="amendments" property="amendments" jdbcType="VARCHAR" />
+        <result column="valuation" property="valuation" jdbcType="DECIMAL"/>
+    </resultMap>
+    <sql id="columns">
+id, name, designer, created, notes, status, custom_order_id,no,end_time,amendments,valuation
+</sql>
+
+    <sql id="columnDtos">
+        d.id, d.name, d.designer, d.created, d.notes, d.status, d.custom_order_id,d.no,d.end_time,d.amendments,d.valuation,u.name designName,u.mobile designMobile
+    </sql>
+
+    <select id="selectById" resultMap="CustomOrderDesignMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   custom_order_design
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="CustomOrderDesignMap">
+SELECT <include refid="columns" />
+FROM   custom_order_design
+<where><trim prefixOverrides="AND">
+<if test="id != null">
+    id = #{id}
+</if>
+<if test="name != null">
+    AND name = #{name}
+</if>
+<if test="designer != null">
+    AND designer = #{designer}
+</if>
+<if test="created != null">
+    AND created = #{created}
+</if>
+<if test="notes != null">
+    AND notes = #{notes}
+</if>
+<if test="amendments != null">
+    AND amendments = #{amendments}
+</if>
+<if test="status != null">
+    AND status = #{status}
+</if>
+<if test="customOrderId != null">
+    AND custom_order_id = #{customOrderId}
+</if>
+    <if test="no != null">
+    AND no = #{no}
+</if>
+    <if test="endTime != null">
+    AND end_time = #{endTime}
+</if>
+</trim></where>
+
+</select>
+
+    <select id="selectByOrderId" resultMap="CustomOrderDesignMapDto">
+        select
+        cod.id,cod.no,u.name as designName,u.mobile as designMobile,cod.created,cod.status,cod.end_time,cod.custom_order_id
+        from custom_order_design cod
+        left join user u on u.id = cod.designer
+        where custom_order_id = #{orderId}
+        order by cod.created desc
+    </select>
+
+
+    <delete id="deleteByOrderId" parameterType="string">
+        delete from
+        custom_order_design
+        where custom_order_id = #{orderId}
+    </delete>
+
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+custom_order_design(id, name, designer, created, notes, status, custom_order_id,no,end_time,amendments,valuation)
+             VALUES(#{id}, #{name}, #{designer}, #{created}, #{notes}, #{status}, #{customOrderId},#{no},#{endTime},#{amendments},#{valuation})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE custom_order_design
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('name') and name != null">
+    name = #{name},
+</if>
+    <if test="_parameter.containsKey('designer') and designer != null">
+    designer = #{designer},
+</if>
+    <if test="_parameter.containsKey('created') and created != null">
+    created = #{created},
+</if>
+    <if test="_parameter.containsKey('notes')">
+    notes = #{notes},
+</if>
+    <if test="_parameter.containsKey('amendments')">
+        amendments = #{amendments},
+</if>
+    <if test="_parameter.containsKey('status') and status != null">
+    status = #{status},
+</if>
+    <if test="_parameter.containsKey('customOrderId') and customOrderId != null">
+    custom_order_id = #{customOrderId}
+</if>
+    <if test="_parameter.containsKey('no') and no != null">
+        no = #{no}
+</if>
+    <if test="_parameter.containsKey('endTime')">
+        end_time = #{endTime}
+</if>
+    <if test="_parameter.containsKey('valuation')">
+        valuation = #{valuation}
+</if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   custom_order_design
+WHERE  id = #{id}
+</delete>
+
+    <select id="findOneByDesignId" resultMap="CustomOrderDesignMapDto">
+         select
+        cod.*,u.name as designName,u.mobile as designMobile
+        from custom_order_design cod
+        left join user u on u.id = cod.designer
+        where cod.id = #{designId}
+        order by cod.created desc
+    </select>
+
+    <select id="findListByOrderId" resultMap="CustomOrderDesignMapDto">
+        select <include refid="columnDtos"/> from custom_order_design d left join user u on d.designer = u.id where d.custom_order_id =#{id}
+    </select>
+
+    <select id="findTimeByOrderId"  resultType="java.lang.String">
+        SELECT min(created) as created
+        from custom_order_design
+        where custom_order_id = #{orderId}
+        limit 1
+    </select>
+
+    <select id="findConfirmedByOrderId" resultMap="CustomOrderDesignMap">
+        select <include refid="columns"/> from custom_order_design where custom_order_id = #{id}
+    </select>
+    <select id="findByOrderIdAndStatus" resultType="java.util.Map">
+        select
+        cod.id,cod.no,cod.end_time,u.name as designerName
+        from custom_order_design cod
+        left join user u on u.id = cod.designer
+        where cod.custom_order_id = #{orderId}
+        and cod.status = #{status}
+        limit 1
+    </select>
+
+
+    <select id="findUnDesign" resultType="java.util.Map">
+            select
+            co.id,co.no,u.name as creatorName,
+            c.name as companyName,co.created
+            from custom_order  co
+            left join company c on c.id = co.company_id
+            left join user u on u.id = co.creator
+            left join payment p on p.custom_order_id = co.id and p.funds = 32
+            <where><trim prefixOverrides="and">
+                co.is_design = 1 and co.id not in (
+                select custom_order_id from custom_order_design where  status = 4 or status = 3 GROUP BY custom_order_id )
+                <if test="beginTime!=null">
+                    and #{beginTime}&lt;= co.created
+                </if>
+                <if test="endTime!=null">
+                    and (co.created &lt;= #{endTime} or co.created like '%${endTime}%')
+                </if>
+                <if test="no!=null">
+                    and co.no like '%${no}%'
+                </if>
+                <if test="creator!=null">
+                    and co.creator = #{creator}
+                </if>
+            </trim></where>
+        order by co.created desc
+    </select>
+    <select id="findDesigned" resultType="java.util.Map">
+        select
+        aa.id as designId,aa.created as end_time,
+        co.id as orderId,co.no,u.name as creatorName,
+        us.name as designerName,c.name as companyName,
+        IFNULL(p.amount,0) as amount,
+        (case p.status
+        when 0 then '待审核'
+        when 1 then '已审核'
+        else '待审核' end
+        ) status
+        from
+        (select id,custom_order_id,created
+        from custom_order_design
+        where  status = 4 or status = 3
+        GROUP BY custom_order_id) aa
+        inner join custom_order co  on co.id = aa.custom_order_id and co.is_design = 1
+        left join company c on c.id = co.company_id
+        left join user u on u.id = co.creator
+        left join user us on us.id = co.designer
+        left join payment p on p.custom_order_id = co.id and p.funds = 32
+        <where><trim prefixOverrides="and">
+            <if test="beginTime!=null">
+                and #{beginTime}&lt;= aa.created
+            </if>
+            <if test="endTime!=null">
+                and (aa.created &lt;= #{endTime} or aa.created like '%${endTime}%')
+            </if>
+            <if test="no!=null">
+                and co.no like '%${no}%'
+            </if>
+            <if test="designer!=null">
+                and co.designer = #{designer}
+            </if>
+        </trim></where>
+        order by aa.created desc
+    </select>
+    <select id="findByOrderIdAndDesignId" resultType="java.util.Map">
+        select cod.id,cod.notes,cod.created,u.name as designerName,IFNULL(p.amount,0) as amount,
+        (case p.status
+        when 1 then '已审核'
+        when 0 then '未审核'
+        else '待审核' end
+        ) status,
+        u.name as auditorName,p.audited
+        from custom_order_design  cod
+        left join user u on u.id = cod.designer
+        left join payment p on p.custom_order_id = #{orderId} and p.funds = 32
+        left join user us on us.id = p.auditor
+        where cod.id = #{designId} limit 1
+    </select>
+
+    <select id="findListByFilter" resultMap="CustomOrderDesignMapDto">
+        select <include refid="columnDtos"/> from custom_order_design d left join user u on d.designer = u.id
+        left join custom_order o on d.custom_order_id = o.id
+        <where><trim prefixOverrides="and">
+            <if test="orderNo!=null">
+                o.no like '%${orderNo}%'
+            </if>
+            <if test="no!=null">
+                and d.no like '%${no}%'
+            </if>
+        </trim></where>
+    </select>
+
+</mapper>

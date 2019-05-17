@@ -1,0 +1,81 @@
+package com.lwxf.industry4.webapp.common.enums;
+
+/**
+ * 功能：上传文件的资源类型
+ *
+ * @author：renzhongshan(d3shan@126.com)
+ * @create：2018-06-15 17:48
+ * @version：2018 Version：1.0
+ * @company：老屋新房 Created with IntelliJ IDEA
+ */
+public enum UploadResourceType {
+	SYSCFG(0,"syscfg"),
+	STORECFG(1,"storecfg"),
+	STORECARD(4,"storecard"),
+	GOODS(2,"goods"),
+	GOODSCOMMENT(3,"goodscomment"),
+	QUICKSHARE(4,"quickshare"),
+	GOODSSPEC(5,"goodsspec"),
+	BRAND(6,"brand"),
+	AVATAR(7,"avatar"),
+	BACKGROUND(8,"background"),
+	GOODSSHOW(9,"goodsshow"),
+	STOREHOMENAV(10,"storehomenav"),
+	VIDEOFILE(11,"videofile"),
+	COVER(12,"cover"),
+	ADVERTISING(13,"advertising"),
+	SCHEME_COVER(14,"scheme_cover"),
+	SCHEME_PANORAMA(15,"scheme_panorama"),
+	HEADLINKCOMMENT(16,"headline_comment"),
+	HEADLINE(17,"headline"),
+	RESERVATIONDESIGNRECORD(18,"reservation_design_record"),
+	SCHEME_CONTENT(19,"scheme_content"),
+	CUSTOM_ORDER(20,"custom_order"),
+	PAYMENT(21,"payment"),
+	DISPATCH_LIST(22,"dispatch_list"),
+	AFTERSALE_APPLY(23,"aftersale_apply"),
+	DESIGN_SCHEMES(24,"design_schemes"),
+	PRODUCT(25,"product"),
+	ACTIVITY(26,"activity"),
+	COMPANY(27,"company"),
+	FACTIVITY(28,"factivity"),
+	CONTENT(29,"content"),
+	PAYMENT_SIMPLE(30,"payment_simple"),
+	DISPATCH_BILL(31,"dispatch_bill"),
+	FCOMPANY(32,"fcompany"),
+	EMPLOYEE(33,"employee"),//员工相关
+	FCOMPANY_FINANCE(34,"fcompany_finance"), //F端后台财务经销商上传
+	UPDATE_VERSION(35,"update_version");//版本更新
+
+
+
+	/*LOGO(11,"logo"),
+	HEADER(12,"header"),
+	POSTER(13,"poster"),
+	QRCODE(14,"qrcode")*/
+	private int type;
+	private String module; // 存数文件的路径
+
+	UploadResourceType(int type,String module) {
+		this.type = type;
+		this.module = module;
+	}
+
+	public int getType() {
+		return this.type;
+	}
+
+	public String getModule() {
+		return module;
+	}
+
+	public static boolean validType(int type){
+		UploadResourceType[] arr = values();
+		for (int m=0,len = arr.length;m<len;m++){
+			if(arr[m].type == type){
+				return true;
+			}
+		}
+		return false;
+	}
+}

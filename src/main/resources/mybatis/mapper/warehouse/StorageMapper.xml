@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.warehouse.StorageDao">
+    <resultMap id="StorageMap" type="com.lwxf.industry4.webapp.domain.entity.warehouse.Storage">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="product_category_id" property="productCategoryId" jdbcType="CHAR" />
+        <result column="key" property="key" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="storekeeper" property="storekeeper" jdbcType="CHAR" />
+    </resultMap>
+    <resultMap id="StorageDtoMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.StorageDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="product_category_id" property="productCategoryId" jdbcType="CHAR" />
+        <result column="key" property="key" jdbcType="VARCHAR" />
+        <result column="notes" property="notes" jdbcType="VARCHAR" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="storekeeper" property="storekeeper" jdbcType="CHAR" />
+        <result column="categoryName" property="categoryName"/>
+        <result column="storekeeperName" property="storekeeperName"/>
+        <result column="creatorName" property="creatorName"/>
+        <result column="categoryType" property="categoryType"/>
+    </resultMap>
+    <resultMap id="StockDtoMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.StockDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="storage_id" property="storageId" jdbcType="CHAR" />
+        <result column="product_id" property="productId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="operator" property="operator" jdbcType="CHAR" />
+        <result column="operate_time" property="operateTime" jdbcType="TIMESTAMP" />
+        <result column="quantity" property="quantity" jdbcType="INTEGER" />
+        <result column="shelf" property="shelf" jdbcType="CHAR" />
+        <result column="column" property="column" jdbcType="TINYINT" />
+        <result column="tier" property="tier" jdbcType="TINYINT" />
+        <result column="storageName" property="storageName"/>
+        <result column="operatorName" property="operatorName"/>
+        <result column="productName" property="productName"/>
+        <result column="pre_output" property="preOutput" jdbcType="INTEGER" />
+    </resultMap>
+    <sql id="columns">
+id, name, product_category_id, `key`, notes, creator, created, storekeeper
+</sql>
+    <sql id="columnDtos">
+s.id, s.name, s.product_category_id, s.`key`, s.notes, s.creator, s.created, s.storekeeper,u.name storekeeperName,s.categoryName,s.creatorName,s.categoryType
+</sql>
+    <sql id="columnStockDtos">
+s.id, s.storage_id, s.product_id, s.price, s.operator, s.operate_time,  s.quantity, s.shelf, s.column, s.tier,s.storageName,s.operatorName,p.name productName,s.pre_output
+</sql>
+    <select id="selectById" resultMap="StorageMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   storage
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="StorageDtoMap">
+SELECT <include refid="columnDtos" />
+FROM   user u RIGHT join (
+        select s.*,u.name creatorName from user u RIGHT JOIN (
+        select s.*,category.name categoryName,category.type categoryType from storage s left join product_category category on s.product_category_id = category.id
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                s.id = #{id}
+            </if>
+            <if test="name != null">
+                AND s.name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="productCategoryId != null">
+                AND s.product_category_id = #{productCategoryId}
+            </if>
+            <if test="key != null">
+                AND s.`key` = #{key}
+            </if>
+            <if test="notes != null">
+                AND s.notes = #{notes}
+            </if>
+            <if test="creator != null">
+                AND s.creator = #{creator}
+            </if>
+            <if test="created != null">
+                AND s.created = #{created}
+            </if>
+            <if test="storekeeper != null">
+                AND s.storekeeper = #{storekeeper}
+            </if>
+            <if test="types != null and types.size>0">
+                AND category.type in
+                <foreach collection="types" item="type" open="(" separator="," close=")">
+                    #{type}
+                </foreach>
+            </if>
+        </trim></where>
+        )s on u.id = s.creator ) s on u.id = s.storekeeper
+
+
+</select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+storage(id, name, product_category_id, `key`, notes, creator, created, storekeeper)
+ VALUES(#{id}, #{name}, #{productCategoryId}, #{key}, #{notes}, #{creator}, #{created}, #{storekeeper})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE storage
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('name') and name != null">
+    name = #{name},
+</if>
+    <if test="_parameter.containsKey('productCategoryId') and productCategoryId != null">
+        product_category_id = #{productCategoryId},
+    </if>
+    <if test="_parameter.containsKey('key') and key != null">
+    `key` = #{key},
+</if>
+    <if test="_parameter.containsKey('notes')">
+    notes = #{notes},
+</if>
+    <if test="_parameter.containsKey('storekeeper') and storekeeper != null">
+    storekeeper = #{storekeeper}
+</if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   storage
+WHERE  id = #{id}
+</delete>
+
+
+    <select id="findOneByName" resultMap="StorageMap">
+        select <include refid="columns"/> from storage
+        where name = #{name}
+    </select>
+
+    <select id="findOneById" resultMap="StorageDtoMap">
+        SELECT <include refid="columnDtos" />
+        FROM   user u RIGHT join (
+        select s.*,u.name creatorName from user u RIGHT JOIN (
+        select s.*,category.name categoryName,category.type categoryType from storage s left join product_category category on s.product_category_id = category.id
+        where s.id = #{id}
+        )s on u.id = s.creator ) s on u.id = s.storekeeper
+    </select>
+
+    <select id="findAllProduct" resultMap="StockDtoMap">
+        select
+        <include refid="columnStockDtos"/> from
+        product p RIGHT JOIN
+        (SELECT s.*,u.name operatorName FROM user u RIGHT JOIN
+        (SELECT s.*,st.name storageName FROM stock s LEFT join storage st on s.storage_id = st.id
+        ) s ON u.id = s.operator
+        ) s ON p.id = s.product_id
+    </select>
+    <select id="findOneByProductCategoryId" resultMap="StorageMap">
+        select
+        <include refid="columns"/>
+        from storage
+        where product_category_id = #{productCategoryId}
+        limit 1
+    </select>
+
+
+    <select id="findByOrderId" resultType="java.util.Map">
+        select
+        name as storageName
+        from `storage`
+         where id = (
+        select storage_id from finished_stock
+        where order_id = #{orderId})
+        limit 1
+    </select>
+
+</mapper>

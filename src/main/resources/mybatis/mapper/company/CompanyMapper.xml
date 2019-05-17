@@ -1,0 +1,583 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.company.CompanyDao">
+    <resultMap id="CompanyMap" type="com.lwxf.industry4.webapp.domain.entity.company.Company">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="city_area_id" property="cityAreaId" jdbcType="CHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="lng" property="lng" jdbcType="FLOAT" />
+        <result column="lat" property="lat" jdbcType="FLOAT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="followers" property="followers" jdbcType="INTEGER" />
+        <result column="leader" property="leader" jdbcType="CHAR" />
+        <result column="leader_tel" property="leaderTel" jdbcType="CHAR" />
+        <result column="business_manager" property="businessManager" jdbcType="CHAR" />
+        <result column="deposit_bank" property="depositBank" jdbcType="VARCHAR" />
+        <result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+        <result column="bank_account_holder" property="bankAccountHolder" jdbcType="VARCHAR" />
+        <result column="shop_area" property="shopArea" jdbcType="VARCHAR" />
+        <result column="logo" property="logo" jdbcType="VARCHAR" />
+        <result column="grade" property="grade" jdbcType="TINYINT" />
+        <result column="service_tel" property="serviceTel" jdbcType="VARCHAR" />
+        <result column="service_staff" property="serviceStaff" jdbcType="CHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="founder_name" property="founderName" jdbcType="VARCHAR" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="contract_time" property="contractTime" jdbcType="DATE" />
+        <result column="contract_expired_date" property="contractExpiredDate" jdbcType="DATE" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="note" property="note" jdbcType="VARCHAR"/>
+    </resultMap>
+    <resultMap id="CompanyDtoMap" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="city_area_id" property="cityAreaId" jdbcType="CHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="lng" property="lng" jdbcType="FLOAT" />
+        <result column="lat" property="lat" jdbcType="FLOAT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="followers" property="followers" jdbcType="INTEGER" />
+        <result column="leader" property="leader" jdbcType="CHAR" />
+        <result column="leader_tel" property="leaderTel" jdbcType="CHAR" />
+        <result column="business_manager" property="businessManager" jdbcType="CHAR" />
+        <result column="deposit_bank" property="depositBank" jdbcType="VARCHAR" />
+        <result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+        <result column="bank_account_holder" property="bankAccountHolder" jdbcType="VARCHAR" />
+        <result column="shop_area" property="shopArea" jdbcType="VARCHAR" />
+        <result column="logo" property="logo" jdbcType="VARCHAR" />
+        <result column="grade" property="grade" jdbcType="TINYINT" />
+        <result column="service_tel" property="serviceTel" jdbcType="VARCHAR" />
+        <result column="service_staff" property="serviceStaff" jdbcType="CHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="creatorName" property="creatorName"/>
+        <result column="leaderName" property="leaderName"/>
+        <result column="founder_name" property="founderName" jdbcType="VARCHAR" />
+        <result column="orderCount" property="orderCount" jdbcType="INTEGER" />
+        <result column="customerCount" property="customerCount" jdbcType="INTEGER" />
+        <result column="balance" property="balance" jdbcType="DECIMAL" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="mergerName" property="mergerName" jdbcType="VARCHAR" />
+        <result column="contract_time" property="contractTime" jdbcType="DATE" />
+        <result column="contract_expired_date" property="contractExpiredDate" jdbcType="DATE" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="note" property="note" jdbcType="VARCHAR"/>
+        <result column="businessManagerName" property="businessManagerName"/>
+        <result column="provinceId" property="provinceId"/>
+        <result column="cityId" property="cityId"/>
+    </resultMap>
+    <resultMap id="MonthsOrdersDto" type="com.lwxf.industry4.webapp.domain.dto.company.MonthsOrdersDto">
+    <result column="signed" property="signed" jdbcType="INTEGER" />
+    <result column="unchecked" property="unchecked" jdbcType="INTEGER" />
+    <result column="quited" property="quited" jdbcType="INTEGER" />
+    </resultMap>
+    <resultMap id="CompanyAccountDto" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyAccountDto">
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="balance" property="balance" jdbcType="DECIMAL" />
+    </resultMap>
+
+    <resultMap id="CompanyInfoDtoForApp" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyInfoDtoForApp">
+    <id column="id" property="id" jdbcType="CHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="grade" property="grade" jdbcType="TINYINT" />
+    <result column="custCount" property="custCount" jdbcType="INTEGER" />
+    <result column="orderCount" property="orderCount" jdbcType="INTEGER" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="nature" property="nature" jdbcType="TINYINT" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="lng" property="lng" jdbcType="FLOAT" />
+    <result column="lat" property="lat" jdbcType="FLOAT" />
+    <result column="leaderName" property="leaderName" jdbcType="VARCHAR" />
+    <result column="leader_tel" property="leaderTel" jdbcType="VARCHAR" />
+    <result column="business_manager_name" property="businessManagerName" jdbcType="VARCHAR" />
+    <result column="merger_short_name" property="areaName" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="note" property="note" jdbcType="VARCHAR" />
+    <result column="contract_expired_date" property="contractExpiredDate" jdbcType="DATE" />
+    <result column="contract_time" property="contractTime" jdbcType="DATE" />
+</resultMap>
+    <resultMap id="CompanyDtoForApp" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyDtoForApp">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="companyName" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="grade" property="grade" jdbcType="TINYINT" />
+        <result column="cust_count" property="custCount" jdbcType="INTEGER" />
+        <result column="business_manager_name" property="businessManagerName" jdbcType="VARCHAR" />
+        <result column="contract_time" property="contractTime" jdbcType="DATE" />
+        <result column="merger_name" property="areaName" jdbcType="VARCHAR" />
+    </resultMap>
+    <sql id="columns">
+id, name, type, city_area_id, address, lng, lat, created, creator, status, followers, leader, leader_tel, business_manager, deposit_bank, bank_account, bank_account_holder, shop_area, logo, grade, service_tel, service_staff, no,founder_name,company_info,contract_time,contract_expired_date,note
+</sql>
+    <sql id="columnDtos">
+c.id, c.name, c.type, c.city_area_id, c.address, c.lng, c.lat, c.created, c.creator, c.status, c.followers, c.leader, c.leader_tel, c.business_manager, c.deposit_bank, c.bank_account, c.bank_account_holder, c.shop_area, c.logo, c.grade, c.service_tel, c.service_staff, c.no,c.leaderName,c.founder_name,c.company_info,c.contract_time,c.contract_expired_date,c.note
+</sql>
+
+    <select id="selectById" resultMap="CompanyMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   company
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="CompanyDtoMap">
+        SELECT ce.* from (select ce.*,m.user_id from(
+        SELECT<include refid="columnDtos"/>,u.name creatorName,uu.name businessManagerName,da.balance balance,daa.balance depositBalance,c.cityId,c.provinceId
+        FROM
+        (select c.*,u.name leaderName,cc.parent_id provinceId,ccc.parent_id cityId from company c
+        left join user u on c.leader = u.id
+        left join city_area cc on c.city_area_id = cc.id
+        left join city_area ccc on cc.parent_id = ccc.id
+        <where><trim prefixOverrides="AND">
+            <if test="id != null">
+                c.id = #{id}
+            </if>
+            <if test="type != null">
+                AND c.type in
+                <foreach collection="type" separator="," open="(" close=")" item="ty">
+                    #{ty}
+                </foreach>
+            </if>
+            <if test="cityAreaId != null">
+                AND c.city_area_id = #{cityAreaId}
+            </if>
+            <if test="address != null">
+                AND c.address = #{address}
+            </if>
+            <if test="lng != null">
+                AND c.lng = #{lng}
+            </if>
+            <if test="lat != null">
+                AND c.lat = #{lat}
+            </if>
+            <if test="created != null">
+                AND c.created = #{created}
+            </if>
+            <if test="creator != null">
+                AND c.creator = #{creator}
+            </if>
+            <if test="status != null">
+                AND c.status = #{status}
+            </if>
+            <if test="followers != null">
+                AND c.followers = #{followers}
+            </if>
+            <if test="leader != null">
+                AND c.leader = #{leader}
+            </if>
+            <if test="leaderTel != null">
+                AND c.leader_tel like CONCAT('%',#{leaderTel},'%')
+            </if>
+            <if test="leaderName != null">
+                AND o.name like CONCAT('%',#{leaderName},'%')
+            </if>
+             <if test="companyName != null">
+                AND c.name like CONCAT('%',#{companyName},'%')
+            </if>
+            <if test="businessManager != null">
+                AND c.business_manager = #{businessManager}
+            </if>
+            <if test="depositBank != null">
+                AND c.deposit_bank = #{depositBank}
+            </if>
+            <if test="bankAccount != null">
+                AND c.bank_account = #{bankAccount}
+            </if>
+            <if test="bankAccountHolder != null">
+                AND c.bank_account_holder = #{bankAccountHolder}
+            </if>
+            <if test="shopArea != null">
+                AND c.shop_area = #{shopArea}
+            </if>
+            <if test="logo != null">
+                AND c.logo = #{logo}
+            </if>
+            <if test="grade != null">
+                AND c.grade = #{grade}
+            </if>
+            <if test="serviceTel != null">
+                AND c.service_tel = #{serviceTel}
+            </if>
+            <if test="serviceStaff != null">
+                AND c.service_staff = #{serviceStaff}
+        </if>
+            <if test="no != null">
+                AND c.no like CONCAT('%',#{no},'%')
+            </if>
+            <if test="founderName != null">
+                AND c.founder_name like CONCAT('%',#{founderName},'%')
+            </if>
+            <if test="beginTime!=null and beginTime!=''">
+                <![CDATA[   and DATE_FORMAT(c.created, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                <![CDATA[  and DATE_FORMAT(c.created, '%Y-%m-%d') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d')    ]]>
+            </if>
+        </trim></where>
+        )
+        c left join user u on c.creator = u.id
+        left join user uu on c.business_manager = uu.id
+        left join dealer_account da on c.id= da.company_id
+        left join dealer_account daa on daa.company_id = c.id
+        where (da.type = #{accountType} or da.id is null) and (daa.type = #{depositType} or daa.id is null)
+        ) ce
+        left join (select u.mobile,ce.company_id,ce.user_id from (select ce.user_id,ce.company_id from company_employee ce left join role r on ce.role_id = r.id
+        <if test="key!=null">
+            where  r.`key` = #{key}
+        </if>
+        ) ce left join user u on ce.user_id = u.id ) m on ce.id = m.company_id
+        <if test="mobile!=null">
+            where ce.leader_tel like CONCAT('%',#{mobile},'%')
+        </if>
+        ) ce
+        <if test="name!=null">
+            left join user u on ce.user_id=u.id where u.name like CONCAT('%',#{name},'%') or ce.name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="companyName!=null">
+            where ce.name like CONCAT('%',#{companyName},'%')
+        </if>
+</select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+company(id, name, type, city_area_id, address, lng, lat, created, creator, status, followers, leader, leader_tel, business_manager, deposit_bank, bank_account, bank_account_holder, shop_area, logo, grade, service_tel, service_staff, no,founder_name,company_info,contract_time,contract_expired_date,note)
+ VALUES(#{id}, #{name}, #{type}, #{cityAreaId}, #{address}, #{lng}, #{lat}, #{created}, #{creator}, #{status}, #{followers}, #{leader}, #{leaderTel}, #{businessManager}, #{depositBank}, #{bankAccount}, #{bankAccountHolder}, #{shopArea}, #{logo}, #{grade}, #{serviceTel}, #{serviceStaff}, #{no},#{founderName},#{companyInfo},#{contractTime},#{contractExpiredDate},#{note})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE company
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('name') and name != null">
+    name = #{name},
+</if>
+    <if test="_parameter.containsKey('type') and type != null">
+    type = #{type},
+</if>
+    <if test="_parameter.containsKey('cityAreaId')">
+    city_area_id = #{cityAreaId},
+</if>
+    <if test="_parameter.containsKey('address')">
+    address = #{address},
+</if>
+    <if test="_parameter.containsKey('lng')">
+    lng = #{lng},
+</if>
+    <if test="_parameter.containsKey('lat')">
+    lat = #{lat},
+</if>
+    <if test="_parameter.containsKey('status') and status != null">
+    status = #{status},
+</if>
+    <if test="_parameter.containsKey('followers') and followers != null">
+    followers = #{followers},
+</if>
+    <if test="_parameter.containsKey('leader')">
+    leader = #{leader},
+</if>
+    <if test="_parameter.containsKey('leaderTel')">
+    leader_tel = #{leaderTel},
+</if>
+    <if test="_parameter.containsKey('businessManager')">
+    business_manager = #{businessManager},
+</if>
+    <if test="_parameter.containsKey('depositBank')">
+    deposit_bank = #{depositBank},
+</if>
+    <if test="_parameter.containsKey('bankAccount')">
+    bank_account = #{bankAccount},
+</if>
+    <if test="_parameter.containsKey('bankAccountHolder')">
+    bank_account_holder = #{bankAccountHolder},
+</if>
+    <if test="_parameter.containsKey('shopArea')">
+    shop_area = #{shopArea},
+</if>
+    <if test="_parameter.containsKey('logo')">
+    logo = #{logo},
+</if>
+    <if test="_parameter.containsKey('grade') and grade != null">
+    grade = #{grade},
+</if>
+    <if test="_parameter.containsKey('serviceTel')">
+    service_tel = #{serviceTel},
+</if>
+    <if test="_parameter.containsKey('serviceStaff')">
+    service_staff = #{serviceStaff},
+</if>
+    <if test="_parameter.containsKey('no') and no != null">
+    no = #{no},
+</if>
+    <if test="_parameter.containsKey('founderName') and founderName != null">
+    founder_name = #{founderName},
+</if>
+    <if test="_parameter.containsKey('companyInfo') and companyInfo != null">
+        company_info = #{companyInfo},
+    </if>
+    <if test="_parameter.containsKey('contractTime')">
+        contract_time = #{contractTime},
+    </if>
+    <if test="_parameter.containsKey('contractExpiredDate')">
+        contract_expired_date = #{contractExpiredDate},
+    </if>
+    <if test="_parameter.containsKey('note')">
+        note = #{note}
+    </if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   company
+WHERE  id = #{id}
+</delete>
+
+
+
+    <select id="selectByNo" resultMap="CompanyMap">
+        select <include refid="columns"/> from company  where no = #{no}
+    </select>
+
+  <select id="findShopList" resultMap="CompanyMap">
+        select id,name  from company
+    <where>
+        <if test="address != null">
+        address like  '%${address}%'
+    </if>
+    </where>
+  </select>
+
+    <select id="findByCompanyId" resultMap="CompanyDtoMap" parameterType="String">
+        SELECT ce.* from (select ce.*,m.user_id from(
+        SELECT<include refid="columnDtos"/>,u.name creatorName,uu.name businessManagerName,cc.parent_id provinceId,ccc.parent_id cityId
+        FROM
+        (select c.*,u.name leaderName from company c left join user u on c.leader = u.id where  c.id = #{companyId})
+        c left join user u on c.creator = u.id
+        left join user uu on uu.id = c.business_manager
+        left join city_area cc on c.city_area_id = cc.id
+        left join city_area ccc on cc.parent_id = ccc.id
+        ) ce
+        left join (select u.mobile,ce.company_id,ce.user_id,ce.created from (select ce.user_id,ce.company_id,ce.created from company_employee ce left join role r on ce.role_id = r.id) ce left join user u on ce.user_id = u.id ) m on ce.id = m.company_id  order by m.created limit 1) ce
+    </select>
+
+    <select id="findCompanyStatistics"  resultType="java.util.HashMap">
+         select
+ (select count(*) from company where DATE_FORMAT(created, '%Y%m' ) = DATE_FORMAT(CURDATE() , '%Y%m' )) as companyAdded,
+ (select count(*) from company where status =1) as companySigned,
+ (select count(*) from company where status =2) as companyQuited
+    </select>
+
+    <select id="selectCompaniesOrdersCountMonthly" resultMap="MonthsOrdersDto" parameterType="java.util.Map">
+        SELECT o.company_id as companyId,DATE_FORMAT(o.created,'%Y-%m') as month,count(*) as orderCount,c.name as companyName
+        FROM custom_order o,company c
+        where c.id=o.company_id
+        and o.company_id = #{id}
+        and DATE_FORMAT(o.created, '%Y-%m') &gt;= #{beginTime}
+        and DATE_FORMAT(o.created, '%Y-%m') &lt;= #{endTime}
+        group by month,company_id  order by o.company_id,month asc
+    </select>
+
+    <select id="selectByFilterForApp" resultMap="CompanyDtoForApp">
+        select c.id,c.`name`,c.type,c.grade,count(cc.id) as cust_count,c.status,c.contract_time,
+        ca.merger_name,
+        u.name as business_manager_name,
+        c.created
+        from company c
+        left join user u on c.business_manager = u.id
+        left join city_area ca on c.city_area_id = ca.id
+        left join company_customer cc on c.id=cc.company_id
+        where  c.id in (select company_id from dealer_account)
+        <if test="name!=null">
+            and c.name like CONCAT('%',#{name},'%')
+        </if>
+        <if test="cityAreaId != null">
+            AND c.city_area_id like CONCAT(#{cityAreaId},'%')
+        </if>
+        <if test="type!=null">
+            and c.type = #{type}
+        </if>
+        <if test="status!=null">
+            and c.status = #{status}
+        </if>
+        <if test="beginTime!=null and beginTime!=''">
+            <![CDATA[   and DATE_FORMAT(c.created, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            <![CDATA[  and DATE_FORMAT(c.created, '%Y-%m-%d') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d')    ]]>
+        </if>
+        group by c.id
+        UNION
+        select c.id,c.`name`,c.type,c.grade,0 as cust_count,c.status,c.contract_time,ca.merger_name,u.name as business_manager_name,c.created
+        from company c
+        left join user u on c.business_manager = u.id
+        left join city_area ca on c.city_area_id = ca.id
+        where c.id not in (select company_id from company_customer) and c.id in (select company_id from dealer_account)
+        <if test="name!=null">
+            and c.name like CONCAT('%',#{companyName},'%')
+        </if>
+        <if test="beginTime!=null and beginTime!=''">
+            <![CDATA[   and DATE_FORMAT(c.created, '%Y-%m-%d')>=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d')   ]]>
+        </if>
+        <if test="cityAreaId != null">
+            AND c.city_area_id like CONCAT(#{cityAreaId},'%')
+        </if>
+        <if test="endTime!=null and endTime!=''">
+            <![CDATA[  and DATE_FORMAT(c.created, '%Y-%m-%d') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d')    ]]>
+        </if>
+        <if test="type!=null">
+            and c.type = #{type}
+        </if>
+        <if test="status!=null">
+            and c.status = #{status}
+        </if>
+    </select>
+    
+    <!-- 查询出订单数前五名的公司id -->
+    <select id="getTop5CustOrdersCompaniesId" parameterType="java.util.Map"  resultType="String" >
+        select c.id
+        from company c,custom_order co
+        where c.id=co.company_id
+        and c.status = 1
+      <![CDATA[  and DATE_FORMAT(co.created, '%Y-%m-%d') >=  DATE_FORMAT(#{beginTime}, '%Y-%m-%d') ]]>
+       <![CDATA[   and DATE_FORMAT(co.created, '%Y-%m-%d') <= DATE_FORMAT(#{endTime}, '%Y-%m-%d')]]>
+        group by c.id  order by count(*) desc limit 5
+    </select>
+
+    <select id="findCompanyByIdForApp" parameterType="String" resultMap="CompanyInfoDtoForApp">
+        select c.id,
+        (select count(*) from company_customer where company_id=#{companyId}) as custCount,
+        (select count(*) from custom_order where company_id=#{companyId}) as orderCount,
+        da.balance,
+        c.name,
+        da.nature,
+        c.type,
+        c.grade,
+        IFNULL((select name from user where c.leader =id),'')  as leaderName,
+        c.leader_tel,
+        (select name from user where id=c.business_manager) as business_managerName,
+        IFNULL((select merger_short_name from city_area where c.city_area_id=id),'') as merger_short_name,
+        c.address,
+        c.lat,
+        c.lng,
+        c.`status`,
+        c.business_manager,
+        c.note,
+        c.contract_time
+        from company c
+        inner join dealer_account da on da.company_id=c.id
+        where c.id=#{companyId} and da.type=1
+    </select>
+
+    <select id="findAllCompany"  resultMap="CompanyMap" parameterType="java.util.List">
+        select <include refid="columns"/> from company
+        <where><trim prefixOverrides="and">
+            <if test="mergerName!=null">
+                and city_area_id in(select id from city_area where merger_name like '%${mergerName}%')
+            </if>
+            <if test="dealerName!=null">
+                and name like '%${dealerName}%'
+            </if>
+            <if test="status!=null">
+                and status =#{status}
+            </if>
+            <if test="companyTypeList!=null">
+            and
+            type in
+            <foreach collection="companyTypeList" item="type" index="index" open="(" close=")" separator=",">
+                #{type}
+            </foreach>
+            </if>
+        </trim></where>
+        order by created
+    </select>
+
+    <!--经销商类型占比 -->
+    <select id="companyTypesStatistics" resultType="java.util.HashMap">
+        select type,count(id) as countTypes from company group by type
+    </select>
+
+    <!--增加工厂账户余额 -->
+    <update id="balancePlusForFactory" >
+        update  dealer_account  set balance = balance+#{amount}
+        where type = #{type} and company_id = (select id from company where type = 0)
+    </update>
+    <!--减少工厂账户余额 -->
+    <update id="balanceMinusForFactory" >
+        update  dealer_account  set balance = balance-#{amount}
+        where type = #{type} and company_id = (select id from company where type = 0)
+    </update>
+    <!--查询经销商余额-->
+    <select id="getCompanyBalance" resultType="Double" >
+        select balance from dealer_account where type = 1 and company_id=#{companyId}
+    </select>
+    <!--查询工厂总店信息-->
+    <select id="findCompanyByType" resultMap="CompanyMap" >
+        select <include refid="columns"/> from company where type =#{type}
+    </select>
+
+    <select id="findBCompanyInfoById" resultType="java.util.Map">
+        select
+        c.name as companyName,a.merger_name,c.address,
+        u.name as leaderName,c.leader_tel,
+        us.name as businessManagerName
+        from company c
+        left join city_area a on c.city_area_id = a.id
+        left join user u on u.id = c.leader
+        left join user us on us.id = c.business_manager
+        where c.id = #{companyId}
+    </select>
+
+
+    <select id="findByCityNameAndName" resultType="java.util.Map">
+        select
+        c.id, c.name, substring(a.merger_name,4) as cityName,
+        c.address,u.name as leaderName,c.leader_tel
+        from company c
+        left join city_area a on c.city_area_id = a.id
+        left join user u on u.id = c.leader
+        <where><trim prefixOverrides="and">
+            <if test="name!=null">
+                and c.name like '%${name}%'
+            </if>
+            <if test="cityName!=null">
+                and c.city_area_id = (
+                select id from city_area
+                where merger_name = #{cityName})
+            </if>
+            and c.id not in ('40ord3va6adp')
+        </trim></where>
+        order by c.created asc
+    </select>
+
+    <!--F端app经销商财务信息首页头部统计-->
+    <select id="getCompanyInfoForApp" resultType="java.util.HashMap">
+       select (select count(*) from company_customer where company_id = #{id}) companyCustCount,
+        (select count(*) from custom_order where company_id = #{id}) as companyOrderCount,
+        (select balance from dealer_account where company_id = #{id} and type = 1) as balance,
+        (select sum(balance) from dealer_account where company_id = #{id}) as sumBalance
+    </select>
+    <!-- F端APP经销商财务信息中间部分统计 -->
+    <select id="getCompanyAccountInfoForApp" resultMap="CompanyAccountDto" >
+      select type,balance from dealer_account where company_id =#{id}
+    </select>
+    <select id="findCompanyNumByOrderCreated" resultType="java.lang.Integer">
+        select count(distinct company_id)
+        from custom_order
+        <where><trim prefixOverrides="and">
+            <if test="beginTime!=null">
+                and created &gt;= #{beginTime}
+            </if>
+            <if test="endTime!=null">
+                and (created &lt;= #{endTime} or created like '%${endTime}%')
+            </if>
+            <if test="created!=null">
+                and created like '%${created}%'
+            </if>
+        </trim></where>
+    </select>
+
+</mapper>
