@@ -7,6 +7,7 @@ import java.util.Set;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.uploadFiles.UploadFileDto;
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
@@ -38,7 +39,7 @@ public interface UploadFilesDao extends BaseDao<UploadFiles, String> {
 	List<UploadFiles> findByBelongId(String belongId);
 	int  updateMicImageStatusAndresourceIdAndbelongId (String[] ids, String resourceId,String belongId);
 
-	int updateMicImageStatus (String[] ids);
+	int updateMicImageStatus (List<String> ids);
 
 	List<UploadFiles> isNullByIds (String[] ids);
 
@@ -54,11 +55,15 @@ public interface UploadFilesDao extends BaseDao<UploadFiles, String> {
 
 	List<UploadFiles> findByBlogIds(Set<String> blogIds);
 	int deleteByBelongId(String id);
-	List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId,boolean status,int typeId);
+	List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId,Integer status);
 	List<UploadFiles> findByResourceIdsAndStatusAndTypeId(Collection<String> resourcedIds, boolean status, int typeId);
 	int updateFormalByPath(MapContext mapContext);
 
 	UploadFiles findCoverImageByCidAndStatusAndResourceType(String dealerShopId, Integer status, Integer resourceType1);
 
 	List<UploadFiles> findShowImageByCidAndStatusAndResType(String companyId, Integer status, Integer resourceType);
+
+	int updateByIds(MapContext mapContext);
+
+	List<UploadFileDto> findByCidAndStatusAndType(MapContext params);
 }

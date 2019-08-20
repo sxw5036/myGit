@@ -15,10 +15,13 @@ import org.apache.shiro.web.util.SavedRequest;
 
 import com.lwxf.industry4.webapp.baseservice.tsmanager.TSManualData;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
+import com.lwxf.industry4.webapp.common.enums.company.EmployeeStatus;
+import com.lwxf.industry4.webapp.common.enums.product.ProductCategoryKey;
 import com.lwxf.industry4.webapp.common.shiro.ShiroUtil;
 import com.lwxf.industry4.webapp.domain.dto.user.LoginedUser;
 import com.lwxf.industry4.webapp.domain.entity.company.CompanyEmployee;
 import com.lwxf.industry4.webapp.domain.entity.user.User;
+import com.lwxf.industry4.webapp.domain.entity.warehouse.Storage;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
 import com.lwxf.commons.agent.AccessClient;
 import com.lwxf.commons.agent.LwxfUserAgent;
@@ -27,6 +30,9 @@ import com.lwxf.commons.collection.http.RequestThreadLocal;
 import com.lwxf.commons.constant.CommonConstant;
 import com.lwxf.commons.exception.ErrorCodes;
 import com.lwxf.commons.utils.LwxfStringUtils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static com.lwxf.industry4.webapp.common.constant.WebConstant.SESSION_KEY_CURR_USER;
 
@@ -49,6 +55,8 @@ public abstract class WebUtils extends org.apache.shiro.web.util.WebUtils {
 	private static final String MQ_USER_TAG="X-TAG";
 	private static final String CURR_LOGIN_USER_ID="curr_login_user_id";
 	private static final String CURR_COMPANY_ID="curr_company_id";
+	private static final String FINISHED_STORAGE_ID="finished_storage_id";
+	private static final String CURR_BRANCH_ID="curr_branch_id";
 	/**
 	 * 仅用于本地测试环境
 	 */
@@ -150,6 +158,24 @@ public abstract class WebUtils extends org.apache.shiro.web.util.WebUtils {
 		return ShiroUtil.getCurrUserId();
 	}
 
+	/**
+	 * 获取当前登录用户企业id
+	 * @return
+	 */
+	public static String getCurrBranchId(){
+		HttpSession session = WebUtils.getHttpSession();
+		String currBranchId = (String) session.getAttribute(CURR_BRANCH_ID);
+		if(null == currBranchId){
+			LoginedUser currUser = ShiroUtil.getCurrUser();
+			if(currUser==null){
+				return null;
+			}
+			currBranchId =currUser.getBranchId();
+			session.setAttribute(CURR_BRANCH_ID,currBranchId);
+		}
+		return currBranchId;
+	}
+
 
 
 	/**
@@ -218,11 +244,25 @@ public abstract class WebUtils extends org.apache.shiro.web.util.WebUtils {
 
 		currCompanyId = getHttpServletRequest().getHeader(REQUEST_HEADER_X_C_ID);
 		if(LwxfStringUtils.isBlank(currCompanyId) || currCompanyId.equals("undefined")){
-			currCompanyId = AppBeanInjector.configuration.getCompanyId();
+			CompanyEmployee companyEmployee = AppBeanInjector.companyEmployeeService.selectByUserId(WebUtils.getCurrUserId());
+			currCompanyId = companyEmployee==null||!companyEmployee.getStatus().equals(EmployeeStatus.NORMAL.getValue())?null:companyEmployee.getCompanyId();
 		}
 
 		requestMap.put(CURR_COMPANY_ID,currCompanyId);
 		return currCompanyId;
+	}
+
+	public static String getFinishedStorageId(){
+		String finished =(String)requestMap.get(FINISHED_STORAGE_ID);
+		if(finished!=null){
+			return finished;
+		}
+		Storage storage = AppBeanInjector.storageService.findOneByProductCategoryKey(ProductCategoryKey.finished.getId(), WebUtils.getCurrBranchId());
+		if(storage!=null){
+			requestMap.put(FINISHED_STORAGE_ID,storage.getId());
+			return storage.getId();
+		}
+		return null;
 	}
 
 
@@ -559,6 +599,13 @@ public abstract class WebUtils extends org.apache.shiro.web.util.WebUtils {
 
 	public static String getPayPricePath() {
 		return getResponsePagePath("price");
+	}
+
+	public static String dateNowFomatToStr() {
+		Date date = new Date();
+		String strDateFormat = "yyyy-MM-dd HH:mm:ss";
+		SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+		return sdf.format(date);
 	}
 
 	/**

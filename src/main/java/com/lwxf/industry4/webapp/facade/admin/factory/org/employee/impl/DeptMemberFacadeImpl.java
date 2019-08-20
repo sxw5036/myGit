@@ -162,6 +162,7 @@ public class DeptMemberFacadeImpl extends BaseFacadeImpl implements DeptMemberFa
 		user.setLoginName(AppBeanInjector.uniquneCodeGenerator.getNextNo(UniquneCodeGenerator.UniqueResource.USER_LOGNAME_NO));
 		user.setFollowers(0);
 		user.setChangedLoginName(false);
+		user.setBranchId(WebUtils.getCurrBranchId());
 		this.userService.add(user);
 
 		//用户扩展信息

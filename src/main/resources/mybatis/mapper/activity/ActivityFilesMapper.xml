@@ -114,14 +114,6 @@ WHERE  id = #{id}
 </delete>
 
 
-    <select id="findByActivityAndPath" resultMap="ActivityFilesMap">
-        select
-        <include refid="columns"/>
-        from activity_files
-        where activity_id = #{activityId}
-        and path = #{path}
-
-    </select>
 
     <select id="findByActivityId" resultMap="ActivityFilesMap">
         select

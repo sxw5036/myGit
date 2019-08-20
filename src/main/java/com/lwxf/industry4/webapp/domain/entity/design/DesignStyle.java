@@ -34,6 +34,8 @@ public class DesignStyle extends IdEntity  {
 	private Boolean disabled;
 	@Column(type = Types.VARCHAR,length = 200,name = "notes",displayName = "描述")
 	private String notes;
+	@Column(type = Types.VARCHAR,length = 13,name = "branch_id",displayName = "描述")
+	private String branchId;
 
     public DesignStyle() {  
      } 
@@ -52,6 +54,9 @@ public class DesignStyle extends IdEntity  {
 		}
 		if (LwxfStringUtils.getStringLength(this.notes) > 200) {
 			validResult.put("notes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+		}
+		if (LwxfStringUtils.getStringLength(this.branchId) > 13) {
+			validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
@@ -97,6 +102,11 @@ public class DesignStyle extends IdEntity  {
 				validResult.put("notes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
+		if(map.containsKey("branchId")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("branchId",String.class)) > 13) {
+				validResult.put("notes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
 		}else {
@@ -127,5 +137,13 @@ public class DesignStyle extends IdEntity  {
 
 	public String getNotes(){
 		return notes;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

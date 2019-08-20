@@ -61,4 +61,14 @@ public class ProduceFlowServiceImpl extends BaseServiceImpl<ProduceFlow, String,
 		return this.dao.findOneById(id);
 	}
 
+	@Override
+	public int deleteByOrderId(String orderId) {
+		return this.dao.deleteByOrderId(orderId);
+	}
+
+	@Override
+	public List<ProduceFlowDto> findListByProduceOrderId(String productId) {
+		return this.dao.findListByProduceOrderId(productId);
+	}
+
 }

@@ -74,7 +74,10 @@ public class FinishedStockItem extends IdEntity  {
 	@Column(type = Types.VARCHAR,length = 200,name = "warehousingNotes",displayName = "入库备注")
 	@ApiModelProperty(value = "入库备注")
 	private String warehousingNotes;
-
+	@Column(type = Types.CHAR,length = 13,updatable = false,name = "order_product_id",displayName = "订单产品主键ID")
+	@ApiModelProperty(value = "订单产品主键ID")
+	private String orderProductId;
+	private String branchId;
 	private Integer amount;
 
     public FinishedStockItem() {  
@@ -119,6 +122,13 @@ public class FinishedStockItem extends IdEntity  {
 		if (LwxfStringUtils.getStringLength(this.warehousingNotes) > 200) {
 			validResult.put("warehousingNotes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
+		if (this.orderProductId == null) {
+			validResult.put("orderProductId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}else{
+			if (LwxfStringUtils.getStringLength(this.orderProductId) > 13) {
+				validResult.put("orderProductId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
 		}else {
@@ -126,7 +136,7 @@ public class FinishedStockItem extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("type","creator","created","delivered","deliverer","barcode","shipped","notes","in","location","warehousingNotes","operated","operator");
+	private final static List<String> propertiesList = Arrays.asList("type","creator","created","delivered","deliverer","barcode","shipped","notes","in","location","warehousingNotes","operated","operator","orderProductId");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -220,6 +230,11 @@ public class FinishedStockItem extends IdEntity  {
 		if(map.containsKey("warehousingNotes")) {
 			if (LwxfStringUtils.getStringLength(map.getTypedValue("warehousingNotes",String.class)) > 200) {
 				validResult.put("warehousingNotes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if(map.containsKey("orderProductId")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("orderProductId",String.class)) > 13) {
+				validResult.put("orderProductId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if(validResult.size()>0){
@@ -348,5 +363,21 @@ public class FinishedStockItem extends IdEntity  {
 
 	public void setWarehousingNotes(String warehousingNotes) {
 		this.warehousingNotes = warehousingNotes;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public String getOrderProductId() {
+		return orderProductId;
+	}
+
+	public void setOrderProductId(String orderProductId) {
+		this.orderProductId = orderProductId;
 	}
 }

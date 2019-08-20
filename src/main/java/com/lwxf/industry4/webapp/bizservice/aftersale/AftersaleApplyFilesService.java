@@ -28,4 +28,14 @@ public interface AftersaleApplyFilesService extends BaseService <AftersaleApplyF
 	List<String> findByPath(List<String> pathList);
 
 	int updateFilesList(String id, List imgIds);
+
+	List<AftersaleApplyFiles> findListByOrderId(String orderId);
+
+	int deleteByOrderId(String orderId);
+
+	List<AftersaleApplyFiles> findListByResultOrderId(String orderId);
+
+	int deleteByResultOrderId(String orderId);
+
+	int updateByIds(MapContext mapContext);
 }

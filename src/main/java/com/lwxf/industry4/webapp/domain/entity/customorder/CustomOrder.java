@@ -152,6 +152,14 @@ public class CustomOrder extends IdEntity {
 	@Column(type = Types.VARCHAR, length = 20, name = "consignee_tel", displayName = "收货人电话")
 	@ApiModelProperty(value = "收货人电话")
 	private String consigneeTel;
+	@Column(type = Types.VARCHAR, length = 100, name = "discounts_note", displayName = "订单优惠说明")
+	@ApiModelProperty(value = "订单优惠说明")
+	private String discountsNote;
+	private String branchId;
+	@Column(type = Types.CHAR, length = 13, nullable = false, name = "receiver", displayName = "接单人")
+	@ApiModelProperty(value = "接单人")
+	private String receiver;
+
 
 	public CustomOrder() {
 	}
@@ -182,8 +190,12 @@ public class CustomOrder extends IdEntity {
 		if (LwxfStringUtils.getStringLength(this.salesman) > 13) {
 			validResult.put("salesman", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
-		if (LwxfStringUtils.getStringLength(this.merchandiser) > 13) {
-			validResult.put("merchandiser", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+		if (this.merchandiser == null) {
+			validResult.put("merchandiser", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		} else {
+			if (LwxfStringUtils.getStringLength(this.merchandiser) > 13) {
+				validResult.put("merchandiser", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
 		}
 		if (this.creator == null) {
 			validResult.put("creator", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
@@ -231,6 +243,9 @@ public class CustomOrder extends IdEntity {
 		if (LwxfStringUtils.getStringLength(this.timeConsuming) > 50) {
 			validResult.put("timeConsuming", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
+		if (LwxfStringUtils.getStringLength(this.discountsNote) > 100) {
+			validResult.put("discountsNote", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+		}
 		if (validResult.size() > 0) {
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, validResult);
 		} else {
@@ -238,7 +253,7 @@ public class CustomOrder extends IdEntity {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("no", "cityAreaId", "address", "acreage", "status", "salesman", "merchandiser", "designer", "designScheme", "earnest", "imprest", "retainage", "amount", "notes", "designStyle", "type", "parentId", "estimatedDeliveryDate", "deliveryDate", "designFee", "factoryPrice", "customerTel", "marketPrice", "discounts", "factoryDiscounts", "factoryFinalPrice", "confirmFprice", "confirmCprice", "design", "timeConsuming", "coordination");
+	private final static List<String> propertiesList = Arrays.asList("no", "cityAreaId", "address", "acreage", "status", "salesman", "merchandiser", "designer", "designScheme", "earnest", "imprest", "retainage", "amount", "notes", "designStyle", "type", "parentId", "estimatedDeliveryDate", "deliveryDate", "designFee", "factoryPrice", "customerTel", "marketPrice", "discounts", "factoryDiscounts", "factoryFinalPrice", "confirmFprice", "confirmCprice", "design", "timeConsuming", "coordination", "consigneeName", "consigneeTel", "documentaryNotes", "documentaryTime", "discountsNote");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -297,8 +312,11 @@ public class CustomOrder extends IdEntity {
 			}
 		}
 		if (map.containsKey("factoryPrice")) {
-			if (!DataValidatorUtils.isDecmal4(map.getTypedValue("factoryPrice", String.class))) {
+			if (!DataValidatorUtils.isDecmal4(new BigDecimal(map.getTypedValue("price", String.class)).toPlainString())) {
 				validResult.put("factoryPrice", AppBeanInjector.i18nUtil.getMessage("VALIDATE_INCORRECT_DATA_FORMAT"));
+			}
+			if (map.getTypedValue("factoryPrice", BigDecimal.class).compareTo(new BigDecimal(100000000)) != -1) {
+				validResult.put("factoryPrice", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if (map.containsKey("marketPrice")) {
@@ -436,6 +454,27 @@ public class CustomOrder extends IdEntity {
 				validResult.put("coordination", AppBeanInjector.i18nUtil.getMessage("VALIDATE_INCORRECT_DATA_FORMAT"));
 			}
 		}
+		if (map.containsKey("consigneeName")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("consigneeName", String.class)) > 50) {
+				validResult.put("consigneeName", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if (map.containsKey("consigneeTel")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("consigneeTel", String.class)) > 20) {
+				validResult.put("consigneeTel", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if (map.containsKey("documentaryNotes")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("documentaryNotes", String.class)) > 200) {
+				validResult.put("documentaryNotes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if (map.containsKey("discountsNote")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("discountsNote", String.class)) > 100) {
+				validResult.put("discountsNote", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+
 		if (validResult.size() > 0) {
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, validResult);
 		} else {
@@ -754,5 +793,29 @@ public class CustomOrder extends IdEntity {
 
 	public void setConsigneeTel(String consigneeTel) {
 		this.consigneeTel = consigneeTel;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public String getDiscountsNote() {
+		return discountsNote;
+	}
+
+	public void setDiscountsNote(String discountsNote) {
+		this.discountsNote = discountsNote;
+	}
+
+	public String getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(String receiver) {
+		this.receiver = receiver;
 	}
 }

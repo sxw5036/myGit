@@ -1,8 +1,16 @@
 package com.lwxf.industry4.webapp.facade.user.impl;
 
+import sun.misc.BASE64Decoder;
+
 import javax.annotation.Resource;
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +46,7 @@ import com.lwxf.commons.utils.ValidateUtils;
 import com.lwxf.industry4.webapp.baseservice.cache.constant.RedisConstant;
 import com.lwxf.industry4.webapp.baseservice.sms.yunpian.SmsUtil;
 import com.lwxf.industry4.webapp.baseservice.sms.yunpian.VerificationCodeType;
+import com.lwxf.industry4.webapp.bizservice.branch.BranchService;
 import com.lwxf.industry4.webapp.bizservice.common.CityAreaService;
 import com.lwxf.industry4.webapp.bizservice.company.CompanyEmployeeService;
 import com.lwxf.industry4.webapp.bizservice.company.EmployeePermissionService;
@@ -67,8 +76,10 @@ import com.lwxf.industry4.webapp.common.shiro.ShiroUtil;
 import com.lwxf.industry4.webapp.common.uniquecode.UniquneCodeGenerator;
 import com.lwxf.industry4.webapp.common.utils.UserExtraUtil;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.domain.dto.company.CompanyDto;
 import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
 import com.lwxf.industry4.webapp.domain.dto.user.LoginedUser;
+import com.lwxf.industry4.webapp.domain.entity.branch.Branch;
 import com.lwxf.industry4.webapp.domain.entity.common.CityArea;
 import com.lwxf.industry4.webapp.domain.entity.company.Company;
 import com.lwxf.industry4.webapp.domain.entity.company.CompanyEmployee;
@@ -120,6 +131,8 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
     private CompanyEmployeeService companyEmployeeService;
     @Resource(name="employeePermissionService")
     private EmployeePermissionService employeePermissionService;
+    @Resource(name = "branchService")
+    private BranchService branchService;
     //增加锁ip登录用户
     @Autowired
     @Qualifier("loginAttackLocker")
@@ -151,6 +164,7 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
     public RequestResult findUserByFilter(Integer pageNum, Integer pageSize, MapContext params) {
 
         PaginatedFilter filter = PaginatedFilter.newOne();
+        params.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
         filter.setFilters(params);
         Pagination pagination = Pagination.newOne();
         pagination.setPageNum(pageNum);
@@ -346,6 +360,7 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
     @Override
     @Transactional(value = "transactionManager",rollbackFor = Exception.class)
     public RequestResult toFactoryLogin(MapContext userMap, HttpServletRequest request) {
+
         String loginName = userMap.getTypedValue("loginName", String.class);
         boolean isEmail = false;
         boolean isMobile = false;
@@ -382,6 +397,33 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
             //用户名或密码错误
             return ResultFactory.generateErrorResult(ErrorCodes.LOGIN_FAIL_90000, i18nUtil.getMessage("LOGIN_FAIL_90000"));
         }
+        //判断企业有没有过有效期
+        String branchId=user.getBranchId();
+        Branch branch=this.branchService.findById(branchId);
+        if(branch==null){
+            return ResultFactory.generateResNotFoundResult();
+        }
+        String branchName=branch.getName();
+        String leaderName=branch.getLeaderName();
+        String leaderTel=branch.getTel();
+        String expireDate=branch.getExpireDate();
+        String keys=branchName+leaderName+leaderTel;
+        //解密有效期的AES加密数据
+        String expireDateValue=AESDncode(expireDate,keys);
+        if(expireDateValue==null){
+            return ResultFactory.generateErrorResult(com.lwxf.industry4.webapp.common.exceptions.ErrorCodes.SYS_UNKNOW_00000,AppBeanInjector.i18nUtil.getMessage("SYS_UNKNOW_00000"));
+        }
+        SimpleDateFormat dateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Long expire=dateFormat.parse(expireDateValue).getTime();
+            Long dateTime=DateUtil.getSystemDate().getTime();
+            if(dateTime>expire){
+                return ResultFactory.generateErrorResult(com.lwxf.industry4.webapp.common.exceptions.ErrorCodes.SYS_INVITATION_HAS_EXPIRED_00011,AppBeanInjector.i18nUtil.getMessage("SYS_INVITATION_HAS_EXPIRED_00011"));
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         //判断用户被锁定
         AttackLockerInfo attackLockerInfo = (AttackLockerInfo)this.loginAttackLocker.getLockerInfo(user.getId());
         if (attackLockerInfo.isLocked()) {
@@ -395,13 +437,19 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
             //用户被禁用
             return ResultFactory.generateErrorResult(ErrorCodes.SYS_ERROR_USER_ISDISABLED_00019, i18nUtil.getMessage("SYS_ERROR_USER_ISDISABLED_00019"));
         }
-
-        // 公司职员处理
-        CompanyEmployee employee = AppBeanInjector.companyEmployeeService.findOneByCompanyIdAndUserId(AppBeanInjector.configuration.getCompanyId(),user.getId());
-
-        // 不是工厂职工或者职工状态不是正常状态，不允许登录
-        if(null == employee ||  employee.getStatus().intValue() != EmployeeStatus.NORMAL.getValue()){
-            return ResultFactory.generateErrorResult(ErrorCodes.LOGIN_FAIL_90000, i18nUtil.getMessage("LOGIN_FAIL_90000"));
+        CompanyEmployee employee = null;
+        //判断是否是管理员
+        if(!user.getType().equals(UserType.ADMIN.getValue())&&!user.getType().equals(UserType.SUPER_ADMIN.getValue())){
+            //判断是否是厂家人员
+            if(!user.getType().equals(UserType.FACTORY.getValue())){
+                return ResultFactory.generateErrorResult(ErrorCodes.LOGIN_FAIL_90000, i18nUtil.getMessage("LOGIN_FAIL_90000"));
+            }
+            // 公司职员处理
+            employee = AppBeanInjector.companyEmployeeService.findOneByCompanyIdAndUserId(null,user.getId());
+            // 不是工厂职工或者职工状态不是正常状态，不允许登录
+            if(null == employee ||  employee.getStatus().intValue() != EmployeeStatus.NORMAL.getValue()){
+                return ResultFactory.generateErrorResult(ErrorCodes.LOGIN_FAIL_90000, i18nUtil.getMessage("LOGIN_FAIL_90000"));
+            }
         }
         //3.判断用户名或密码是否正确
         if (!this.doLogin(user, password,rememberMe)) {
@@ -427,12 +475,51 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
 		} else {
             redirectPath = savedRequest.getRequestUrl();
         }
-		result.put(WebConstant.KEY_ENTITY_COMPANY_ID,employee.getCompanyId());
+        //判断是否是管理员
+        if(!user.getType().equals(UserType.ADMIN.getValue())&&!user.getType().equals(UserType.SUPER_ADMIN.getValue())){
+            result.put(WebConstant.KEY_ENTITY_COMPANY_ID,employee.getCompanyId());
+        }
         result.put("go", redirectPath);
         return result;
     }
 
-	@Override
+    private String AESDncode(String expireDate, String keys) {
+        try {
+            //1.构造密钥生成器，指定为AES算法,不区分大小写
+            KeyGenerator keygen= KeyGenerator.getInstance("AES");
+            //2.根据ecnodeRules规则初始化密钥生成器
+            //生成一个128位的随机源,根据传入的字节数组
+            SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG") ;
+            secureRandom.setSeed(keys.getBytes());
+            keygen.init(128, secureRandom);
+            //keygen.init(128, new SecureRandom(keys.getBytes()));
+            //3.产生原始对称密钥
+            SecretKey original_key=keygen.generateKey();
+            //4.获得原始对称密钥的字节数组
+            byte [] raw=original_key.getEncoded();
+            //5.根据字节数组生成AES密钥
+            SecretKey key=new SecretKeySpec(raw, "AES");
+            //6.根据指定算法AES自成密码器
+            Cipher cipher=Cipher.getInstance("AES");
+            //7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密(Decrypt_mode)操作，第二个参数为使用的KEY
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            //8.将加密并编码后的内容解码成字节数组
+            byte [] byte_content= new BASE64Decoder().decodeBuffer(expireDate);
+            /*
+             * 解密
+             */
+            byte [] byte_decode=cipher.doFinal(byte_content);
+            String AES_decode=new String(byte_decode,"utf-8");
+            return AES_decode;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //如果有错就返加nulll
+        return null;
+    }
+
+    @Override
     @Transactional(value = "transactionManager",rollbackFor = Exception.class)
     public Boolean doLogin(User user, String inputPassword,boolean remberMe) {
         //  User user = this.findByEmail(email);
@@ -476,16 +563,16 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
 		if(user.getState().intValue() != UserState.ENABLED.getValue()){
 			return perms;
 		}
-		CompanyEmployee employee = currUser.getCompanyEmployee();
+    		CompanyEmployee employee = currUser.getCompanyEmployee();
 		if(employee.getStatus().intValue() != EmployeeStatus.NORMAL.getValue()){
 		    return perms;
         }
 		int userType = currUser.getType().intValue();
 		String userTypeStr = String.valueOf(userType);
-		String currCompanyId = WebUtils.getCurrCompanyId();
-        if(!employee.getCompanyId().equals(currCompanyId)){
-            return perms;
-        }
+//		String currCompanyId = WebUtils.getCurrCompanyId();
+//        if(!employee.getCompanyId().equals(currCompanyId)){
+//            return perms;
+//        }
 		switch(userType){
 			case 0: // 厂家
 				break;
@@ -557,23 +644,9 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
     public RequestResult findUserPreloadData(String userId) {
         //todo 设置角色权限的数据
         Map<String, Object> map = new HashMap<>();
-        // 1. 加载公司信息
-        String factoryCompanyId = AppBeanInjector.configuration.getCompanyId();
-        String currCompanyId = WebUtils.getCurrCompanyId();
-        map.put("factoryCompanyId",factoryCompanyId);
-        map.put("currCompanyId",currCompanyId);
-        Map<String,Company> companyMap = new HashMap<>();
-        // 工厂公司
-        Company tempCompany = AppBeanInjector.companyService.findById(factoryCompanyId);
-        companyMap.put(factoryCompanyId,tempCompany);
-        // 当前用户所属公司
-        if(LwxfStringUtils.isNotBlank(currCompanyId) && !factoryCompanyId.equals(currCompanyId)){
-            tempCompany = AppBeanInjector.companyService.findById(currCompanyId);
-            map.put(currCompanyId,tempCompany);
-        }
-        map.put(WebConstant.KEY_PRELOAD_COMPANY,companyMap);
-
-        // 2. 当前用户信息
+        CompanyEmployee companyEmployee = null;
+        CompanyDto companyDto = null;
+        // 1. 当前用户信息
         User userMap = this.userService.findByUserId(userId);
         Integer userType = userMap.getType();
         map.put(WebConstant.KEY_PRELOAD_USER, userMap);
@@ -598,8 +671,16 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
             userMenu.put("userOperations",userOperations);
             map.put(WebConstant.KEY_PRELOAD_USER_MENU, userMenu);
         } else{
+            // 2. 加载公司信息
+            //Branch branch = AppBeanInjector.branchService.findById(branchId);
+            companyEmployee = AppBeanInjector.companyEmployeeService.findCompanyByUidAndStatus(userId,EmployeeStatus.NORMAL.getValue());
+            companyDto = AppBeanInjector.companyService.findCompanyById(companyEmployee.getCompanyId());
+            map.put("currCompanyId",companyEmployee.getCompanyId());
+            Map<String,Company> companyMap = new HashMap<>();
+            companyMap.put(companyEmployee.getCompanyId(),companyDto);
+            map.put(WebConstant.KEY_PRELOAD_COMPANY,companyMap);
             // 用户的职位信息
-            CompanyEmployee userEmployee = AppBeanInjector.companyEmployeeService.findOneByCompanyIdAndUserId(currCompanyId,userId);
+            CompanyEmployee userEmployee = AppBeanInjector.companyEmployeeService.findOneByCompanyIdAndUserId(companyDto.getId(),userId);
             if(null != userEmployee && userEmployee.getStatus().intValue() == 0){
                 map.put(WebConstant.KEY_PRELOAD_COMPANY_EMPLOYEE, userEmployee);
                 // 用户权限
@@ -616,7 +697,6 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
                 }
             }
         }
-
         // 3. 字典数据
         Map<String,Object> dictionaries = new HashMap<>();
         map.put(WebConstant.KEY_PRELOAD_DICTIONARIES, dictionaries);
@@ -635,7 +715,7 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
         // 加载操作按钮
         dictionaries.put(WebConstant.KEY_PRELOAD_OPERATIONS,AppBeanInjector.operationsService.findAll());
         // 加载产品分类
-        dictionaries.put(WebConstant.KEY_PRELOAD_PRODUCT_CATEGORY,AppBeanInjector.productCategoryService.findAll());
+        dictionaries.put(WebConstant.KEY_PRELOAD_PRODUCT_CATEGORY,AppBeanInjector.productCategoryService.findAllByBranchId(companyDto==null?null:companyDto.getBranchId()));
         // 加载产品材质
         dictionaries.put(WebConstant.KEY_PRELOAD_PRODUCT_MATERIAL,AppBeanInjector.productMaterialService.findAll());
         // 加载产品规格
@@ -643,9 +723,9 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
         // 加载产品颜色
         dictionaries.put(WebConstant.KEY_PRELOAD_PRODUCT_COLOR,AppBeanInjector.productColorService.findAll());
         // 加载角色
-        dictionaries.put(WebConstant.KEY_PRELOAD_ROLES,AppBeanInjector.roleService.findListByType(userType,null));
+        dictionaries.put(WebConstant.KEY_PRELOAD_ROLES,AppBeanInjector.roleService.findListByType(userType,null,WebUtils.getCurrBranchId()));
         // 加载部门
-        dictionaries.put(WebConstant.KEY_PRELOAD_DEPTS,AppBeanInjector.deptService.findListByCompanyId(currCompanyId));
+        dictionaries.put(WebConstant.KEY_PRELOAD_DEPTS,AppBeanInjector.deptService.findListByCompanyId(companyDto==null?null:companyDto.getId()));
         // 加载字典数据
         dictionaries.put(WebConstant.KEY_BASE_CODE,AppBeanInjector.basecodeService.findAll());
         //4. 用户权限数据
@@ -867,7 +947,7 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
     public LoginedUser findLoginedUserById(String id) {
         User user = this.userService.findById(id);
         LoginedUser loginedUser = new LoginedUser(user);
-        CompanyEmployee employee = AppBeanInjector.companyEmployeeService.findOneByCompanyIdAndUserId(WebUtils.getCurrCompanyId(),id);
+        CompanyEmployee employee = AppBeanInjector.companyEmployeeService.selectByUserId(id);
         if(null != employee){
 			loginedUser.setCompanyEmployee(employee);
 		}
@@ -917,19 +997,6 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
         AppBeanInjector.userThirdInfoService.add(thirdInfo);
         AppBeanInjector.redisUtils.hPut(RedisConstant.PLATFORM_TAG, user.getId(), Integer.valueOf(1));
         return ResultFactory.generateRequestResult(UserInfoObj.newOne(user,null,thirdInfo,null));
-    }
-
-    @Override
-    public RequestResult findUserListByLikeName(Integer pageNum,Integer pageSize,String name) {
-        PaginatedFilter paginatedFilter = new PaginatedFilter();
-        MapContext mapContext = MapContext.newOne();
-        mapContext.put(WebConstant.KEY_ENTITY_NAME,name);
-        paginatedFilter.setFilters(mapContext);
-        Pagination pagination = new Pagination();
-        pagination.setPageSize(pageSize);
-        pagination.setPageNum(pageNum);
-        paginatedFilter.setPagination(pagination);
-        return ResultFactory.generateRequestResult(this.userService.findUserListByLikeName(paginatedFilter));
     }
 
 	@Override
@@ -1119,7 +1186,7 @@ public class UserFacadeImpl extends BaseFacadeImpl implements UserFacade {
             companyEmployee.setCompanyId(mapContext.getTypedValue("companyId",String.class));
             companyEmployee.setUserId(user.getId());
             String key= DealerEmployeeRole.CLERK.getValue();
-            Role role=this.roleService.findRoleByKey(key);
+            Role role=this.roleService.selectByKey(key,WebUtils.getCurrBranchId());
             companyEmployee.setRoleId(role.getId());
             companyEmployee.setCreated(DateUtil.getSystemDate());
             companyEmployee.setStatus(EmployeeStatus.NORMAL.getValue());

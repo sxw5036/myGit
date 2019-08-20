@@ -25,7 +25,7 @@ public interface ActivityFilesDao extends BaseDao<ActivityFiles, String> {
 
 	PaginatedList<ActivityFiles> selectByFilter(PaginatedFilter paginatedFilter);
 
-    ActivityFiles findByActivityAndPath(MapContext parmas);
+
 
     ActivityFiles findByActivityId(String activityId);
 }

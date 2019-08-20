@@ -76,4 +76,6 @@ public interface CompanyEmployeeDao extends BaseDao<CompanyEmployee, String> {
 	List<Map> findAllEmployeesByCid(String companyid);
 
 	List<String> findAllDianzhuId();
+
+	List<MapContext> findsalemans(String branchId);
 }

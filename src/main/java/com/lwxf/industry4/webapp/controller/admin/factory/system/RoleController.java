@@ -123,4 +123,10 @@ public class RoleController {
 	private RequestResult findAllByType(@RequestParam Integer type){
 		return this.roleFacade.findAllByType(type);
 	}
+
+	//个人使用 请勿调用
+	@PutMapping("defalut")
+	private RequestResult settingDefault(){
+		return this.roleFacade.settingDefault();
+	}
 }

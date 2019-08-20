@@ -19,6 +19,7 @@ import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 功能：payment_simple 实体类
@@ -31,15 +32,15 @@ import io.swagger.annotations.ApiModelProperty;
 @Table(name = "payment_simple",displayName = "payment_simple")
 public class PaymentSimple extends IdEntity  {
 	private static final long serialVersionUID = 1L;
-	@ApiModelProperty(value="款项类型ID(0:收入,1:支出)",name="paymentDate")
+	@ApiModelProperty(value="款项类型ID(1:收入,2:支出)",name="paymentDate")
 	@Column(type = Types.TINYINT,nullable = false,name = "type",displayName = "1:收入,2:支出")
 	private Integer type;
 	@ApiModelProperty(value="支付方式",name="ways")
 	@Column(type = Types.TINYINT,nullable = false,name = "ways",displayName = "支付方式")
 	private Integer ways;
-	@ApiModelProperty(value="银行信息，对应字典中type:bankAccount",name="bank")
-	@Column(type = Types.TINYINT,nullable = false,name = "ways",displayName = "银行信息，对应字典中bankAccount")
-	private Integer bank;
+	@ApiModelProperty(value="银行信息，对应bankAccount表id",name="bank")
+	@Column(type = Types.VARCHAR,nullable = false,name = "bank",displayName = "银行信息，对应bankAccount")
+	private String bank;
 	@ApiModelProperty(value="款项ID",name="paymentDate")
 	@Column(type = Types.INTEGER,nullable = false,name = "funds",displayName = "科目id")
 	private Integer funds;
@@ -50,18 +51,32 @@ public class PaymentSimple extends IdEntity  {
 	@Column(type = Types.VARCHAR,length = 200,name = "note",displayName = "描述")
 	private String note;
 	@ApiModelProperty(value="支付时间 格式:2019-01-01",name="paymentDate")
-	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
 	@Column(type = TypesExtend.DATETIME,name = "payment_date",displayName = "收支时间")
 	private Date paymentDate;
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "creator",displayName = "创建人")
 	private String creator;
 	@ApiModelProperty(value="创建时间",name="created")
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	@Column(type = TypesExtend.DATETIME,nullable = false,name = "created",displayName = "创建时间")
 	private Date created;
 	@ApiModelProperty(value="操作人",name="operator")
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "operator",displayName = "操作人")
 	private String operator;
-
+	@ApiModelProperty(value="企业id",name="branchId")
+	@Column(type = Types.CHAR,length = 13,nullable = false,name = "branch_id",displayName = "企业id")
+	private String branchId;
+	@ApiModelProperty(value="转出银行",name="outcomeBank")
+	@Column(type = Types.CHAR,length = 13,nullable = false,name = "outcome_bank",displayName = "企业id")
+	private String outcomeBank;
+	@ApiModelProperty(value="转入银行",name="incomeBank")
+	@Column(type = Types.CHAR,length = 13,nullable = false,name = "income_bank",displayName = "企业id")
+	private String incomeBank;
+	@ApiModelProperty(value="部门id",name="deptId")
+	@Column(type = Types.CHAR,length = 13,nullable = false,name = "dept_id",displayName = "部门id")
+	private String deptId;
+	@ApiModelProperty(value="款项描述组合字段",name="fundsName")
+	@Column(type = Types.VARCHAR,length = 50,nullable = false,name = "funds_name",displayName = "款项描述组合字段")
+	private String fundsName;
     public PaymentSimple() {  
      }
 
@@ -142,6 +157,11 @@ public class PaymentSimple extends IdEntity  {
 				validResult.put("funds", ErrorCodes.VALIDATE_NOTNULL);
 			}
 		}
+		if(map.containsKey("branchId")) {
+			if (map.get("branchId")  == null) {
+				validResult.put("branchId", ErrorCodes.VALIDATE_NOTNULL);
+			}
+		}
 		if(map.containsKey("note")) {
 			if (LwxfStringUtils.getStringLength(map.getTypedValue("note",String.class)) > 200) {
 				validResult.put("note", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
@@ -156,6 +176,7 @@ public class PaymentSimple extends IdEntity  {
 				}
 			}
 		}
+
 		if(map.containsKey("operator")) {
 			if (map.getTypedValue("operator",String.class)  == null) {
 				validResult.put("operator", ErrorCodes.VALIDATE_NOTNULL);
@@ -176,6 +197,26 @@ public class PaymentSimple extends IdEntity  {
 			return null;
 		}
 	}
+
+	public String getOutcomeBank() {
+		return outcomeBank;
+	}
+
+	public void setOutcomeBank(String outcomeBank) {
+		this.outcomeBank = outcomeBank;
+	}
+
+	public String getIncomeBank() {
+		return incomeBank;
+	}
+
+	public void setIncomeBank(String incomeBank) {
+		this.incomeBank = incomeBank;
+	}
+
+	public String getBranchId() {return branchId;}
+
+	public void setBranchId(String branchId) {this.branchId = branchId;}
 
 	public Integer getType() {
 		return type;
@@ -245,7 +286,27 @@ public class PaymentSimple extends IdEntity  {
 
 	public void setWays(Integer ways) {this.ways = ways;}
 
-	public Integer getBank() {return bank;}
+	public String getBank() {
+		return bank;
+	}
 
-	public void setBank(Integer bank) {this.bank = bank;}
+	public void setBank(String bank) {
+		this.bank = bank;
+	}
+
+	public String getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(String deptId) {
+		this.deptId = deptId;
+	}
+
+	public String getFundsName() {
+		return fundsName;
+	}
+
+	public void setFundsName(String fundsName) {
+		this.fundsName = fundsName;
+	}
 }

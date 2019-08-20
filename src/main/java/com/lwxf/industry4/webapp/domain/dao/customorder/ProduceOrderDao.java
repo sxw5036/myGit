@@ -9,6 +9,7 @@ import java.util.Map;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.customorder.ProduceOrderDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.CoordinationPrintTableDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
@@ -36,18 +37,27 @@ public interface ProduceOrderDao extends BaseDao<ProduceOrder, String> {
 
 	List<ProduceOrder> findListByIds(List<String> ids);
 
+	List<ProduceOrderDto> findProduceOrderByProductId(String id);
+
 	List<ProduceOrderDto> findListByOrderId(String id);
 
-	List<ProduceOrder> findIncompleteListByOrderId(String customOrderId);
+	List<ProduceOrder> findIncompleteListByOrderId(String customOrderId,List<Integer> ways);
 
 	int updatePayByOrderIdAndWays(String orderId, List<Integer> ways);
 
-	List<ProduceOrder> findListByOrderIdAndWays(String id, List<Integer> ways);
+	List<ProduceOrder> findListByOrderIdAndTypesAndWays(String id, List<Integer> type, List<Integer> ways);
 
-	int updateStateByIds(List<String> ids, int state);
+	int updateMapContextByIds(MapContext mapContext);
 
 	int updatePlanTimeByIds(Date planTime, List ids);
 
+	int deleteByOrderId(String orderId);
 
-	PaginatedList<ProduceOrder> findProduceOrderList(PaginatedFilter paginatedFilter);
+	int deleteByProductId(String pId);
+
+	List findListOrderIdByPId(List ids);
+
+	CoordinationPrintTableDto findCoordinationPrintInfo(String id);
+
+	MapContext findCoordinationCount(String branchId);
 }

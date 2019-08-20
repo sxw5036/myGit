@@ -32,8 +32,6 @@ public class Storage extends IdEntity  {
 	private String name;
 	@Column(type = Types.CHAR,length = 50,nullable = false,name = "product_category_id",displayName = "产品分类")
 	private String productCategoryId;
-	@Column(type = Types.VARCHAR,length = 20,nullable = false,name = "key",displayName = "仓库的key，来自于产品分类的key，该字段为隐含字段，在管理页面中不显示，用于业务逻辑处理，存在管理功能可以根据该key判断打开不同的页面")
-	private String key;
 	@Column(type = Types.VARCHAR,length = 200,name = "notes",displayName = "仓库说明")
 	private String notes;
 	@Column(type = Types.CHAR,length = 13,nullable = false,updatable = false,name = "creator",displayName = "创建人")
@@ -42,6 +40,8 @@ public class Storage extends IdEntity  {
 	private Date created;
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "storekeeper",displayName = "仓库管理员")
 	private String storekeeper;
+	@Column(type = Types.CHAR,length = 13,nullable = false,name = "branch_id",displayName = "仓库管理员")
+	private String branchId;
 
 	public Storage() {
 	}
@@ -60,13 +60,6 @@ public class Storage extends IdEntity  {
 		}else{
 			if (LwxfStringUtils.getStringLength(this.productCategoryId) > 50) {
 				validResult.put("productCategoryId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
-			}
-		}
-		if (this.key == null) {
-			validResult.put("key", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-		}else{
-			if (LwxfStringUtils.getStringLength(this.key) > 20) {
-				validResult.put("key", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if (LwxfStringUtils.getStringLength(this.notes) > 200) {
@@ -96,7 +89,7 @@ public class Storage extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("name","productCategoryId","key","notes","storekeeper");
+	private final static List<String> propertiesList = Arrays.asList("name","productCategoryId","notes","storekeeper");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -124,15 +117,6 @@ public class Storage extends IdEntity  {
 			}else{
 				if (LwxfStringUtils.getStringLength(map.getTypedValue("productCategoryId",String.class)) > 50) {
 					validResult.put("productCategoryId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
-				}
-			}
-		}
-		if(map.containsKey("key")) {
-			if (map.getTypedValue("key",String.class)  == null) {
-				validResult.put("key", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-			}else{
-				if (LwxfStringUtils.getStringLength(map.getTypedValue("key",String.class)) > 20) {
-					validResult.put("key", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 				}
 			}
 		}
@@ -174,14 +158,6 @@ public class Storage extends IdEntity  {
 		return productCategoryId;
 	}
 
-	public void setKey(String key){
-		this.key=key;
-	}
-
-	public String getKey(){
-		return key;
-	}
-
 	public void setNotes(String notes){
 		this.notes=notes;
 	}
@@ -212,5 +188,13 @@ public class Storage extends IdEntity  {
 
 	public String getStorekeeper(){
 		return storekeeper;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

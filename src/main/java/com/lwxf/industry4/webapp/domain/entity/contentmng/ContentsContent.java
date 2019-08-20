@@ -1,4 +1,7 @@
 package com.lwxf.industry4.webapp.domain.entity.contentmng;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.*;
 import java.sql.*;
 import java.util.Date;
@@ -26,10 +29,13 @@ import com.lwxf.industry4.webapp.common.result.ResultFactory;
  * @dept：老屋新房 Created with IntelliJ IDEA 
  */ 
 @Table(name = "contents_content",displayName = "contents_content")
+@ApiModel(value = "内容详情信息",description = "内容详情信息")
 public class ContentsContent extends AbstractNoIdEntity {
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "contents_id",displayName = "")
+	@ApiModelProperty(value = "内容ID")
 	private String contentsId;
 	@Column(type = Types.LONGVARCHAR,nullable = false,name = "content",displayName = "内容详情")
+	@ApiModelProperty(value = "内容详情")
 	private String content;
 
     public ContentsContent() {  

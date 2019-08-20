@@ -46,10 +46,6 @@ public class ActivityFilesServiceImpl extends BaseServiceImpl<ActivityFiles, Str
 	}
 
 
-	@Override
-	public ActivityFiles findByActivityAndPath(MapContext parmas) {
-		return this.dao.findByActivityAndPath(parmas);
-	}
 
 	@Override
 	public ActivityFiles findByActivityId(String activityId) {

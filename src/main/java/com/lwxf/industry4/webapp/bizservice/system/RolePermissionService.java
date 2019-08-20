@@ -36,4 +36,6 @@ public interface RolePermissionService extends BaseService <RolePermission, Stri
 	int deleteByKey(String key);
 
 	List<RolePermission> findAllDianzhuRolePer();
+
+	int addList(List<RolePermission> rolePermissionList);
 }

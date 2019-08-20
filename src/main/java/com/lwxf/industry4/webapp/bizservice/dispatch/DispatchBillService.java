@@ -9,6 +9,8 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillDto;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillPlanItemDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.DispatchPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBill;
 
 
@@ -24,13 +26,13 @@ public interface DispatchBillService extends BaseService <DispatchBill, String> 
 
 	PaginatedList<DispatchBillDto> selectByFilter(PaginatedFilter paginatedFilter);
 
-	List<DispatchBillDto> findDispatchsByOrderId(String orderId);
-
-	DispatchBill findOneByNo(String no);
+	List<DispatchBillDto> findDispatchsByOrderId(String orderId);;
 
 	int deleteDispatchBillAndItemById(String id);
 
 	DispatchBillDto findDispatchsBillById(String dispatchId);
+
+	List<DispatchBillDto> findDispatchInfoForOrder(String orderId);
 
     int findYSHItemCount(String orderId);
 
@@ -38,17 +40,15 @@ public interface DispatchBillService extends BaseService <DispatchBill, String> 
 
     List<Map> findFactoryDispatchsByOrderId(String orderId);
 
-	Integer findTodayCount();
-
-	Integer findThisMonthCount();
-
 	PaginatedList<DispatchBillPlanItemDto> findDispathcBillList(PaginatedFilter paginatedFilter);
-
-	Integer findTobeShipped();
 
 	List<DispatchBill> findDispatchListByOrderId(String orderId);
 
 	List<Map> findDispatchList(String resultOrderId);
 
-    Integer findNumByCreated(String beginTime, String endTime, String day);
+	List<Map> findDispatchListByFinishedItemId(List itemids);
+
+	List<FinishedStockDto> findFinishedItemTypeByDispatchId(String dispatchBillId, List itemids);
+
+	DispatchPrintTableDto findDispatchPrintInfo(String id);
 }

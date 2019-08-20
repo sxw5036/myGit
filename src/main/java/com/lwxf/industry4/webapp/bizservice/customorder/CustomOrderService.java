@@ -11,9 +11,12 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
-import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderCountDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderQuoteDto;
+import com.lwxf.industry4.webapp.domain.dto.customorder.*;
+import com.lwxf.industry4.webapp.domain.dto.dealer.DealerOrderRankDto;
+import com.lwxf.industry4.webapp.domain.dto.dealer.WxDealerInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OfferPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.statement.WxFactoryStatementDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.bizservice.base.BaseService;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
@@ -61,35 +64,7 @@ public interface CustomOrderService extends BaseService <CustomOrder, String> {
 
 	List<DateNum> findOrderNumByCreatedAndCid(MapContext mapContext);
 
-	List<CustomOrder> findOrderNumByCustomIdAndCid(MapContext mapContext);
-
-	PaginatedList<Map> findByCreated(PaginatedFilter filter);
-
-	int findOrderNumByCreated(String created);
-
-	Map findOrderInfoByOrderId(String orderId);
-	//根据当月、当年创建的订单，并在当月、当年支付了的订单数量
-	int findPaidOrderNumByCreated(String created);
-	//根据当月、当年支付的时间，查询当月、当年内订支付的数量
-	int findPaidOrderNumByTime(String beginTime,String endTime,String created);
-	//根据创建时间，查询当月、当年订单的未支付的订单数量
-	int findUnpaidOrderNumByTime(String beginTime,String endTime,String created);
-	//查询今日的设计数量
-	int findDesignNumByCreated(String created);
-
-	PaginatedList<Map> findByConditions(PaginatedFilter paginatedFilter);
-
-    Map findFactoryOrderInfoById(String orderId);
-
-    int findIsDesignNumByTime(MapContext params);
-
-	List<CustomOrder> findOrderListByStatusList(List<Integer> statusList);
-
-	List<MapContext> findCustomerOrderInfo(String userId, String companyId);
-
 	List<MapContext> findOrderListByCidAndUid(String dealerId, String userId);
-    //查询订单的生产跟进列表
-	PaginatedList<Map> findFProcessOrderList(PaginatedFilter paginatedFilter);
 
 	Map findFAppBaseInfoByOrderId(MapContext params);
 
@@ -99,22 +74,34 @@ public interface CustomOrderService extends BaseService <CustomOrder, String> {
 
 	PaginatedList<CustomOrderDto> findPacksOrderList(PaginatedFilter paginatedFilter);
 
-	Map findShipmentsInfoByOrderId(String orderId);
+	List<CustomOrder> findByCustomerIdAndCid(String uId, String branchId);
 
-    PaginatedList<Map> findPaidOrderListByTime(PaginatedFilter filter);
+	List<CustomOrder> findByCustomerIdAndCidAndStatus(String uId, String branchId, Integer status);
 
-	PaginatedList<Map> findUnpaidOrderListByTime(PaginatedFilter filter);
+	CustomOrder findByUidAndBranchId(MapContext mapContext);
 
-	PaginatedList<Map> findIsDesignListByTime(PaginatedFilter filter);
+	CustomOrder findByCidAndBranchId(String dealerId, String branchId);
+
+	Integer findTodayOrderCount(MapContext param1);
+
+	Integer findTodayInvalidOrder(MapContext param2);
+
+	Integer findTodayEffectiveOrder(MapContext param2);
+
+	PaginatedList<WxCustomOrderDto> findWxOrderList(PaginatedFilter paginatedFilter);
+
+	WxCustomerOrderInfoDto findWxOrderByorderId(String orderId);
+	//微信工厂端报表
+	WxFactoryStatementDto statementWxFactory(String branchId);
+
+	//微信经销商端首页
+	WxDealerInfoDto selectDealerInfo(String companyId);
 
 
-	List<MapContext> findByCid(String dealerId);
+	OrderPrintTableDto findOrderPrintTable(MapContext mapContext);
 
-    Integer getAllByCreated(String beginTime, String endTime, String todayDate);
-
-	List<CustomOrder> getAllOrderByCreated (String beginTime, String endTime, String todayDate);
-
-	BigDecimal findPaidOrderAmountByTime(String beginTime, String endTime, String day);
+	OfferPrintTableDto findOfferPrintTableInfo(String id);
 
 
+	Integer findOverdueOrderCount(String currBranchId);
 }

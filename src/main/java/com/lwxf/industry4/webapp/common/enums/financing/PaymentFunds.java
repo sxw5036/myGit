@@ -9,13 +9,11 @@ package com.lwxf.industry4.webapp.common.enums.financing;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 public enum PaymentFunds {
-	FREE_FUNDS(11,"自由资金/预付款"), //充值进经销商自由账户
-	BOND(12,"保证金"), //充值进经销商保证金账户
-	//ADVANCE_CHARGE(1,"预付款"),
-	//TAIL_MONEY(2,"尾款"),
-	//ALL_MONEY(3,"全款"),
-	DESSIGN_FEE(13,"设计金"),  //充值进经销商自由账户
-	//CARGO(14,"货款"),  //充值进经销商自由账户
+	FREE_FUNDS(11,"预付款"),
+	BOND(12,"保证金"),
+	DESSIGN_FEE(13,"设计金"),
+	SOFTWARE(14,"软件年金"),
+	ACTIVITY(15,"活动款"),
 	DESIGN_FEE_PAY(21,"设计金支付"), //工厂账户支付到设计人
 	FREE_FUNDS_REFUND(22,"经销商账户退款"), //工厂账户退款到经销商自由账户
 	DESIGN_FEE_REFUND(23,"经销商设计费退款"), //工厂账户退款到经销商自由账户

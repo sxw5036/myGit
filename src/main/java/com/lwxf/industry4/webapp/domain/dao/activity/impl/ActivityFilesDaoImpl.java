@@ -42,11 +42,6 @@ public class ActivityFilesDaoImpl extends BaseDaoImpl<ActivityFiles, String> imp
 	}
 
 
-	@Override
-	public ActivityFiles findByActivityAndPath(MapContext parmas) {
-		String sqlId = this.getNamedSqlId("findByActivityAndPath");
-		return this.getSqlSession().selectOne(sqlId,parmas);
-	}
 
 	@Override
 	public ActivityFiles findByActivityId(String activityId) {

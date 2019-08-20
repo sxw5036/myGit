@@ -5,6 +5,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import com.lwxf.industry4.webapp.domain.dto.dealer.WxDealerInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OfferPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.statement.WxFactoryStatementDto;
 import org.springframework.stereotype.Repository;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
@@ -18,9 +22,8 @@ import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.customorder.CustomOrderDao;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
-import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderCountDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderQuoteDto;
+import com.lwxf.industry4.webapp.domain.dto.customorder.*;
+import com.lwxf.industry4.webapp.domain.dto.dealer.DealerOrderRankDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Repository;
@@ -153,103 +156,6 @@ public class CustomOrderDaoImpl extends BaseDaoImpl<CustomOrder, String> impleme
 		String sqlId=this.getNamedSqlId("findOrderNumByCreatedAndCid");
 		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
-
-	@Override
-	public List<CustomOrder> findOrderNumByCustomIdAndCid(MapContext mapContext) {
-		String sqlId=this.getNamedSqlId("findOrderNumByCustomIdAndCid");
-		return this.getSqlSession().selectList(sqlId,mapContext);
-	}
-
-
-	@Override
-	public PaginatedList<Map> findByCreated(PaginatedFilter filter) {
-		String sqlId = this.getNamedSqlId("findByCreated");
-		PageBounds pageBounds = this.toPageBounds(filter.getPagination(), filter.getSorts());
-		PageList<Map> pageList =  (PageList)this.getSqlSession().selectList(sqlId, filter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-	}
-
-	@Override
-	public int findOrderNumByCreated(String created) {
-		String sqlId = this.getNamedSqlId("findOrderNumByCreated");
-		return this.getSqlSession().selectOne(sqlId,created);
-	}
-
-	@Override
-	public Map findOrderInfoByOrderId(String orderId) {
-		String sqlId = this.getNamedSqlId("findOrderInfoByOrderId");
-		return this.getSqlSession().selectOne(sqlId,orderId);
-	}
-
-	@Override
-	public int findPaidOrderNumByCreated(String created) {
-		String sqlId = this.getNamedSqlId("findPaidOrderNumByCreated");
-		return this.getSqlSession().selectOne(sqlId,created);
-	}
-
-	@Override
-	public int findPaidOrderNumByTime(String beginTime,String endTime,String created) {
-		MapContext params = MapContext.newOne();
-		params.put("beginTime", beginTime);
-		params.put("endTime", endTime);
-		params.put("created", created);
-		String sqlId = this.getNamedSqlId("findPaidOrderNumByTime");
-		return this.getSqlSession().selectOne(sqlId,params);
-	}
-
-	@Override
-	public int findUnpaidOrderNumByTime(String beginTime,String endTime,String created) {
-		MapContext params = MapContext.newOne();
-		params.put("beginTime", beginTime);
-		params.put("endTime", endTime);
-		params.put("created", created);
-		String sqlId = this.getNamedSqlId("findUnpaidOrderNumByTime");
-		return this.getSqlSession().selectOne(sqlId,params);
-	}
-
-	@Override
-	public int findDesignNumByCreated(String created) {
-		String sqlId = this.getNamedSqlId("findDesignNumByCreated");
-		return this.getSqlSession().selectOne(sqlId,created);
-	}
-
-	@Override
-	public PaginatedList<Map> findByConditions(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("findByConditions");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<Map> pageList =  (PageList)this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-	}
-
-	@Override
-	public Map findFactoryOrderInfoById(String orderId) {
-		String sqlId = this.getNamedSqlId("findFactoryOrderInfoById");
-		return this.getSqlSession().selectOne(sqlId,orderId);
-	}
-
-	@Override
-	public int findIsDesignNumByTime(MapContext params) {
-		String sqlId = this.getNamedSqlId("findIsDesignNumByTime");
-		return this.getSqlSession().selectOne(sqlId,params);
-	}
-
-
-
-	@Override
-	public List<CustomOrder> findOrderListByStatusList(List<Integer> statusList) {
-		String sqlId=this.getNamedSqlId("findOrderListByStatusList");
-		return this.getSqlSession().selectList(sqlId,statusList);
-	}
-
-	@Override
-	public List<MapContext> findCustomerOrderInfo(String userId, String companyId) {
-		String sqlId=this.getNamedSqlId("findCustomerOrderInfo");
-		MapContext mapContext=MapContext.newOne();
-		mapContext.put("customerId",userId);
-		mapContext.put("companyId",companyId);
-		return this.getSqlSession().selectList(sqlId,mapContext);
-	}
-
 	@Override
 	public List<MapContext> findOrderListByCidAndUid(String userId, String dealerId) {
 		String sqlId=this.getNamedSqlId("findOrderListByCidAndUid");
@@ -259,13 +165,6 @@ public class CustomOrderDaoImpl extends BaseDaoImpl<CustomOrder, String> impleme
 		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
-	@Override
-	public PaginatedList<Map> findFProcessOrderList(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("findFProcessOrderList");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<Map> pageList =  (PageList)this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-	}
 
 	@Override
 	public Map findFAppBaseInfoByOrderId(MapContext params) {
@@ -298,68 +197,101 @@ public class CustomOrderDaoImpl extends BaseDaoImpl<CustomOrder, String> impleme
 	}
 
 	@Override
-	public Map findShipmentsInfoByOrderId(String orderId) {
-		String sqlId = this.getNamedSqlId("findShipmentsInfoByOrderId");
+	public List<CustomOrder> findByCustomerIdAndCid(String uId, String branchId) {
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("uId",uId);
+		mapContext.put("branchId",branchId);
+		String sqlId=this.getNamedSqlId("findByCustomerIdAndCid");
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public List<CustomOrder> findByCustomerIdAndCidAndStatus(String uId, String branchId, Integer status) {
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("uId",uId);
+		mapContext.put("branchId",branchId);
+		mapContext.put("status",status);
+		String sqlId=this.getNamedSqlId("findByCustomerIdAndCidAndStatus");
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public CustomOrder findByUidAndBranchId(MapContext mapContext) {
+		String sqlId=this.getNamedSqlId("findByUidAndBranchId");
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public CustomOrder findByCidAndBranchId(String dealerId, String branchId) {
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("cId",dealerId);
+		mapContext.put("branchId",branchId);
+		String sqlId=this.getNamedSqlId("findByCidAndBranchId");
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public Integer findTodayOrderCount(MapContext param1) {
+
+		String sqlId=this.getNamedSqlId("findTodayOrderCount");
+		return this.getSqlSession().selectOne(sqlId,param1);
+	}
+
+	@Override
+	public Integer findTodayInvalidOrder(MapContext param2) {
+		String sqlId=this.getNamedSqlId("findTodayInvalidOrder");
+		return this.getSqlSession().selectOne(sqlId,param2);
+	}
+
+	@Override
+	public Integer findTodayEffectiveOrder(MapContext param2) {
+		String sqlId=this.getNamedSqlId("findTodayEffectiveOrder");
+		return this.getSqlSession().selectOne(sqlId,param2);
+	}
+
+	@Override
+	public PaginatedList<WxCustomOrderDto> findWxOrderList(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findWxOrderList");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<WxCustomOrderDto> pageList =  (PageList)this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public WxCustomerOrderInfoDto findWxOrderByorderId(String orderId) {
+		String sqlId=this.getNamedSqlId("findWxOrderByorderId");
 		return this.getSqlSession().selectOne(sqlId,orderId);
 	}
 
 	@Override
-	public PaginatedList<Map> findPaidOrderListByTime(PaginatedFilter filter) {
-		String sqlId = this.getNamedSqlId("findPaidOrderListByTime");
-		PageBounds pageBounds = this.toPageBounds(filter.getPagination(), filter.getSorts());
-		PageList<Map> pageList =  (PageList)this.getSqlSession().selectList(sqlId, filter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
+	public WxFactoryStatementDto statementWxFactory(String branchId) {
+		String sqlId=this.getNamedSqlId("statementWxFactory");
+		return this.getSqlSession().selectOne(sqlId,branchId);
 	}
 
 	@Override
-	public PaginatedList<Map> findUnpaidOrderListByTime(PaginatedFilter filter) {
-		String sqlId = this.getNamedSqlId("findUnpaidOrderListByTime");
-		PageBounds pageBounds = this.toPageBounds(filter.getPagination(), filter.getSorts());
-		PageList<Map> pageList =  (PageList)this.getSqlSession().selectList(sqlId, filter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
+	public WxDealerInfoDto selectDealerInfo(String companyId) {
+		String sqlId=this.getNamedSqlId("selectDealerInfo");
+		return this.getSqlSession().selectOne(sqlId,companyId);
 	}
 
 	@Override
-	public PaginatedList<Map> findIsDesignListByTime(PaginatedFilter filter) {
-		String sqlId = this.getNamedSqlId("findIsDesignListByTime");
-		PageBounds pageBounds = this.toPageBounds(filter.getPagination(), filter.getSorts());
-		PageList<Map> pageList =  (PageList)this.getSqlSession().selectList(sqlId, filter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
+	public OrderPrintTableDto findOrderPrintTable(MapContext mapContext) {
+		String sqlId=this.getNamedSqlId("findOrderPrintTable");
+		return this.getSqlSession().selectOne(sqlId,mapContext);
 	}
 
 	@Override
-	public List<MapContext> findByCid(String dealerId) {
-		String sqlId = this.getNamedSqlId("findByCid");
-		return this.getSqlSession().selectList(sqlId,dealerId);
+	public OfferPrintTableDto findOfferPrintTableInfo(String id) {
+		String sqlId = this.getNamedSqlId("findOfferPrintTableInfo");
+		return this.getSqlSession().selectOne(sqlId,id);
 	}
 
 	@Override
-	public Integer getAllByCreated(String beginTime, String endTime, String todayDate) {
-		MapContext params = MapContext.newOne();
-		params.put("beginTime", beginTime);
-		params.put("endTime", endTime);
-		params.put("created", todayDate);
-		String sqlId = this.getNamedSqlId("getAllByCreated");
-		return this.getSqlSession().selectOne(sqlId,params);
+	public Integer findOverdueOrderCount(String branchId) {
+		String sqlId = this.getNamedSqlId("findOverdueOrderCount");
+		return this.getSqlSession().selectOne(sqlId,branchId);
 	}
 
-	@Override
-	public List<CustomOrder> getAllOrderByCreated(String beginTime, String endTime, String todayDate) {
-		MapContext params = MapContext.newOne();
-		params.put("beginTime", beginTime);
-		params.put("endTime", endTime);
-		params.put("created", todayDate);
-		String sqlId = this.getNamedSqlId("getAllOrderByCreated");
-		return this.getSqlSession().selectList(sqlId,params);
-	}
 
-	@Override
-	public BigDecimal findPaidOrderAmountByTime(String beginTime, String endTime, String day) {
-		MapContext params = MapContext.newOne();
-		params.put("beginTime", beginTime);
-		params.put("endTime", endTime);
-		params.put("created", day);
-		String sqlId = this.getNamedSqlId("findPaidOrderAmountByTime");
-		return this.getSqlSession().selectOne(sqlId,params);
-	}
 }

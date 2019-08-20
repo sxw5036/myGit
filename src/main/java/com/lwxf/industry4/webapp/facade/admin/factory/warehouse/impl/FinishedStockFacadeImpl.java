@@ -4,10 +4,12 @@ import javax.annotation.Resource;
 
 import java.util.*;
 
+import com.lwxf.industry4.webapp.bizservice.customorder.CustomOrderLogService;
+import com.lwxf.industry4.webapp.common.enums.order.OrderStage;
+import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderLog;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.bizservice.customorder.CustomOrderFilesService;
 import com.lwxf.industry4.webapp.bizservice.customorder.CustomOrderService;
@@ -29,17 +31,19 @@ import com.lwxf.industry4.webapp.common.enums.storage.DispatchBillPlanStatus;
 import com.lwxf.industry4.webapp.common.enums.storage.FinishedStockStatus;
 import com.lwxf.industry4.webapp.common.exceptions.ErrorCodes;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
+import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.common.utils.excel.BaseExportExcelUtil;
+import com.lwxf.industry4.webapp.common.utils.excel.ExcelParam;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.DispatchBillPlanDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockItemDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderFiles;
-import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillPlan;
 import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillPlanItem;
 import com.lwxf.industry4.webapp.domain.entity.warehouse.FinishedStock;
 import com.lwxf.industry4.webapp.domain.entity.warehouse.FinishedStockItem;
@@ -74,6 +78,8 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 	private DispatchBillPlanItemService dispatchBillPlanItemService;
 	@Resource(name = "customOrderFilesService")
 	private CustomOrderFilesService customOrderFilesService;
+	@Resource(name = "customOrderLogService")
+	private CustomOrderLogService customOrderLogService;
 
 	@Override
 	public RequestResult findFinishedDto(MapContext mapContext, Integer pageNum, Integer pageSize) {
@@ -82,11 +88,18 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 		pagination.setPageNum(pageNum);
 		pagination.setPageSize(pageSize);
 		paginatedFilter.setPagination(pagination);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		paginatedFilter.setFilters(mapContext);
 		List<Map<String,String>> sorts=  new ArrayList<Map<String,String>>();
+//		Map<String,String> orderId = new HashMap<String,String>();
+//		orderId.put("orderId","desc");
+//		sorts.add(orderId);
 		Map<String,String> created = new HashMap<String,String>();
-		created.put("orderId","desc");
+		created.put("created","desc");
 		sorts.add(created);
+		Map<String,String> id = new HashMap<String,String>();
+		id.put("id","desc");
+		sorts.add(id);
 		paginatedFilter.setSorts(sorts);
 		return ResultFactory.generateRequestResult(this.finishedStockItemService.findListByFilter(paginatedFilter));
 	}
@@ -124,6 +137,15 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 			finishedStockItemDto.setFinishedStockId(finishedStockDto.getId());
 			this.finishedStockItemService.add(finishedStockItemDto);
 		}
+		//记录操作日志
+		CustomOrderLog log = new CustomOrderLog();
+		log.setCreated(new Date());
+		log.setCreator(WebUtils.getCurrUserId());
+		log.setName("订单打包中");
+		log.setStage(OrderStage.PACKAGING.getValue());
+		log.setContent("订单号："+customOrder.getNo()+" 中的产品正在打包中");
+		log.setCustomOrderId(customOrder.getId());
+		customOrderLogService.add(log);
 		return ResultFactory.generateSuccessResult();
 	}
 
@@ -187,20 +209,11 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 
 	@Override
 	@Transactional(value = "transactionManager")
-	public RequestResult updateItemById(String id, String itemId,MapContext mapContext,String storageId) {
-		FinishedStock finishedStock = this.finishedStockService.findById(id);
-		//判断成品库是否存在
-		if(finishedStock==null||!finishedStock.getStorageId().equals(storageId)){
-			return ResultFactory.generateResNotFoundResult();
-		}
+	public RequestResult updateItemById(String itemId,MapContext mapContext) {
 		FinishedStockItem finishedStockItem = this.finishedStockItemService.findById(itemId);
 		//判断item是否存在
 		if(finishedStockItem==null){
 			return ResultFactory.generateResNotFoundResult();
-		}
-		//判断是否已发货
-		if(finishedStockItem.getDelivered()!=null){
-			return ResultFactory.generateErrorResult(ErrorCodes.BIZ_DELIVERED_NOT_OPERATE_10082,AppBeanInjector.i18nUtil.getMessage("BIZ_DELIVERED_NOT_OPERATE_10082"));
 		}
 		mapContext.put(WebConstant.KEY_ENTITY_ID,itemId);
 		this.finishedStockItemService.updateByMapContext(mapContext);
@@ -230,19 +243,12 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 
 	@Override
 	@Transactional(value = "transactionManager")
-	public RequestResult itemWarehousing(String id, String itemId,String storageId,MapContext mapContext) {
-		FinishedStock finishedStock = this.finishedStockService.findById(id);
-		//判断成品库单是否存在
-		if(finishedStock==null||!finishedStock.getStorageId().equals(storageId)){
-			return ResultFactory.generateResNotFoundResult();
-		}
+	public RequestResult itemWarehousing(String itemId,MapContext mapContext) {
 		FinishedStockItem finishedStockItem = this.finishedStockItemService.findById(itemId);
 		//判断item是否存在
 		if(finishedStockItem==null){
 			return ResultFactory.generateResNotFoundResult();
 		}
-		//修改订单状态
-		this.finishedStockItemService.updateOrderStatusByFinishedStock(finishedStock);
 		mapContext.put(WebConstant.KEY_ENTITY_ID,itemId);
 		mapContext.put("ins",true);
 		this.finishedStockItemService.updateByMapContext(mapContext);
@@ -258,6 +264,7 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 		dispatchBillPlanDto.setStatus(DispatchBillPlanStatus.INCOMPLETE.getValue());
 		this.dispatchBillPlanService.add(dispatchBillPlanDto);
 		List itemIds = new ArrayList();
+		Set ids = new HashSet();
 		for(DispatchBillPlanItem dispatchBillPlanItem:dispatchBillPlanDto.getDispatchBillPlanItems()){
 			dispatchBillPlanItem.setStatus(DispatchBillPlanItemStatus.UNSHIPPED.getValue());
 			dispatchBillPlanItem.setDispatchBillPlanId(dispatchBillPlanDto.getId());
@@ -266,8 +273,14 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 			if(finishedStockItem==null||finishedStockItem.getIn().equals(false)||finishedStockItem.getShipped().equals(true)||finishedStockItem.getDelivered()!=null){
 				return ResultFactory.generateResNotFoundResult();
 			}
-			this.dispatchBillPlanItemService.add(dispatchBillPlanItem);
 			itemIds.add(dispatchBillPlanItem.getFinishedStockItemId());
+			ids.add(dispatchBillPlanItem.getFinishedStockItemId());
+		}
+		if(itemIds.size()!=ids.size()){
+			return ResultFactory.generateErrorResult(ErrorCodes.BIZ_NOT_ALLOW_OPERATION_10020,AppBeanInjector.i18nUtil.getMessage("BIZ_NOT_ALLOW_OPERATION_10020"));
+		}
+		for(DispatchBillPlanItem dispatchBillPlanItem:dispatchBillPlanDto.getDispatchBillPlanItems()){
+			this.dispatchBillPlanItemService.add(dispatchBillPlanItem);
 		}
 		//修改包裹状态为已创建配送计划
 		this.finishedStockItemService.updateShippedByIds(itemIds);
@@ -293,7 +306,7 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 		for (MultipartFile multipartFile : multipartFileList) {
 			UploadInfo uploadInfo = AppBeanInjector.baseFileUploadComponent.doUploadByModule(UploadType.FORMAL, multipartFile, UploadResourceType.CUSTOM_ORDER, id, itemId);
 			customOrderFiles.setPath(uploadInfo.getRelativePath());
-			customOrderFiles.setFullPath(uploadInfo.getRealPath());
+			customOrderFiles.setFullPath(WebUtils.getDomainUrl() + uploadInfo.getRelativePath());
 			customOrderFiles.setName(uploadInfo.getFileName());
 			customOrderFiles.setMime(uploadInfo.getFileMimeType().getRealType());
 			customOrderFiles.setOriginalMime(uploadInfo.getFileMimeType().getOriginalType());
@@ -315,6 +328,130 @@ public class FinishedStockFacadeImpl extends BaseFacadeImpl implements FinishedS
 		this.customOrderFilesService.deleteById(fileId);
 		//删除本地文件
 		AppBeanInjector.baseFileUploadComponent.deleteFileByDir(byId.getFullPath());
+		return ResultFactory.generateSuccessResult();
+	}
+
+	@Override
+	public RequestResult writeExcel(PaginatedFilter paginatedFilter, ExcelParam excelParam) {
+		List<Map<String,String>> sorts=  new ArrayList<Map<String,String>>();
+		Map<String,String> created = new HashMap<String,String>();
+		created.put("orderId","desc");
+		sorts.add(created);
+		paginatedFilter.setSorts(sorts);
+
+		new BaseExportExcelUtil().download("第一页",this.finishedStockItemService.findListMapByFilter(paginatedFilter).getRows(),excelParam);
+		return ResultFactory.generateSuccessResult();
+	}
+
+	@Override
+	public RequestResult findFinishedStockNos(String order,MapContext mapContext) {
+		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		Pagination pagination = new Pagination();
+		pagination.setPageNum(1);
+		pagination.setPageSize(100);
+		paginatedFilter.setPagination(pagination);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
+		paginatedFilter.setFilters(mapContext);
+		List<Map<String,String>> sorts=  new ArrayList<Map<String,String>>();
+		Map<String,String> created = new HashMap<String, String>();
+		if(order!=null){
+			if(order.equals("orderCreated")){
+				created.put("orderCreated","asc");
+			}else if(order.equals("consigneeName")){
+				created.put("consigneeName","desc");
+			}
+		}else {
+			created.put("finishedCreated","desc");
+		}
+		sorts.add(created);
+		paginatedFilter.setSorts(sorts);
+		PaginatedList<MapContext> result=this.finishedStockItemService.findFinishedStockNos(paginatedFilter);
+		return ResultFactory.generateRequestResult(result.getRows());
+	}
+
+	@Override
+	public RequestResult findFinishedStockCount(String branchId) {
+		MapContext mapContext=this.finishedStockService.findCountByBranchId(branchId);
+		List result=new ArrayList();
+		int a=0;
+		for(int i=0;i<3;i++){
+			Map map = new HashMap();
+			switch (a) {
+				case 	0:
+					map.put("name", "今日包装数");
+					map.put("value",mapContext.getTypedValue("baoZhuang",Integer.class));
+					a=a+1;
+					break;
+				case 1:
+					map.put("name", "今日包裹订单数");
+					map.put("value",mapContext.getTypedValue("orderNum",Integer.class));
+					a=a+1;
+					break;
+				case 2:
+					map.put("name", "今日入库数量");
+					map.put("value",mapContext.getTypedValue("ruKu",Integer.class));
+					a=a+1;
+					break;
+			}
+			result.add(map);
+		}
+		return ResultFactory.generateRequestResult(result);
+	}
+
+	@Override
+	@Transactional(value = "transactionManager")
+	public RequestResult addDispatchPlanByOrder(DispatchBillPlanDto dispatchBillPlanDto) {
+		List<String> orderIds = dispatchBillPlanDto.getOrderIds();
+		//查询这些订单下的包裹
+		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		Pagination pagination = new Pagination();
+		pagination.setPageSize(1);
+		pagination.setPageNum(999999999);
+		paginatedFilter.setPagination(pagination);
+		MapContext mapContext = new MapContext();
+		List<List<FinishedStockItemDto>> lists = new ArrayList<List<FinishedStockItemDto>>();
+		int pages = 0;
+		for(String orderId:orderIds){
+			mapContext.put("orderId",orderId);
+			paginatedFilter.setFilters(mapContext);
+			PaginatedList<FinishedStockItemDto> listByFilter = this.finishedStockItemService.findListByFilter(paginatedFilter);
+			lists.add(listByFilter.getRows());
+			pages+=listByFilter.getRows().size();
+		}
+		if(pages!=0){
+			dispatchBillPlanDto.setBranchId(WebUtils.getCurrBranchId());
+			dispatchBillPlanDto.setCreated(DateUtil.getSystemDate());
+			dispatchBillPlanDto.setCreator(WebUtils.getCurrUserId());
+			dispatchBillPlanDto.setNum(pages);
+			dispatchBillPlanDto.setStatus(DispatchBillPlanStatus.INCOMPLETE.getValue());
+			this.dispatchBillPlanService.add(dispatchBillPlanDto);
+			List itemIds = new ArrayList();
+			Set ids = new HashSet();
+			for(List<FinishedStockItemDto> finishedStockItemDtoList:lists){
+				for(FinishedStockItemDto finishedStockItemDto :finishedStockItemDtoList){
+					DispatchBillPlanItem dispatchBillPlanItem = new DispatchBillPlanItem();
+					dispatchBillPlanItem.setStatus(DispatchBillPlanItemStatus.UNSHIPPED.getValue());
+					dispatchBillPlanItem.setDispatchBillPlanId(dispatchBillPlanDto.getId());
+					dispatchBillPlanItem.setFinishedStockItemId(finishedStockItemDto.getId());
+					dispatchBillPlanDto.getDispatchBillPlanItems().add(dispatchBillPlanItem);
+					//判断包裹是否存在 以及包裹是否已入库 并且 未发货 未创建配送计划
+					FinishedStockItem finishedStockItem = this.finishedStockItemService.findById(dispatchBillPlanItem.getFinishedStockItemId());
+					if(finishedStockItem==null||finishedStockItem.getIn().equals(false)||finishedStockItem.getShipped().equals(true)||finishedStockItem.getDelivered()!=null){
+						return ResultFactory.generateResNotFoundResult();
+					}
+					itemIds.add(dispatchBillPlanItem.getFinishedStockItemId());
+					ids.add(dispatchBillPlanItem.getFinishedStockItemId());
+				}
+			}
+			if(itemIds.size()!=ids.size()){
+				return ResultFactory.generateErrorResult(ErrorCodes.BIZ_NOT_ALLOW_OPERATION_10020,AppBeanInjector.i18nUtil.getMessage("BIZ_NOT_ALLOW_OPERATION_10020"));
+			}
+			for(DispatchBillPlanItem dispatchBillPlanItem:dispatchBillPlanDto.getDispatchBillPlanItems()){
+				this.dispatchBillPlanItemService.add(dispatchBillPlanItem);
+			}
+			//修改包裹状态为已创建配送计划
+			this.finishedStockItemService.updateShippedByIds(itemIds);
+		}
 		return ResultFactory.generateSuccessResult();
 	}
 

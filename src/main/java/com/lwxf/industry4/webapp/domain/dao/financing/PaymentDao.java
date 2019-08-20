@@ -5,12 +5,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.financing.PaymentDto;
-import com.lwxf.industry4.webapp.domain.dto.financing.PaymentDtoForApp;
-import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.*;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.PaymentPrintTableDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
@@ -34,48 +34,13 @@ public interface PaymentDao extends BaseDao<Payment, String> {
 
 	PaymentDto findByPaymentId (String paymentId);
 
-	PaymentDto findByPId (String paymentId);
-
-	List<Payment> findByCompanyIdAndStatusAndType(MapContext params);
-
-	PaginatedList<Payment> findByCompanyIdAndStatusAndType(PaginatedFilter paginatedFilter);
-
-	PaginatedList<PaymentDtoForApp> selectByFilterForApp(PaginatedFilter paginatedFilter);
-
-	PaginatedList<PaymentDtoForApp> selectPaymentByCompanyIdForApp(PaginatedFilter paginatedFilter);
-
-	List<Payment> findByOrderIdAndStatus(MapContext params);
-
 	int updateStatusByOrderIdAndFund(String orderId, Integer funds, Integer status);
 
 	PaginatedList<PaymentDto> findListByPaginateFilter(PaginatedFilter paginatedFilter);
 
-    PaymentDto findByOrderIdAndTypeAndFundsAndStatus(MapContext orderIdAndType);
+    List<Map> findByOrderIdAndType(MapContext orderIdAndType);
 
-    /*
-    F端app财务审核首页上方统计
-     */
-	FinanceCountDto selectFinanceCountForApp();
-	/*
-    F端app财务审核首页下测列表
-     */
-	List<VerifyPaymentDto> selectVerifyPaymentList();
-	/*
-	货款审核页面显示数据
-	 */
-	VerifyOrderPriceDto selectVerifyOrderPriceInfo(String paymentId);
-	/*
-	设计费审核页面显示数据
-	 */
-	VerifyDesignPriceDto selectVerifyDesignPriceInfo(String paymentId);
-	/*
-	 F端app审核货款
-	 */
-	int verifyOrderPrice(MapContext map);
-	/*
-	 F端app审核货款
-	 */
-	int verifyDesignPrice(MapContext map);
+	int deleteByOrderId(String orderId);
 
 	/**
 	 * 财务-F端app经销商财务上测统计
@@ -91,7 +56,12 @@ public interface PaymentDao extends BaseDao<Payment, String> {
 	 */
 	CompanyFinanceInfoDto getCompanyFinanceInfoByPaymentId(String paymentId);
 
-    List<Map> findByOrderIdAndType(MapContext orderIdAndType);
+	PaymentDto findByOrderIdAndFunds(MapContext params);
 
-    BigDecimal findByTypeAndCreated(MapContext params);
+	PaymentDto findOrderFinanceInfo(String paymentId);
+
+	MapContext countPaymentForPageIndex(String branchId);
+	PaymentPrintTableDto findPrintTableById(String id);
+
+	BigDecimal findTodayAmountByType(Integer type);
 }

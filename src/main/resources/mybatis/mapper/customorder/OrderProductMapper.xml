@@ -6,20 +6,25 @@
         <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
         <result column="type" property="type" jdbcType="TINYINT" />
         <result column="series" property="series" jdbcType="TINYINT" />
-        <result column="color" property="color" jdbcType="VARCHAR" />
+        <result column="door_color" property="doorColor" jdbcType="VARCHAR" />
+        <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
         <result column="door" property="door" jdbcType="VARCHAR" />
         <result column="notes" property="notes" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="DATE" />
         <result column="creator" property="creator" jdbcType="CHAR" />
         <result column="update_time" property="updateTime" jdbcType="DATE" />
         <result column="update_user" property="updateUser" jdbcType="CHAR" />
+        <result column="after_apply_id" property="afterApplyId" jdbcType="CHAR" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="install" property="install" jdbcType="VARCHAR" />
     </resultMap>
     <resultMap id="OrderProductDtoMap" type="com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto">
         <id column="id" property="id" jdbcType="CHAR" />
         <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
         <result column="type" property="type" jdbcType="TINYINT" />
         <result column="series" property="series" jdbcType="TINYINT" />
-        <result column="color" property="color" jdbcType="VARCHAR" />
+        <result column="door_color" property="doorColor" jdbcType="VARCHAR" />
+        <result column="body_color" property="bodyColor" jdbcType="VARCHAR" />
         <result column="door" property="door" jdbcType="VARCHAR" />
         <result column="notes" property="notes" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="DATE" />
@@ -28,14 +33,19 @@
         <result column="update_user" property="updateUser" jdbcType="CHAR" />
         <result column="creatorName" property="creatorName"/>
         <result column="updateUserName" property="updateUserName"/>
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="seriesName" property="seriesName"/>
+        <result column="typeName" property="typeName"/>
+        <result column="after_apply_id" property="afterApplyId" jdbcType="CHAR" />
+        <result column="install" property="install" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="columns">
-id, custom_order_id, type, series, color, door, notes, created, creator, update_time, update_user
+id, custom_order_id, type, series, door_color,body_color, door, notes, created, creator, update_time, update_user,price,install
 </sql>
 
     <sql id="columnDtos">
-o.id, o.custom_order_id, o.type, o.series, o.color, o.door, o.notes, o.created, o.creator, o.update_time, o.update_user,u.name creatorName,uu.name updateUserName
+o.id, o.custom_order_id, o.type, o.series, o.door_color,o.body_color, o.door, o.notes, o.created, o.creator, o.update_time, o.update_user,u.name creatorName,uu.name updateUserName,o.install,o.price,b.value typeName,bb.value seriesName
 </sql>
 
     <select id="selectById" resultMap="OrderProductMap" parameterType="String">
@@ -60,8 +70,11 @@ FROM   order_product
 <if test="series != null">
     AND series = #{series}
 </if>
-<if test="color != null">
-    AND color = #{color}
+<if test="doorColor != null">
+    AND door_color = #{doorColor}
+</if>
+<if test="body_color != null">
+    AND body_color = #{bodyColor}
 </if>
 <if test="door != null">
     AND door = #{door}
@@ -87,7 +100,7 @@ FROM   order_product
 
     <select id="findByOrderId" resultType="java.util.Map">
         select
-        id,color,door,notes,
+        id,door_color doorColor,body_color bodyColor,door,notes,
         (case type
         when 0 then '橱柜(J)'
         when 1 then '衣柜(B)'
@@ -112,8 +125,8 @@ FROM   order_product
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-order_product(id, custom_order_id, type, series, color, door, notes, created, creator, update_time, update_user)
-       VALUES(#{id}, #{customOrderId}, #{type}, #{series}, #{color}, #{door}, #{notes}, #{created}, #{creator}, #{updateTime}, #{updateUser})
+order_product(id, custom_order_id, type, series, door_color,body_color, door, notes, created, creator, update_time, update_user,price,after_apply_id,install)
+       VALUES(#{id}, #{customOrderId}, #{type}, #{series}, #{doorColor},#{bodyColor}, #{door}, #{notes}, #{created}, #{creator}, #{updateTime}, #{updateUser},#{price},#{afterApplyId},#{install})
 </insert>
 
     <update id="updateByMapContext">
@@ -125,8 +138,11 @@ UPDATE order_product
     <if test="_parameter.containsKey('series') and series != null">
     series = #{series},
 </if>
-    <if test="_parameter.containsKey('color')">
-    color = #{color},
+    <if test="_parameter.containsKey('doorColor')">
+        door_color = #{doorColor},
+</if>
+    <if test="_parameter.containsKey('bodyColor')">
+        body_color = #{bodyColor},
 </if>
     <if test="_parameter.containsKey('door')">
     door = #{door},
@@ -138,8 +154,17 @@ UPDATE order_product
     update_time = #{updateTime},
 </if>
     <if test="_parameter.containsKey('updateUser')">
-    update_user = #{updateUser}
+    update_user = #{updateUser},
 </if>
+    <if test="_parameter.containsKey('afterApplyId')">
+        after_apply_id = #{afterApplyId},
+    </if>
+    <if test="_parameter.containsKey('price')">
+    price = #{price},
+</if>
+    <if test="_parameter.containsKey('price')">
+        install = #{install}
+    </if>
 </trim></set>
 WHERE  id = #{id}
 </update>
@@ -149,11 +174,126 @@ DELETE FROM   order_product
 WHERE  id = #{id}
 </delete>
     <select id="findOneById" resultMap="OrderProductDtoMap">
-      select <include refid="columnDtos"/> from order_product o left join user u on o.creator = u.id left join user uu on o.update_user = uu.id where o.id = #{id}
+      select <include refid="columnDtos"/>
+        from order_product o
+        left join user u on o.creator = u.id
+        left join user uu on o.update_user = uu.id
+        left join basecode b on b.code = o.type
+        left join basecode bb on bb.code = o.series
+        where o.id = #{id} and b.type = 'orderProductType' and bb.type = 'orderProductSeries'
     </select>
 
     <select id="findListByOrderId" resultMap="OrderProductDtoMap">
-        select <include refid="columnDtos"/> from order_product o left join user u on o.creator = u.id left join user uu on o.update_user = uu.id where o.custom_order_id = #{id}
+        select <include refid="columnDtos"/>
+        from order_product o
+        left join user u on o.creator = u.id
+        left join user uu on o.update_user = uu.id
+        left join basecode b on b.code = o.type  and b.type = 'orderProductType'
+        left join basecode bb on o.series= bb.code and bb.type = 'orderProductSeries'
+        where o.custom_order_id = #{id}
+    </select>
+    <select id="findCountNumByCreatedAndType" resultType="java.lang.Integer">
+        select  count(id) from
+        order_product
+        <where><trim prefixOverrides="and">
+            <if test="beginTime!=null">
+                and created &gt;= #{beginTime}
+            </if>
+            <if test="endTime!=null">
+                and (created &lt;= #{endTime} or created like '%${endTime}%')
+            </if>
+            <if test="created!=null">
+                and created like '%${created}%'
+            </if>
+            <if test="type!=null">
+                and type = #{type}
+            </if>
+            <if test="series!=null">
+                and series = #{series}
+            </if>
+        </trim></where>
+    </select>
+
+    <select id="findCountPriceByOrderId" resultType="decimal">
+        select IFNULL(sum(price),0) from order_product where custom_order_id = #{id}
+    </select>
+
+    <select id="findCountPriceByCreatedAndStatus" resultType="java.math.BigDecimal">
+        select sum(op.price)
+        from order_product op
+        right join custom_order co on op.custom_order_id = co.id
+        <where><trim prefixOverrides="and">
+            <if test="beginTime!=null">
+                and op.created &gt;= #{beginTime}
+            </if>
+            <if test="endTime!=null">
+                and (op.created &lt;= #{endTime} or op.created like '%${endTime}%')
+            </if>
+            <if test="created!=null">
+                and op.created like '%${created}%'
+            </if>
+            <if test="type!=null">
+                and op.type = #{type}
+            </if>
+            <if test="series!=null">
+                and op.series = #{series}
+            </if>
+            <if test="status!=null">
+                and co.status &gt;= #{status}
+            </if>
+        </trim></where>
+
+
+
+    </select>
+    <select id="findCountNumByCreatedAndStatus" resultType="java.lang.Integer">
+        select count(op.id)
+        from order_product op
+        right join custom_order co on op.custom_order_id = co.id
+        <where><trim prefixOverrides="and">
+            <if test="beginTime!=null">
+                and op.created &gt;= #{beginTime}
+            </if>
+            <if test="endTime!=null">
+                and (op.created &lt;= #{endTime} or op.created like '%${endTime}%')
+            </if>
+            <if test="created!=null">
+                and op.created like '%${created}%'
+            </if>
+            <if test="type!=null">
+                and op.type = #{type}
+            </if>
+            <if test="series!=null">
+                and op.series = #{series}
+            </if>
+            <if test="status!=null">
+                and co.status &gt;= #{status}
+            </if>
+        </trim></where>
+    </select>
+
+    <delete id="deleteByOrderId">
+        delete from order_product where custom_order_id = #{orderId}
+    </delete>
+
+    <select id="findProductsByOrderId" resultMap="OrderProductDtoMap">
+        select <include refid="columnDtos"/>
+        from order_product o
+        left join user u on o.creator = u.id
+        left join user uu on o.update_user = uu.id
+        left join basecode b on b.code = o.type
+        left join basecode bb on bb.code = o.series
+        where (o.custom_order_id=#{id} or o.after_apply_id = #{id}) and b.type = 'orderProductType' and bb.type = 'orderProductSeries'
+    </select>
+
+    <select id="findListByAftersaleId" resultMap="OrderProductDtoMap">
+        select <include refid="columnDtos"/>
+        from order_product o
+        left join user u on o.creator = u.id
+        left join user uu on o.update_user = uu.id
+        left join basecode b on b.code = o.type
+        left join basecode bb on bb.code = o.series
+        where o.after_apply_id=#{id} and b.type = 'orderProductType' and bb.type = 'orderProductSeries'
     </select>
 
 </mapper>

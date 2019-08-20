@@ -176,4 +176,16 @@ public class FileMimeTypeUtil extends MimeTypeUtil {
 
 		return isLegalFileMimeType(configuration.getUploadVideoMimeRange(),videoType);
 	}
+
+	public static boolean isLegalExcelWordType(MultipartFile multipartFile) {
+		FileMimeType fileMimeType = doFileMimeType(multipartFile);
+		return isLegalExcelWordType(fileMimeType.getOriginalType());
+	}
+
+	public static boolean isLegalExcelWordType(String excelWordType){
+		if(LwxfStringUtils.isBlank(excelWordType)){
+
+		}
+		return false;
+	}
 }

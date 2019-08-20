@@ -66,4 +66,10 @@ public class CustomOrderDemandDaoImpl extends BaseDaoImpl<CustomOrderDemand, Str
 		String sqlId = this.getNamedSqlId("findListByOrderId");
 		return this.getSqlSession().selectList(sqlId,id);
 	}
+
+	@Override
+	public CustomOrderDemand findByProductId(String id) {
+		String sqlId = this.getNamedSqlId("findByProductId");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
 }

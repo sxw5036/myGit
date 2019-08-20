@@ -25,8 +25,12 @@ public class Configuration {
 
 	@Value("${lwxf.company.id}")
 	private String companyId;
-	@Value("${lwxf.contentPath}")
-	private String contentPath;
+	@Value("${lwxf.scheme.contentPath}")
+	private String schemeContentPath;
+	@Value("${lwxf.activition.contentPath}")
+	private String activitionContentPath;
+	@Value("${lwxf.contention.contentPath}")
+	private String contentionContentPath;
 //	@Value("${server.session.timeout:1800}")
 //	private int sessionTimeOut;
 	@Value("${ch.system.task.copy.limit: 500}")
@@ -150,8 +154,16 @@ public class Configuration {
 		return this.companyId;
 	}
 
-	public String getContentPath() {
-		return contentPath;
+	public String getSchemeContentPath() {
+		return schemeContentPath;
+	}
+
+	public String getActivitionContentPath() {
+		return activitionContentPath;
+	}
+
+	public String getContentionContentPath() {
+		return contentionContentPath;
 	}
 
 	/*public int getSessionTimeOut() {

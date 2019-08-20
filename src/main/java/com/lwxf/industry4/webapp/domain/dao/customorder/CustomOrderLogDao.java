@@ -2,6 +2,7 @@ package com.lwxf.industry4.webapp.domain.dao.customorder;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
@@ -28,4 +29,7 @@ public interface CustomOrderLogDao extends BaseDao<CustomOrderLog, String> {
 
 	List<CustomOrderLogDto> findByOrderIdAndState(String orderId, Integer stage);
 
+	List<CustomOrderLog> findByOrderId(String orderId);
+
+	PaginatedList<Map> findMessageOrderInfo(PaginatedFilter paginatedFilter);
 }

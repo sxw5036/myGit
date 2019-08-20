@@ -4,6 +4,11 @@ import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.facade.base.BaseFacade;
 import com.lwxf.mybatis.utils.MapContext;
 
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.web.multipart.MultipartFile;
+
 /**
  * 功能：
  *
@@ -31,5 +36,18 @@ public interface FinanceFacade extends BaseFacade {
 
 	RequestResult updateDealerPay(String id);
 
-	RequestResult updateCoordinationPay(String id);
+	RequestResult updateCoordinationPay(String id,MapContext mapContext);
+
+	RequestResult updateCustomOrdersPay(String id, MapContext map);
+
+
+	RequestResult findOrderFinanceInfo(String paymentId);
+
+	RequestResult findPaymentInfo(String id);
+
+	RequestResult findFinanceOverview();
+
+	RequestResult uploadFiles(String id, List<MultipartFile> multipartFileList);
+
+	RequestResult deleteFile(String fileId);
 }

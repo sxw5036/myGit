@@ -103,6 +103,9 @@ FROM   (select p.*,u.name creatorName from
             <if test="storageId != null">
                 AND storage_id = #{storageId}
             </if>
+            <if test="branchId != null">
+                AND branch_id = #{branchId}
+            </if>
         </trim></where>
         )
         p left join company com on p.supplier_id = com.id

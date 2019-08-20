@@ -42,7 +42,27 @@ public class CityAreaFacadeImpl extends BaseFacadeImpl implements CityAreaFacade
     }
 
 
-
+    @Override
+    public RequestResult findParentCityById(String id) {
+        MapContext map = MapContext.newOne();
+        CityArea cityarea = cityAreaService.findById(id);
+        String str = id.substring(2,6);
+        String str2 = id.substring(4,6);
+        if(id.substring(2,6).equals("0000")){
+            map.put("province",cityarea);
+        }else{
+            if(id.substring(4,6).equals("00")){
+                map.put("province",cityAreaService.findById(cityarea.getParentId()));
+                map.put("city",cityarea);
+            }else{
+                CityArea city = cityAreaService.findById(cityarea.getParentId());
+                map.put("province",cityAreaService.findById(city.getParentId()));
+                map.put("city",city);
+                map.put("area",cityarea);
+            }
+        }
+        return ResultFactory.generateRequestResult(map);
+    }
 
     @Override
     public RequestResult selectCityAreaList(Integer pageNum,Integer pageSize,MapContext params) {

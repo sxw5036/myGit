@@ -4,8 +4,10 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderDesign;
+import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderFiles;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 功能：
@@ -22,6 +24,10 @@ public class CustomOrderDesignDto extends CustomOrderDesign {
     private String designName;//设计师名称
     @ApiModelProperty(value = "设计师电话")
     private String designMobile;//设计师电话
+    @ApiModelProperty(value = "设计单状态")
+    private String statusName;
+    @ApiModelProperty(value = "设计单资源集合")
+    private List<CustomOrderFiles> fileList;
 
     public String getDesignName() {
         return designName;
@@ -39,5 +45,20 @@ public class CustomOrderDesignDto extends CustomOrderDesign {
         this.designMobile = designMobile;
     }
 
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public List<CustomOrderFiles> getFileList() {
+        return fileList;
+    }
+
+    public void setFileList(List<CustomOrderFiles> fileList) {
+        this.fileList = fileList;
+    }
 }
 

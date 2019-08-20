@@ -31,4 +31,5 @@ public interface ProductFacade extends BaseFacade {
 	RequestResult findProductInfo(String id);
 
 	RequestResult deleteFile(String productId, String fileId);
+
 }

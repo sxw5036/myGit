@@ -1,6 +1,7 @@
 package com.lwxf.industry4.webapp.facade.admin.factory.customermng;
 
 import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.domain.entity.customer.CompanyCustomer;
 import com.lwxf.industry4.webapp.facade.base.BaseFacade;
 import com.lwxf.mybatis.utils.MapContext;
 
@@ -14,9 +15,13 @@ import com.lwxf.mybatis.utils.MapContext;
  */
 public interface CustomerFacade extends BaseFacade {
 
-    RequestResult findByClient(String companyId,String condition,Integer pageSize,Integer pageNum);
+    RequestResult findByClient(MapContext mapContext,Integer pageSize,Integer pageNum);
 
-    RequestResult addCustomer(String companyId, MapContext mapContext, String uid);
+    RequestResult addCustomer(CompanyCustomer customer, String uid);
 
 	RequestResult updateClient(String cid, MapContext mapContext);
+
+	RequestResult findClientInfo(String id);
+
+	RequestResult findCustomerCount(String branchId);
 }

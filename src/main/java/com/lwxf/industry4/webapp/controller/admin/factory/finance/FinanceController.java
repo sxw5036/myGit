@@ -4,28 +4,27 @@ import io.swagger.annotations.*;
 
 import javax.annotation.Resource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
-import com.lwxf.industry4.webapp.common.enums.company.ProduceOrderPay;
-import com.lwxf.industry4.webapp.common.enums.customorder.ProduceOrderState;
+import com.lwxf.commons.json.JsonMapper;
+import com.lwxf.commons.utils.LwxfStringUtils;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentFunds;
-import com.lwxf.industry4.webapp.common.enums.financing.PaymentStatus;
-import com.lwxf.industry4.webapp.common.enums.financing.PaymentType;
-import com.lwxf.industry4.webapp.common.enums.order.ProduceOrderType;
 import com.lwxf.industry4.webapp.common.enums.order.ProduceOrderWay;
+import com.lwxf.industry4.webapp.common.exceptions.ErrorCodes;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
-import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.common.utils.FileMimeTypeUtil;
 import com.lwxf.industry4.webapp.domain.dto.financing.PaymentDto;
-import com.lwxf.industry4.webapp.domain.entity.customorder.ProduceOrder;
+import com.lwxf.industry4.webapp.domain.entity.financing.Payment;
+import com.lwxf.industry4.webapp.domain.entity.financing.PaymentFiles;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.facade.admin.factory.finance.FinanceFacade;
-import com.lwxf.industry4.webapp.facade.app.dealer.order.OrderFacade;
+import com.lwxf.industry4.webapp.facade.admin.factory.dealer.OrderFacade;
 import com.lwxf.mybatis.utils.MapContext;
 
 /**
@@ -62,6 +61,7 @@ public class FinanceController {
                                                @RequestParam(required = false)@ApiParam(value = "状态") Integer status,
                                                @RequestParam(required = false)@ApiParam(value = "订单编号") String orderNo,
                                                @RequestParam(required = false)@ApiParam(value = "数据量") Integer pageSize,
+                                               @RequestParam(required = false)@ApiParam(value = "客户手机号")String customerTel,
                                                @RequestParam(required = false)@ApiParam(value = "款项") Integer funds) {
 
         if (null == pageSize) {
@@ -70,10 +70,17 @@ public class FinanceController {
         if (null == pageNum) {
             pageNum = 1;
         }
-        MapContext mapContext = this.createMapContext(type, companyId, null, null, null, null, null, orderNo, null,status,funds);
+        MapContext mapContext = this.createMapContext(type, companyId, null, null, null, null, null, orderNo, null,status,funds,customerTel,null);
         return this.financeFacade.findOrderFinanceList(mapContext, pageNum, pageSize);
     }
 
+    @GetMapping("customorders/{paymentId}")
+    @ApiOperation(value = "支付记录详情" ,notes = "支付记录详情",response = PaymentDto.class)
+    private String findOrderFinanceInfo(@PathVariable String paymentId){
+        JsonMapper jsonMapper=JsonMapper.createAllToStringMapper();
+        RequestResult result=this.financeFacade.findOrderFinanceInfo(paymentId);
+        return jsonMapper.toJson(result);
+    }
     /**
      * 查询待审批的采购单列表
      *
@@ -99,7 +106,7 @@ public class FinanceController {
             pageNum = 1;
         }
 
-        MapContext mapContext = this.createMapContext(null, null, name, supplierId, batch, storageId, null, null, null,null,null);
+        MapContext mapContext = this.createMapContext(null, null, name, supplierId, batch, storageId, null, null, null,null,null,null,null);
         return this.financeFacade.findPurchaseList(mapContext, pageNum, pageSize);
     }
 
@@ -173,7 +180,7 @@ public class FinanceController {
         if (null == pageNum) {
             pageNum = 1;
         }
-        MapContext mapContext = this.createMapContext(null, null, name, null, null, null, leaderTel, no, leaderName,null,null);
+        MapContext mapContext = this.createMapContext(null, null, name, null, null, null, leaderTel, no, leaderName,null,null,null,null);
         return this.financeFacade.findSupplierList(mapContext, pageNum, pageSize);
     }
 
@@ -210,7 +217,7 @@ public class FinanceController {
         if (null == pageNum) {
             pageNum = 1;
         }
-        MapContext mapContext = this.createMapContext(type, null, null, null, null, null, null, no, null,null,null);
+        MapContext mapContext = this.createMapContext(type, null, null, null, null, null, null, no, null,null,null,null,null);
         return this.financeFacade.findAftersaleList(mapContext, pageNum, pageSize);
     }
 
@@ -235,7 +242,7 @@ public class FinanceController {
         if (null == pageNum) {
             pageNum = 1;
         }
-        MapContext mapContext = this.createMapContext(null, null, name, null, null, null, null, no, null,null,null);
+        MapContext mapContext = this.createMapContext(null, null, name, null, null, null, null, no, null,null,null,null,null);
         return this.financeFacade.findDealerList(mapContext, pageNum, pageSize);
     }
 
@@ -261,15 +268,23 @@ public class FinanceController {
             @ApiImplicitParam(value = "页码",name = "pageNum",dataType = "int",paramType = "query"),
             @ApiImplicitParam(value = "订单编号",name = "orderNo",dataType = "string",paramType = "query"),
             @ApiImplicitParam(value = "页数",name = "pageSize",dataType = "int", paramType = "query"),
-			@ApiImplicitParam(name = "no",value = "生产编号",dataType = "string",paramType = "query")
+			@ApiImplicitParam(name = "no",value = "生产编号",dataType = "string",paramType = "query"),
+			@ApiImplicitParam(name = "produceState",value = "生产单状态 0 未开始 1 生产中 2 已完成",dataType = "string",paramType = "query"),
+			@ApiImplicitParam(name = "pay",value = "是否已付款  true 已付款 false 未付款",dataType = "string",paramType = "query")
     })
     @GetMapping("/coordination")
     private RequestResult findCoordinationList(@RequestParam(required = false,defaultValue = "1") Integer pageNum,
                                                @RequestParam(required = false) String orderNo,
                                                @RequestParam(required = false) String no,
+                                               @RequestParam(required = false) Integer produceState,
+                                               @RequestParam(required = false) Boolean pay,
                                                @RequestParam(required = false,defaultValue = "10") Integer pageSize){
-		MapContext mapContext = this.createProduceMapContext(no,orderNo,ProduceOrderWay.COORDINATION.getValue(),null,ProduceOrderState.NOT_YET_BEGUN.getValue(),ProduceOrderPay.NOT_PAY.getValue());
-		return this.orderFacade.findProducesList(mapContext,pageNum,pageSize);
+		MapContext mapContext = this.createProduceMapContext(no,orderNo,ProduceOrderWay.COORDINATION.getValue(),null,produceState,pay);
+        List<Map<String,String>> sorts = new ArrayList<Map<String, String>>();
+        Map<String,String> paySorts = new HashMap<String, String>();
+        paySorts.put("is_pay","asc");
+        sorts.add(paySorts);
+        return this.orderFacade.findProducesList(mapContext,pageNum,pageSize,sorts);
     }
 
     /**
@@ -281,11 +296,81 @@ public class FinanceController {
             @ApiImplicitParam(value = "外协单主键ID",name = "id",dataType = "int",paramType = "path")
     })
     @PutMapping("/coordination/{id}")
-    private RequestResult updateCoordinationPay(@PathVariable String id){
-        return this.financeFacade.updateCoordinationPay(id);
+    private RequestResult updateCoordinationPay(@PathVariable String id,@RequestBody MapContext map){
+        return this.financeFacade.updateCoordinationPay(id,map);
     }
 
-	private MapContext createProduceMapContext(String no, String orderNo, Integer way, Integer type,Integer state,boolean pay) {
+    /**
+     * 订单货款或者 设计费 支付记录 审核
+     * @param id
+     * @return
+     */
+    @PutMapping("/customorders/{id}")
+    @ApiOperation(value = "订单货款或者 设计费 支付记录 审核",notes = "订单货款或者 设计费 支付记录 审核")
+    private RequestResult updateCustomOrdersPay(@PathVariable@ApiParam(value = "支付记录主键ID")String id, @RequestBody MapContext map){
+        return this.financeFacade.updateCustomOrdersPay(id,map);
+    }
+
+    @GetMapping
+    @ApiOperation(value = "查询支付记录",notes = "查询支付记录")
+    private RequestResult findPayemntList(@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize
+    ,@RequestParam(required = false)@ApiParam(value = "状态") Integer status
+    ,@RequestParam(required = false)@ApiParam(value = "订单编号") String orderNo
+    ,@RequestParam(required = false)@ApiParam(value = "类型") Integer type
+    ,@RequestParam(required = false)@ApiParam(value = "公司Id") String companyId
+    ,@RequestParam(required = false)@ApiParam(value = "款项") Integer funds){
+        MapContext mapContext = this.createMapContext(type,companyId,null,null,null,null,null,null,null,status,funds,null,orderNo);
+        return this.financeFacade.findOrderFinanceList(mapContext, pageNum, pageSize);
+    }
+
+    @GetMapping("/overview")
+    @ApiOperation(value = "查询财务审核统计",notes = "查询财务审核统计")
+    private RequestResult findFinanceOverview(){
+        return this.financeFacade.findFinanceOverview();
+    }
+
+
+    /**
+     * 上传支付审核记录附件
+     * @param id
+     * @param multipartFileList
+     * @return
+     */
+    @PostMapping("/{id}/files")
+    @ApiOperation(value = "上传支付审核记录附件",notes = "上传支付审核记录附件",response = PaymentFiles.class)
+    private RequestResult uploadFiles(@PathVariable@ApiParam(value = "支付记录主键ID") String id, @RequestBody List<MultipartFile> multipartFileList){
+        Map<String, String> result = new HashMap<>();
+        if (multipartFileList == null || multipartFileList.size() == 0) {
+            result.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+            return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, result);
+        }
+        for (MultipartFile multipartFile : multipartFileList) {
+            if (multipartFile == null) {
+                result.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+            } else if (!FileMimeTypeUtil.isLegalImageType(multipartFile)) {
+                result.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_ILLEGAL_ARGUMENT"));
+            } else if (multipartFile.getSize() > 1024 * 1024 * AppBeanInjector.configuration.getUploadBackgroundMaxsize()) {
+                return ResultFactory.generateErrorResult(ErrorCodes.BIZ_FILE_SIZE_LIMIT_10031, LwxfStringUtils.format(AppBeanInjector.i18nUtil.getMessage("BIZ_FILE_SIZE_LIMIT_10031"), AppBeanInjector.configuration.getUploadBackgroundMaxsize()));
+            }
+            if (result.size() > 0) {
+                return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, result);
+            }
+        }
+        return this.financeFacade.uploadFiles(id, multipartFileList);
+    }
+
+    /**
+     * 删除支付记录资源文件
+     * @param fileId
+     * @return
+     */
+    @DeleteMapping("/files/{fileId}")
+    @ApiOperation(value = "删除支付记录资源文件",notes = "删除支付记录资源文件")
+    private RequestResult deleteFile(@PathVariable@ApiParam(value = "资源文件ID") String fileId){
+        return this.financeFacade.deleteFile(fileId);
+    }
+
+	private MapContext createProduceMapContext(String no, String orderNo, Integer way, Integer type,Integer state,Boolean pay) {
 		MapContext mapContext = new MapContext();
 		if(no!=null&&!no.trim().equals("")){
 			mapContext.put(WebConstant.STRING_NO,no);
@@ -302,11 +387,13 @@ public class FinanceController {
 		if(state!=null){
 			mapContext.put(WebConstant.KEY_ENTITY_STATE,Arrays.asList(state));
 		}
-		mapContext.put("pay",pay);
+		if(pay!=null){
+            mapContext.put("pay",pay);
+        }
 		return mapContext;
 	}
 
-    private MapContext createMapContext(Integer type, String companyId, String name, String supplierId, String batch, String storageId, String leaderTel, String no, String leaderName,Integer status,Integer funds) {
+    private MapContext createMapContext(Integer type, String companyId, String name, String supplierId, String batch, String storageId, String leaderTel, String no, String leaderName,Integer status,Integer funds,String customerTel,String orderNo) {
         MapContext mapContext = new MapContext();
         if (type != null && type != -1) {
             mapContext.put("type", type);
@@ -341,7 +428,13 @@ public class FinanceController {
         if (funds!=null){
             mapContext.put("fundsList",Arrays.asList(funds));
         }else{
-            mapContext.put("fundsList", Arrays.asList(PaymentFunds.DESIGN_FEE_CHARGE.getValue(),PaymentFunds.ORDER_FEE_CHARGE.getValue()));
+            mapContext.put("fundsList", Arrays.asList(PaymentFunds.DESIGN_FEE_CHARGE.getValue(),PaymentFunds.ORDER_FEE_CHARGE.getValue(),PaymentFunds.COORDINATION.getValue()));
+        }
+        if(customerTel!=null){
+            mapContext.put("customerTel",customerTel);
+        }
+        if(orderNo!=null){
+            mapContext.put("orderNo",orderNo);
         }
         return mapContext;
     }

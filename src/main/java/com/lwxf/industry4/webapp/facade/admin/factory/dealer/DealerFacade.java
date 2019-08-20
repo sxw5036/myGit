@@ -22,11 +22,13 @@ import com.lwxf.mybatis.utils.MapContext;
 public interface DealerFacade extends BaseFacade {
 	RequestResult addDealer(CompanyDto company);
 
+	RequestResult initDealerAccount(String branchId);
+
 	RequestResult findDealerCompanyList(MapContext mapContent, Integer pageNum, Integer pageSize);
 
 	RequestResult openDealer(User user,String cid,StringBuffer pwd);
 
-	RequestResult updateDealerCompany(MapContext mapContext, String cid);
+	RequestResult updateDealerCompany(MapContext mapContext, String cid,String logisticsCompanyId);
 
 	RequestResult uploadDealerFiles(String cid, List<MultipartFile> multipartFileList);
 
@@ -43,4 +45,6 @@ public interface DealerFacade extends BaseFacade {
 	RequestResult updateDealerAccountPwd(String id, String newPassword);
 
 	RequestResult findDealerCompanyInfo(String cid);
+
+	RequestResult findDealerCount(String branchId);
 }

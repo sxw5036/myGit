@@ -31,6 +31,7 @@ import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.procurement.PurchaseDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.StockDto;
 import com.lwxf.industry4.webapp.domain.entity.product.ProductCategory;
@@ -74,13 +75,14 @@ public class StorageFacadeImpl extends BaseFacadeImpl implements StorageFacade {
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult addStorage(Storage storage) {
+        String branchId= WebUtils.getCurrBranchId();
 		//判断分类是否存在
 		ProductCategory category = this.productCategoryService.findById(storage.getProductCategoryId());
-		if(category==null||!category.getKey().equals(storage.getKey())){
+		if(category==null){
 			return ResultFactory.generateResNotFoundResult();
 		}
 		//判断名称是否重复
-		if(this.storageService.findOneByName(storage.getName())!=null){
+		if(this.storageService.findOneByName(storage.getName(),branchId)!=null){
 			Map result = new HashMap<String,String>();
 			result.put(WebConstant.KEY_ENTITY_NAME,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
@@ -127,6 +129,7 @@ public class StorageFacadeImpl extends BaseFacadeImpl implements StorageFacade {
 	@Override
 	public RequestResult findStorageList(MapContext mapContext, Integer pageNum, Integer pageSize) {
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		Pagination pagination = new Pagination();
 		pagination.setPageNum(pageNum);
 		pagination.setPageSize(pageSize);
@@ -143,6 +146,7 @@ public class StorageFacadeImpl extends BaseFacadeImpl implements StorageFacade {
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult updateStorage(String id, MapContext mapContext) {
+		String branchId=WebUtils.getCurrBranchId();
 		//判断资源是否存在
 		Storage storage = this.storageService.findById(id);
 		if(storage==null){
@@ -150,7 +154,7 @@ public class StorageFacadeImpl extends BaseFacadeImpl implements StorageFacade {
 		}
 		String name = mapContext.getTypedValue("name", String.class);
 		if (name!=null&&!name.trim().equals("")){
-			Storage byName = this.storageService.findOneByName(name);
+			Storage byName = this.storageService.findOneByName(name,branchId);
 			if(byName!=null&&!byName.getId().equals(id)){
 				Map result = new HashMap();
 				result.put(WebConstant.KEY_ENTITY_NAME,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));

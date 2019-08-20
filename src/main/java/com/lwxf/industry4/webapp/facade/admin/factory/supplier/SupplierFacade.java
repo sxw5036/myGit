@@ -3,11 +3,15 @@ package com.lwxf.industry4.webapp.facade.admin.factory.supplier;
 import java.util.List;
 
 import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.domain.dto.company.CompanyDto;
+import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierDto;
+import com.lwxf.industry4.webapp.domain.entity.supplier.Supplier;
 import com.lwxf.industry4.webapp.domain.entity.supplier.SupplierProduct;
 import com.lwxf.industry4.webapp.domain.entity.user.User;
 import com.lwxf.industry4.webapp.facade.base.BaseFacade;
 import com.lwxf.mybatis.utils.MapContext;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 功能：
@@ -18,17 +22,30 @@ import com.lwxf.mybatis.utils.MapContext;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 public interface SupplierFacade extends BaseFacade {
-	RequestResult findAllSupplierList(Integer pageNum,Integer pageSize,MapContext mapContext);
+	RequestResult findAllSupplierList(Integer pageNum, Integer pageSize, MapContext mapContext);
 
-	RequestResult addSupplierProdcut(String id, List<SupplierProduct> supplierProductList);
+	RequestResult addSupplier(SupplierDto supplier);
 
-	RequestResult addSupplier(CompanyDto company);
+	RequestResult addSupplierProduct(String supplierId, List<SupplierProduct> supplierProducts);
 
-	RequestResult addSupplierLeader(User user,String id);
+	RequestResult viewSupplierInfo(String id);
 
-	RequestResult findProductList(MapContext mapContext, Integer pageNum, Integer pageSize);
+	RequestResult uploadImage(String userId, List<MultipartFile> multipartFile);
 
-	RequestResult updateProduct(String id, String productId, MapContext mapContext);
+	RequestResult uploadProductImage(String supplierId,MultipartFile multipartFile);
 
-	RequestResult deleteProduct(String id, String productId);
+	RequestResult updateSupplier(String supplierId, MapContext map);
+
+	RequestResult deleteSupplier(String supplierId);
+
+	RequestResult deleteSupplierProduct(String prodId);
+
+	RequestResult deleteSupplierImages(String imgId);
+
+
+
+	RequestResult countSupplierToday();
+
+
+	RequestResult updateSupplierProduct(String prodId, MapContext map);
 }

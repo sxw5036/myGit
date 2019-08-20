@@ -30,4 +30,8 @@ public interface DispatchBillPlanItemDao extends BaseDao<DispatchBillPlanItem, S
 	List<DispatchBillPlanItem> findBydbpIdAndStatus(String dispatchBillPlanId, Integer status1);
 
 	int updateStatusByFinishedItemId(MapContext updatePlanItem);
+
+	int deleteByOrderId(String orderId);
+
+	MapContext findCountByBranchId(String branchId);
 }

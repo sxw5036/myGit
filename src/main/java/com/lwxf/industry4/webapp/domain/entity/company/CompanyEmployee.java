@@ -50,7 +50,9 @@ public class CompanyEmployee extends IdEntity  {
 	@Column(type = Types.CHAR,length = 10,name = "no",displayName = "员工编号，公司内部不允许重复")
 	@ApiModelProperty(value = "员工编号",name = "no",required = false)
 	protected String no;
-
+	@Column(type = Types.TINYINT,length = 2,name = "is_supervisor",displayName = "是否为主管 : 0-不是 1-是 默认为0")
+	@ApiModelProperty(value = "是否为主管 : 0-不是 1-是 默认为0")
+    private Integer supervisor;
 	public CompanyEmployee() {
 	}
 
@@ -93,7 +95,7 @@ public class CompanyEmployee extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("userId","roleId","status","no");
+	private final static List<String> propertiesList = Arrays.asList("userId","roleId","status","no","supervisor");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -137,6 +139,11 @@ public class CompanyEmployee extends IdEntity  {
 		if(map.containsKey("no")) {
 			if (LwxfStringUtils.getStringLength(map.getTypedValue("no",String.class)) > 10) {
 				validResult.put("no", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if(map.containsKey("supervisor")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("supervisor",String.class)) > 2) {
+				validResult.put("supervisor", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if(validResult.size()>0){
@@ -193,6 +200,14 @@ public class CompanyEmployee extends IdEntity  {
 
 	public String getNo(){
 		return no;
+	}
+
+	public Integer getSupervisor() {
+		return supervisor;
+	}
+
+	public void setSupervisor(Integer supervisor) {
+		this.supervisor = supervisor;
 	}
 
 	public CompanyEmployee(String companyId, String userId, String roleId, Date created, Integer status, String no) {

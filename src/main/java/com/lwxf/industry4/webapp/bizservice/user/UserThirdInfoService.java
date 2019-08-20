@@ -4,6 +4,7 @@ package com.lwxf.industry4.webapp.bizservice.user;
 import java.util.List;
 
 import com.lwxf.industry4.webapp.bizservice.base.BaseNoIdService;
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
@@ -39,4 +40,7 @@ public interface UserThirdInfoService extends BaseNoIdService<UserThirdInfo> {
 	List<UserThirdInfo> findByAppTokenAndUserId(String appToken,String userId);
 
 	UserThirdInfo findByAppToken(String appToken);
+
+
+	Object userlogout(MapContext mapContext);
 }

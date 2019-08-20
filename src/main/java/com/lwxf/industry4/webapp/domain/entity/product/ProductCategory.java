@@ -36,6 +36,8 @@ public class ProductCategory extends IdEntity  {
 	private String notes;
 	@Column(type = Types.TINYINT,nullable = false,name = "type",displayName = "类型：0 - 原材料；1 - 尾料；2 - 废料；3 - 退料；4 - 退货；5 - 成品，购买原材料时的商品选择列表按0查询")
 	private Integer type;
+	@Column(type = Types.VARCHAR,length = 13,name = "branch_id",displayName = "企业id")
+	private String branchId;
 
 	public ProductCategory() {
 	}
@@ -144,5 +146,13 @@ public class ProductCategory extends IdEntity  {
 
 	public Integer getType(){
 		return type;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

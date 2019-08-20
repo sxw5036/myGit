@@ -40,4 +40,6 @@ public interface RolePermissionDao extends BaseDao<RolePermission, String> {
 	int deleteByKey(String key);
 
 	List<RolePermission> findAllDianzhuRolePer();
+
+	int addList(List<RolePermission> rolePermissionList);
 }

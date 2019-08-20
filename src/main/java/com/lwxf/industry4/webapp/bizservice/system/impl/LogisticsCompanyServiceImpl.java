@@ -6,7 +6,9 @@ import com.lwxf.industry4.webapp.bizservice.system.LogisticsCompanyService;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.system.LogisticsCompanyDao;
+import com.lwxf.industry4.webapp.domain.dto.system.LcNameAndNum;
 import com.lwxf.industry4.webapp.domain.entity.system.LogisticsCompany;
+import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -41,8 +43,25 @@ public class LogisticsCompanyServiceImpl extends BaseServiceImpl<LogisticsCompan
 	}
 
 	@Override
-	public List<LogisticsCompany> findAllNormal() {
-		return this.dao.findAllNormal();
+	public List<LogisticsCompany> findAllNormalByBranchId(MapContext mapContext) {
+		return this.dao.findAllNormalByBranchId(mapContext);
 	}
 
+	@Override
+	public List<LcNameAndNum> findLCNameAndNum(String beginTime, String endTime) {
+		MapContext params = MapContext.newOne();
+		params.put("beginTime", beginTime);
+		params.put("endTime", endTime);
+		return this.dao.findLCNameAndNum(params);
+	}
+
+	@Override
+	public LogisticsCompany findByNO(String no) {
+		return this.dao.findByNO(no);
+	}
+
+	@Override
+	public LogisticsCompany findByLogisticId(String logisticId) {
+		return this.dao.findByLogisticId(logisticId);
+	}
 }

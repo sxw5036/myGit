@@ -7,7 +7,9 @@ import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDemandDto;
 import com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.OrderProduct;
+import com.lwxf.mybatis.utils.MapContext;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +31,18 @@ public interface OrderProductService extends BaseService <OrderProduct, String> 
 	OrderProductDto findOneById(String id);
 
 	List<OrderProductDto> findListByOrderId(String id);
+
+    Integer findCountNumByCreatedAndType(String beginTime, String endTime, Integer type, String created,Integer series);
+
+
+	BigDecimal findCountPriceByOrderId(String id);
+
+	BigDecimal findCountPriceByCreatedAndStatus(String beginTime, String endTime,String created,Integer status,Integer type,Integer series);
+	Integer findCountNumByCreatedAndStatus(String beginTime, String endTime,String created,Integer status,Integer type,Integer series);
+
+	int deleteByOrderId(String orderId);
+
+	List<OrderProductDto> findProductsByOrderId(String id);
+
+	List<OrderProductDto> findListByAftersaleId(String id);
 }

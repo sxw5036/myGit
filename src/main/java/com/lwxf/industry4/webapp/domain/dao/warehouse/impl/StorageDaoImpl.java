@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.StockDto;
@@ -45,9 +46,12 @@ public class StorageDaoImpl extends BaseDaoImpl<Storage, String> implements Stor
 	}
 
 	@Override
-	public Storage findOneByName(String name) {
+	public Storage findOneByName(String name,String branchId) {
 		String sql = this.getNamedSqlId("findOneByName");
-		return this.getSqlSession().selectOne(sql,name);
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("name",name);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 	@Override
@@ -63,9 +67,12 @@ public class StorageDaoImpl extends BaseDaoImpl<Storage, String> implements Stor
 	}
 
 	@Override
-	public Storage findOneByProductCategoryId(String productCategoryId) {
-		String sql = this.getNamedSqlId("findOneByProductCategoryId");
-		return this.getSqlSession().selectOne(sql,productCategoryId);
+	public Storage findOneByProductCategoryKey(String key,String branchId) {
+		String sql = this.getNamedSqlId("findOneByProductCategoryKey");
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		mapContext.put("key",key);
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 

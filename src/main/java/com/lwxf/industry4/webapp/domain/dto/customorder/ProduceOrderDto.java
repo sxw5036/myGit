@@ -1,15 +1,13 @@
 package com.lwxf.industry4.webapp.domain.dto.customorder;
 
-import io.swagger.annotations.ApiImplicitParam;
+import com.lwxf.industry4.webapp.common.enums.order.ProduceOrderType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Date;
 import java.util.List;
 
-import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderFiles;
-import com.lwxf.industry4.webapp.domain.entity.customorder.ProduceFlow;
 import com.lwxf.industry4.webapp.domain.entity.customorder.ProduceOrder;
 
 /**
@@ -30,6 +28,8 @@ public class ProduceOrderDto extends ProduceOrder {
 	private String merchandiserName;
 	@ApiModelProperty(value = "经销商名称")
 	private String dealerName;
+	@ApiModelProperty(value = "经销商id")
+	private String companyId;
 	@ApiModelProperty(value = "客户名称")
 	private String customerName;
 	@ApiModelProperty(value = "有效时间")
@@ -42,6 +42,18 @@ public class ProduceOrderDto extends ProduceOrder {
 	private List<CustomOrderFiles> uploadFiles;
 	@ApiModelProperty(value = "图片id集合")
 	private List<String> fileIds;
+	@ApiModelProperty(value = "是否付款 转义")
+	private String payName;
+	@ApiModelProperty(value = "类型 转义")
+	private String typeName;
+	@ApiModelProperty(value = "生产方式 转义")
+	private String wayName;
+	@ApiModelProperty(value = "状态 转义")
+	private String stateName;
+	@ApiModelProperty(value = "是否允许生产 转义")
+	private String permitName;
+	@ApiModelProperty(value = "产品信息")
+	private OrderProductDto orderProductDto;
 
 	public String getCreatorName() {
 		return creatorName;
@@ -121,5 +133,65 @@ public class ProduceOrderDto extends ProduceOrder {
 
 	public void setFileIds(List<String> fileIds) {
 		this.fileIds = fileIds;
+	}
+
+	public String getPayName() {
+		return payName;
+	}
+
+	public void setPayName(String payName) {
+		this.payName = payName;
+	}
+
+	public String getTypeName() {
+		if(this.getType()!=null){
+			return ProduceOrderType.getByValue(this.getType()).getName();
+		}else{
+			return typeName;
+		}
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+	public String getWayName() {
+		return wayName;
+	}
+
+	public void setWayName(String wayName) {
+		this.wayName = wayName;
+	}
+
+	public String getStateName() {
+		return stateName;
+	}
+
+	public void setStateName(String stateName) {
+		this.stateName = stateName;
+	}
+
+	public String getPermitName() {
+		return permitName;
+	}
+
+	public void setPermitName(String permitName) {
+		this.permitName = permitName;
+	}
+
+	public OrderProductDto getOrderProductDto() {
+		return orderProductDto;
+	}
+
+	public void setOrderProductDto(OrderProductDto orderProductDto) {
+		this.orderProductDto = orderProductDto;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }

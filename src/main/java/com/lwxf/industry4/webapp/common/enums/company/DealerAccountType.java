@@ -2,9 +2,10 @@ package com.lwxf.industry4.webapp.common.enums.company;
 
 public enum DealerAccountType {
     FREE_ACCOUNT(1,"自由账户"),
-    FREEZE_ACCOUNT(2,"冻结账号"),
-    DEPOSIT_ACCOUNT(3,"保证金账号"),
-    PAYMENTSIMPLE_ACCOUNT(4,"日常账账号");
+    FREEZE_ACCOUNT(2,"设计金"),
+    DEPOSIT_ACCOUNT(3,"保证金"),
+    SOFTWARE_ACCOUNT(4,"软件年金"),
+    ACTIVITY_ACCOUNT(5,"活动款");
     private int value;
     private String name;
 
@@ -16,6 +17,7 @@ public enum DealerAccountType {
     public int getValue() {
         return value;
     }
+
 
     public String getName() {
         return name;

@@ -55,4 +55,9 @@ public class OrderAccountLogServiceImpl extends BaseServiceImpl<OrderAccountLog,
 	public String findTimeByOrderId(String orderId) {
 		return this.dao.findTimeByOrderId(orderId);
 	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		return this.dao.deleteByOrderId(orderId);
+	}
 }

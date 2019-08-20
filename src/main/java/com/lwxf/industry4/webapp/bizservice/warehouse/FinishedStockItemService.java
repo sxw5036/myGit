@@ -1,6 +1,7 @@
 package com.lwxf.industry4.webapp.bizservice.warehouse;
 
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,5 +64,15 @@ public interface FinishedStockItemService extends BaseService <FinishedStockItem
 
 	MapContext findOneByFinishedStockitemId(String finishedStockItemId);
 
-    Integer findNumByCreated(String beginTime, String endTime, String day);
+    Integer findNumByCreated(String beginTime, String endTime, String day,Integer isIn,String delivered);
+
+	Integer findFininshedstockStatementByDateAndIsin(Date date, Integer isIn);
+
+	Integer findCountByTimeAndType(Date sTime, Date eTime, int type,Integer isIn);
+
+	PaginatedList<Map<String,Object>> findListMapByFilter(PaginatedFilter paginatedFilter);
+
+	int deleteByOrderId(String orderId);
+
+	PaginatedList<MapContext> findFinishedStockNos(PaginatedFilter paginatedFilter);
 }

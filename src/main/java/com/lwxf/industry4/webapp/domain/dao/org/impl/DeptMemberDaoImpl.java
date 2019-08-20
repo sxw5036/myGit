@@ -3,22 +3,20 @@ package com.lwxf.industry4.webapp.domain.dao.org.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
-import org.springframework.stereotype.Repository;
-
-
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
-import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
-import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto;
-import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.org.DeptMemberDao;
+import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
+import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto;
 import com.lwxf.industry4.webapp.domain.entity.org.DeptMember;
+import com.lwxf.mybatis.utils.MapContext;
 
 
 /**
@@ -99,6 +97,12 @@ public class DeptMemberDaoImpl extends BaseDaoImpl<DeptMember, String> implement
 	public List<String> findDeptNameByEmployeeId(String employeeId) {
 		String sql = this.getNamedSqlId("findDeptNameByEmployeeId");
 		return this.getSqlSession().selectList(sql,employeeId);
+	}
+
+	@Override
+	public List selectUserIdByDeptId(String deptId) {
+		String sql = this.getNamedSqlId("selectUserIdByDeptId");
+		return this.getSqlSession().selectList(sql,deptId);
 	}
 
 }

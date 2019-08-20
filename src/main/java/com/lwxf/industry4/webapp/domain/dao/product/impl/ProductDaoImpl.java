@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
+import com.lwxf.industry4.webapp.common.enums.product.ProductFilesType;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.product.ProductDto;
@@ -70,7 +72,10 @@ public class ProductDaoImpl extends BaseDaoImpl<Product, String> implements Prod
 	@Override
 	public ProductDto selectProductDtoById(String id) {
 		String sql = this.getNamedSqlId("selectProductDtoById");
-		return this.getSqlSession().selectOne(sql,id);
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_ENTITY_ID,id);
+		mapContext.put("fileType",ProductFilesType.WX_COVER_MAP.getValue());
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 	@Override
@@ -85,4 +90,15 @@ public class ProductDaoImpl extends BaseDaoImpl<Product, String> implements Prod
 		return this.getSqlSession().selectList(sql,mapContent);
 	}
 
+	@Override
+	public List<Product> findProductsBySupplierId(String supplierId) {
+		String sql = this.getNamedSqlId("findProductsBySupplierId");
+		return this.getSqlSession().selectList(sql,supplierId);
+	}
+
+	@Override
+	public List<Product> findProductsRecommend(String companyId) {
+		String sql = this.getNamedSqlId("findProductsRecommend");
+		return this.getSqlSession().selectList(sql,companyId);
+	}
 }

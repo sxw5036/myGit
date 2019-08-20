@@ -5,9 +5,12 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
-import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderCountDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderQuoteDto;
+import com.lwxf.industry4.webapp.domain.dto.customorder.*;
+import com.lwxf.industry4.webapp.domain.dto.dealer.DealerOrderRankDto;
+import com.lwxf.industry4.webapp.domain.dto.dealer.WxDealerInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OfferPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.statement.WxFactoryStatementDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.mybatis.utils.MapContext;
@@ -59,35 +62,7 @@ public interface CustomOrderDao extends BaseDao<CustomOrder, String> {
 
 	List<DateNum> findOrderNumByCreatedAndCid(MapContext mapContext);
 
-	List<CustomOrder> findOrderNumByCustomIdAndCid(MapContext mapContext);
-
-	PaginatedList<Map> findByCreated(PaginatedFilter filter);
-
-	int findOrderNumByCreated(String created);
-
-	Map findOrderInfoByOrderId(String orderId);
-
-    int findPaidOrderNumByCreated(String created);
-
-	int findPaidOrderNumByTime(String beginTime,String endTime,String created);
-
-	int findUnpaidOrderNumByTime(String beginTime,String endTime,String created);
-
-	int findDesignNumByCreated(String created);
-
-	PaginatedList<Map> findByConditions(PaginatedFilter paginatedFilter);
-
-    Map findFactoryOrderInfoById(String orderId);
-
-    int findIsDesignNumByTime(MapContext params);
-
-	List<CustomOrder> findOrderListByStatusList(List<Integer> statusList);
-
-	List<MapContext> findCustomerOrderInfo(String userId, String companyId);
-
 	List<MapContext> findOrderListByCidAndUid(String userId, String dealerId);
-
-    PaginatedList<Map> findFProcessOrderList(PaginatedFilter paginatedFilter);
 
 	Map findFAppBaseInfoByOrderId(MapContext params);
 
@@ -97,21 +72,33 @@ public interface CustomOrderDao extends BaseDao<CustomOrder, String> {
 
 	PaginatedList<CustomOrderDto> findPacksOrderList(PaginatedFilter paginatedFilter);
 
-	Map findShipmentsInfoByOrderId(String orderId);
+	List<CustomOrder> findByCustomerIdAndCid(String uId, String branchId);
+
+	List<CustomOrder> findByCustomerIdAndCidAndStatus(String uId, String branchId, Integer status);
+
+	CustomOrder findByUidAndBranchId(MapContext mapContext);
+
+	CustomOrder findByCidAndBranchId(String dealerId, String branchId);
+
+	Integer findTodayOrderCount(MapContext param1);
+
+	Integer findTodayInvalidOrder(MapContext param2);
+
+	Integer findTodayEffectiveOrder(MapContext param2);
+
+	PaginatedList<WxCustomOrderDto> findWxOrderList(PaginatedFilter paginatedFilter);
+
+	WxCustomerOrderInfoDto findWxOrderByorderId(String orderId);
+
+	//微信工厂端报表
+	WxFactoryStatementDto statementWxFactory(String branchId);
+	//微信经销商端首页
+	WxDealerInfoDto selectDealerInfo(String companyId);
 
 
-    PaginatedList<Map> findPaidOrderListByTime(PaginatedFilter filter);
+	OrderPrintTableDto findOrderPrintTable(MapContext mapContext);
 
-	PaginatedList<Map> findUnpaidOrderListByTime(PaginatedFilter filter);
+	OfferPrintTableDto findOfferPrintTableInfo(String id);
 
-	PaginatedList<Map> findIsDesignListByTime(PaginatedFilter filter);
-
-	List<MapContext> findByCid(String dealerId);
-
-    Integer getAllByCreated(String beginTime, String endTime, String todayDate);
-
-	List<CustomOrder> getAllOrderByCreated (String beginTime, String endTime, String todayDate);
-
-	BigDecimal findPaidOrderAmountByTime(String beginTime, String endTime, String day);
-
+	Integer findOverdueOrderCount(String branchId);
 }

@@ -5,7 +5,12 @@ import java.util.List;
 import java.util.Map;
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
+
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
+import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.company.*;
+import com.lwxf.industry4.webapp.domain.dto.companyEmployee.WxDealerUserInfoDto;
 import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto;
 import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
 import org.apache.ibatis.annotations.Param;
@@ -41,9 +46,22 @@ public class CompanyDaoImpl extends BaseDaoImpl<Company, String> implements Comp
 	}
 
 	@Override
-	public Company selectByNo(String no) {
+	public Company selectByNo(String no,String branchId) {
 		String sql = this.getNamedSqlId("selectByNo");
-		return this.getSqlSession().selectOne(sql,no);
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("no",no);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		return this.getSqlSession().selectOne(sql,mapContext);
+	}
+
+	@Override
+	public Company findByTelAndName(String tel, String name,String branchId) {
+		String sql = this.getNamedSqlId("findByTelAndName");
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("tel",tel);
+		mapContext.put("name",name);
+		mapContext.put("branchId",branchId);
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 	@Override
@@ -111,6 +129,7 @@ public class CompanyDaoImpl extends BaseDaoImpl<Company, String> implements Comp
 		MapContext map = MapContext.newOne();
 		map.put("amount",amount);
 		map.put("type",accountType);
+		map.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		return this.getSqlSession().update(sqlId,map);
 	}
 
@@ -148,6 +167,20 @@ public class CompanyDaoImpl extends BaseDaoImpl<Company, String> implements Comp
 		return this.getSqlSession().selectList(sqlId,companyId);
 	}
 
+	/**
+	 * 查詢经销商账户详情
+	 * @param paginatedFilter
+	 * @return
+	 */
+	@Override
+	public PaginatedList<CompanyAccountInfoDto> findAccountListInfo(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findAccountListInfo");
+		//  过滤查询参数
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<CompanyAccountInfoDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
 	@Override
 	public Double getCompanyBalance(String companyId) {
 		String sqlId = this.getNamedSqlId("getCompanyBalance");
@@ -164,5 +197,71 @@ public class CompanyDaoImpl extends BaseDaoImpl<Company, String> implements Comp
 	public Integer findCompanyNumByOrderCreated(MapContext params) {
 		String sqlId = this.getNamedSqlId("findCompanyNumByOrderCreated");
 		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+	@Override
+	public PaginatedList<CompanyDtoForApp> findWxDealers(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findWxDealers");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<CompanyDtoForApp> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public Integer findAllCompanyCount(String branchId) {
+
+		String sqlId = this.getNamedSqlId("findAllCompanyCount");
+		return this.getSqlSession().selectOne(sqlId,branchId);
+	}
+
+	@Override
+	public Integer findIntentionDealer(Integer intention, String branchId) {
+		String sqlId = this.getNamedSqlId("findIntentionDealer");
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("status",intention);
+		mapContext.put("branchId",branchId);
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public Integer findSignedDealer(Integer signed, String branchId) {
+		String sqlId = this.getNamedSqlId("findSignedDealer");
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("status",signed);
+		mapContext.put("branchId",branchId);
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public WxCompanyDto findByBranchIdAndDealerId(String branchId, String dealerId) {
+		String sqlId = this.getNamedSqlId("findByBranchIdAndDealerId");
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("dealerId",dealerId);
+		mapContext.put("branchId",branchId);
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public List<Map> findWxDealersAddCustomer(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("findWxDealersAddCustomer");
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public MapContext findDealerCount(String branchId) {
+		String sqlId = this.getNamedSqlId("findDealerCount");
+		return this.getSqlSession().selectOne(sqlId,branchId);
+	}
+
+	@Override
+	public WxDealerDto findWxDealerInfoByCId(String currCompanyId) {
+		String sqlId = this.getNamedSqlId("findWxDealerInfoByCId");
+		return this.getSqlSession().selectOne(sqlId,currCompanyId);
+	}
+
+	@Override
+	public WxDealerUserInfoDto findDealerUserInfoByUid(String currUserId) {
+		String sqlId = this.getNamedSqlId("findDealerUserInfoByUid");
+		return this.getSqlSession().selectOne(sqlId,currUserId);
 	}
 }

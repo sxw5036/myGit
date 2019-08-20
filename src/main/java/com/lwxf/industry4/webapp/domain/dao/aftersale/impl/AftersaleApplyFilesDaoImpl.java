@@ -63,4 +63,34 @@ public class AftersaleApplyFilesDaoImpl extends BaseDaoImpl<AftersaleApplyFiles,
 		return this.getSqlSession().update(sqlId,mapContext);
 	}
 
+	@Override
+	public List<AftersaleApplyFiles> findListByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("findListByOrderId");
+		return this.getSqlSession().selectList(sqlId,orderId);
+	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public List<AftersaleApplyFiles> findListByResultOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("findListByResultOrderId");
+		return this.getSqlSession().selectList(sqlId,orderId);
+	}
+
+	@Override
+	public int deleteByResultOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByResultOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public int updateByIds(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("updateByIds");
+		return this.getSqlSession().update(sqlId,mapContext);
+	}
+
 }

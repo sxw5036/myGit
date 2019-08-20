@@ -4,6 +4,7 @@ import io.swagger.annotations.*;
 
 import javax.annotation.Resource;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,15 @@ import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.enums.storage.FinishedStockStatus;
 import com.lwxf.industry4.webapp.common.enums.storage.FinishedStockWay;
 import com.lwxf.industry4.webapp.common.exceptions.ErrorCodes;
+import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
+import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.FileMimeTypeUtil;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.common.utils.excel.BaseExportExcelUtil;
+import com.lwxf.industry4.webapp.common.utils.excel.impl.DispatchBillItemParam;
+import com.lwxf.industry4.webapp.common.utils.excel.impl.DispatchBillPlanItemParam;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.DispatchBillPlanDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockItemDto;
@@ -42,7 +48,7 @@ import com.lwxf.mybatis.utils.MapContext;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 @RestController
-@RequestMapping(value = "/api/f/storages/{storageId}/finisheds",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON_CHARTSET)
+@RequestMapping(value = "/api/f/storages/finisheds",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON_CHARTSET)
 @Api(value = "FinishedStockController",tags = "成品库管理")
 public class FinishedStockController {
 	@Resource(name = "finishedStockFacade")
@@ -71,14 +77,13 @@ public class FinishedStockController {
 			@ApiImplicitParam(value = "页码",name = "pageNum",dataType = "int",paramType = "query")
 	})
 	@GetMapping
-	private String findFinishedDto(@PathVariable String storageId,
-								   @RequestParam(required = false) Integer way,
+	private String findFinishedDto(@RequestParam(required = false) Integer way,
 								   @RequestParam(required = false) String orderNo,
 								   @RequestParam(required = false) Integer status,
 								   @RequestParam(required = false) Integer ship,
 								   @RequestParam(required = false) Integer in,
 								   @RequestParam(required = false) String barcode,
-								   @RequestParam(required = false) Integer type,
+								   @RequestParam(required = false) List<Integer> type,
 								   @RequestParam(required = false) Boolean delivery,
 								   @RequestParam(required = false) Integer pageNum,
 								   @RequestParam(required = false) Integer pageSize){
@@ -88,9 +93,33 @@ public class FinishedStockController {
 		if(null == pageNum){
 			pageNum = 1;
 		}
-		MapContext mapContext = this.createMapContent(way,orderNo,status,storageId,ship,in,barcode,type,delivery);
+		MapContext mapContext = this.createMapContent(way,orderNo,status,ship,in,barcode,type,delivery);
 		JsonMapper jsonMapper = new JsonMapper();
 		return jsonMapper.toJson(this.finishedStockFacade.findFinishedDto(mapContext,pageNum,pageSize));
+	}
+
+	/**
+	 * 创建发货时，条件搜索成品库包裹
+	 */
+	@ApiOperation(value = "创建发货时，条件搜索成品库包裹",notes = "创建发货时，条件搜索成品库包裹")
+	@ApiImplicitParams({
+			@ApiImplicitParam(value = "收货人排序，值是（consigneeName），订单创建时间排序（orderCreated）",name = "order",paramType = "query",dataType = "string")
+	})
+	@GetMapping("/finishedStockNos")
+	private String findFinishedStockNos(
+								   @RequestParam(required = false) String order
+								   ){
+
+		JsonMapper jsonMapper = new JsonMapper();
+		MapContext mapContext=MapContext.newOne();
+//		mapContext.put("in",1);//已入库
+//		mapContext.put("status",0);//未发货consigneeName
+		mapContext.put("storageId",WebUtils.getFinishedStorageId());
+		mapContext.put("branchId",WebUtils.getCurrBranchId());
+		if(LwxfStringUtils.isNotBlank(order)){
+			mapContext.put("order",order);
+		}
+		return jsonMapper.toJson(this.finishedStockFacade.findFinishedStockNos(order,mapContext));
 	}
 
 	/**
@@ -99,8 +128,8 @@ public class FinishedStockController {
 	 * @return
 	 */
 	@PostMapping
-	private RequestResult addFinishedStock(@PathVariable String storageId,@RequestBody FinishedStockDto finishedStockDto){
-		finishedStockDto.setStorageId(storageId);
+	private RequestResult addFinishedStock(@RequestBody FinishedStockDto finishedStockDto){
+		finishedStockDto.setStorageId(WebUtils.getFinishedStorageId());
 		finishedStockDto.setCreator(WebUtils.getCurrUserId());
 		finishedStockDto.setCreated(DateUtil.getSystemDate());
 		finishedStockDto.setStatus(FinishedStockStatus.UNSHIPPED.getValue());
@@ -127,7 +156,7 @@ public class FinishedStockController {
 	}
 
 	/**
-	 * 成品库单下新增条目
+	 * 成品库单下新增条目(废弃)
 	 * @param finishedStockItem
 	 * @param id
 	 * @return
@@ -147,7 +176,7 @@ public class FinishedStockController {
 	}
 
 	/**
-	 * 修改成品库单
+	 * 修改成品库单(废弃)
 	 * @param id
 	 * @param mapContext
 	 * @return
@@ -162,7 +191,7 @@ public class FinishedStockController {
 	}
 
 	/**
-	 * 删除成品库单
+	 * 删除成品库单(废弃)
 	 * @param id
 	 * @return
 	 */
@@ -173,18 +202,18 @@ public class FinishedStockController {
 
 	/**
 	 * 修改成品库条目详情
-	 * @param id
 	 * @param itemId
 	 * @param mapContext
 	 * @return
 	 */
-	@PutMapping("/{id}/items/{itemId}")
-	private RequestResult updateItemById(@PathVariable String id,@PathVariable String itemId,@RequestBody MapContext mapContext,@PathVariable String storageId){
+	@PutMapping("/items/{itemId}")
+	@ApiOperation(value = "修改成品库条目详情",notes = "修改成品库条目详情")
+	private RequestResult updateItemById(@PathVariable String itemId,@RequestBody MapContext mapContext){
 		RequestResult result = FinishedStockItem.validateFields(mapContext);
 		if(result!=null){
 			return result;
 		}
-		return this.finishedStockFacade.updateItemById(id,itemId,mapContext,storageId);
+		return this.finishedStockFacade.updateItemById(itemId,mapContext);
 	}
 
 	/**
@@ -200,7 +229,6 @@ public class FinishedStockController {
 
 	/**
 	 * 成品库下的条目入库
-	 * @param id
 	 * @param itemId
 	 * @return
 	 */
@@ -208,18 +236,16 @@ public class FinishedStockController {
 			@ApiResponse(code = 200,message = "入库成功",response = FinishedStockItemDto.class)
 	})
 	@ApiImplicitParams({
-			@ApiImplicitParam(value = "成品库主键ID",required = true,name = "id",dataType = "string",paramType = "body"),
-			@ApiImplicitParam(value = "条目ID",required = true,name = "itemId",dataType = "string",paramType = "body"),
-			@ApiImplicitParam(value = "仓库ID",required = true,name = "storageId",dataType = "string",paramType = "body")
+			@ApiImplicitParam(value = "条目ID",required = true,name = "itemId",dataType = "string",paramType = "body")
 	})
 	@ApiOperation(value = "成品库下的条目入库",notes = "成品库下的条目入库")
-	@PutMapping("/{id}/warehousing/{itemId}")
-	private RequestResult itemWarehousing(@PathVariable String id,@PathVariable String itemId,@PathVariable String storageId,@RequestBody MapContext mapContext){
+	@PutMapping("/warehousing/{itemId}")
+	private RequestResult itemWarehousing(@PathVariable String itemId,@RequestBody MapContext mapContext){
 		RequestResult result = FinishedStockItem.validateFields(mapContext);
 		if(result!=null){
 			return result;
 		}
-		return this.finishedStockFacade.itemWarehousing(id,itemId,storageId,mapContext);
+		return this.finishedStockFacade.itemWarehousing(itemId,mapContext);
 	}
 
 	/**
@@ -284,7 +310,104 @@ public class FinishedStockController {
 		return this.finishedStockFacade.addDispatchPlan(dispatchBillPlanDto);
 	}
 
-	private MapContext createMapContent(Integer way, String orderNo, Integer status,String storageId,Integer ship,Integer in,String barcode,Integer type,Boolean delivery) {
+	@ApiOperation(value = "创建配送计划通过订单")
+	@PostMapping("/dispatchplan/orders")
+	private RequestResult addDispatchPlanByOrder(@RequestBody DispatchBillPlanDto dispatchBillPlanDto){
+		if(dispatchBillPlanDto.getOrderIds().size()==0){
+			return ResultFactory.generateResNotFoundResult();
+		}
+		return this.finishedStockFacade.addDispatchPlanByOrder(dispatchBillPlanDto);
+	}
+
+	/**
+	 * 导出配送计划
+	 * @param ids
+	 * @return
+	 */
+	@GetMapping("/dispatchplan")
+	@ApiOperation(value = "导出配送计划",notes = "导出配送计划")
+	@ApiImplicitParams({
+			@ApiImplicitParam(value = "入库方式：0 - 系统自动入库；1 - 人工手动入库",name = "way",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "订单编号",name = "orderNo",paramType = "query",dataType = "string"),
+			@ApiImplicitParam(value = "状态：0 - 未配送；1 - 部分配送；2 - 全部配送",name = "status",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "是否已创建配送计划",name = "ship",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "是否已入库",name = "in",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "包装编号/条形码",name = "barcode",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "是否发货",name = "delivery",dataType = "boolean", paramType = "query")
+	})
+	private RequestResult writeExcelPlan(@RequestParam@ApiParam(value = "包裹id集合") List<String> ids,
+										 @RequestParam(required = false) Integer way,
+										 @RequestParam(required = false) String orderNo,
+										 @RequestParam(required = false) Integer status,
+										 @RequestParam(required = false) Integer ship,
+										 @RequestParam(required = false) Integer in,
+										 @RequestParam(required = false) String barcode,
+										 @RequestParam(required = false) List<Integer> type,
+										 @RequestParam(required = false) Boolean delivery){
+		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		Pagination pagination = new Pagination();
+		pagination.setPageNum(1);
+		pagination.setPageSize(1000);
+		paginatedFilter.setPagination(pagination);
+		MapContext mapContext = this.createMapContent(way,orderNo,status,ship,in,barcode,type,delivery);
+		mapContext.put("ids",ids);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
+		paginatedFilter.setFilters(mapContext);
+		return this.finishedStockFacade.writeExcel(paginatedFilter,new DispatchBillPlanItemParam());
+	}
+
+
+	/**
+	 * 导出待发货包裹
+	 * @return
+	 */
+	@GetMapping("/dispatch")
+	@ApiOperation(value = "导出待发货包裹",notes = "导出待发货包裹")
+	@ApiImplicitParams({
+			@ApiImplicitParam(value = "入库方式：0 - 系统自动入库；1 - 人工手动入库",name = "way",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "订单编号",name = "orderNo",paramType = "query",dataType = "string"),
+			@ApiImplicitParam(value = "状态：0 - 未配送；1 - 部分配送；2 - 全部配送",name = "status",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "是否已创建配送计划",name = "ship",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "是否已入库",name = "in",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "包装编号/条形码",name = "barcode",paramType = "query",dataType = "int"),
+			@ApiImplicitParam(value = "是否发货",name = "delivery",dataType = "boolean", paramType = "query")
+	})
+	private RequestResult writeExcelDispatch(@RequestParam(required = false)@ApiParam(value = "包裹id集合") List<String> ids,
+											 @RequestParam(required = false) Integer way,
+											 @RequestParam(required = false) String orderNo,
+											 @RequestParam(required = false) Integer status,
+											 @RequestParam(required = false) Integer ship,
+											 @RequestParam(required = false) Integer in,
+											 @RequestParam(required = false) String barcode,
+											 @RequestParam(required = false) List<Integer> type,
+											 @RequestParam(required = false) Boolean delivery){
+		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		Pagination pagination = new Pagination();
+		pagination.setPageNum(1);
+		pagination.setPageSize(1000);
+		paginatedFilter.setPagination(pagination);
+		MapContext mapContext = this.createMapContent(way,orderNo,status,ship,in,barcode,type,delivery);
+		mapContext.put("ids",ids);
+		mapContext.put("ship",true);
+		mapContext.put("delivery",false);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
+		paginatedFilter.setFilters(mapContext);
+		return this.finishedStockFacade.writeExcel(paginatedFilter,new DispatchBillItemParam());
+	}
+	/**
+	 * 成品信息统计
+	 *
+	 * @param
+	 * @return
+	 */
+	@GetMapping("/count")
+	@ApiOperation(value = "成品信息统计",notes = "成品信息统计")
+	private RequestResult findFinishedStockCount() {
+		String branchId=WebUtils.getCurrBranchId();
+		return this.finishedStockFacade.findFinishedStockCount(branchId);
+	}
+
+	private MapContext createMapContent(Integer way, String orderNo, Integer status,Integer ship,Integer in,String barcode,List<Integer> type,Boolean delivery) {
 		MapContext mapContext = new MapContext();
 		if (way!=null){
 			mapContext.put("way",way);
@@ -294,9 +417,6 @@ public class FinishedStockController {
 		}
 		if(status!=null){
 			mapContext.put(WebConstant.KEY_ENTITY_STATUS,status);
-		}
-		if(storageId!=null&&!storageId.trim().equals("all")){
-			mapContext.put("storageId",storageId);
 		}
 		if(ship!=null){
 			mapContext.put("ship",ship);
@@ -315,4 +435,5 @@ public class FinishedStockController {
 		}
 		return mapContext;
 	}
+
 }

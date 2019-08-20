@@ -9,7 +9,6 @@ import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
 import com.lwxf.industry4.webapp.domain.entity.financing.PaymentSimple;
 import com.lwxf.mybatis.utils.MapContext;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,12 +28,14 @@ public interface PaymentSimpleDao extends BaseDao<PaymentSimple, String> {
 
 	PaginatedList<PaymentSimpleDto> selectDtoByFilter(PaginatedFilter paginatedFilter);
 
-	List<PaymentSimpleListDtoForApp> selectCurrentDayListByFilterForApp();
-
 	PaymentSimpleDto selectDtoById(String id);
+
+	List<Map<String,String>> getUserForPaymentSimple(String roleId);
 
 	Map<String,String> countPaymentSimpleForApp();
 
-	List<Map<String,String>> getUserForPaymentSimple(String roleId);
+	MapContext countPaymentForPageIndex(String branchId);
+
+	List<PaymentSimpleListDtoForApp> selectCurrentDayListByFilterForApp();
 
 }

@@ -80,6 +80,7 @@ public class ProductController {
 		product.setStatus(ProductStatus.ENABLE.getValue());
 		product.setCreated(DateUtil.getSystemDate());
 		product.setCreator(WebUtils.getCurrUserId());
+		product.setBranchId(WebUtils.getCurrBranchId());
 		RequestResult result = product.validateFields();
 		if (result != null) {
 			return jsonMapper.toJson(result);

@@ -17,12 +17,12 @@ public enum UploadResourceType {
 	QUICKSHARE(4,"quickshare"),
 	GOODSSPEC(5,"goodsspec"),
 	BRAND(6,"brand"),
-	AVATAR(7,"avatar"),
+	AVATAR(7,"avatar"),//头像
 	BACKGROUND(8,"background"),
 	GOODSSHOW(9,"goodsshow"),
 	STOREHOMENAV(10,"storehomenav"),
 	VIDEOFILE(11,"videofile"),
-	COVER(12,"cover"),
+	COVER(12,"cover"),//封面
 	ADVERTISING(13,"advertising"),
 	SCHEME_COVER(14,"scheme_cover"),
 	SCHEME_PANORAMA(15,"scheme_panorama"),
@@ -45,7 +45,13 @@ public enum UploadResourceType {
 	FCOMPANY(32,"fcompany"),
 	EMPLOYEE(33,"employee"),//员工相关
 	FCOMPANY_FINANCE(34,"fcompany_finance"), //F端后台财务经销商上传
-	UPDATE_VERSION(35,"update_version");//版本更新
+	UPDATE_VERSION(35,"update_version"),//版本更新
+	VISITING_CARD(36,"visiting_card"),//名片
+	CONTRACT_FILE(37,""),//合同附件
+	SUPPLIER_PRODUCT_FILE(38,"supplier_product_file"),//供應商商品圖片
+	MATERIAL(39,"material")//原材料图片
+
+	;
 
 
 

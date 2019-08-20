@@ -69,4 +69,10 @@ public class ProduceFlowDaoImpl extends BaseDaoImpl<ProduceFlow, String> impleme
 		String sqlId = this.getNamedSqlId("findOneById");
 		return this.getSqlSession().selectOne(sqlId,id);
 	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
 }

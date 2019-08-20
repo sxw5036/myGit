@@ -1,4 +1,7 @@
 package com.lwxf.industry4.webapp.domain.entity.product;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.math.BigDecimal;
 import java.util.*;
 import java.sql.*;
@@ -26,42 +29,78 @@ import com.lwxf.industry4.webapp.common.result.ResultFactory;
  * @dept：老屋新房 Created with IntelliJ IDEA
  */
 @Table(name = "product",displayName = "product")
+@ApiModel(value = "产品信息",description = "产品信息")
 public class Product extends IdEntity  {
 	private static final long serialVersionUID = 1L;
 	@Column(type = Types.VARCHAR,length = 50,nullable = false,name = "name",displayName = "产品名称")
+	@ApiModelProperty(value = "产品名称")
 	private String name;
 	@Column(type = Types.VARCHAR,length = 200,name = "notes",displayName = "简介")
+	@ApiModelProperty(value = "简介")
 	private String notes;
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "product_category_id",displayName = "产品用途")
+	@ApiModelProperty(value = "产品用途")
 	private String productCategoryId;
 	@Column(type = Types.VARCHAR,length = 50,name = "product_material",displayName = "产品材质")
+	@ApiModelProperty(value = "产品材质")
 	private String productMaterial;
 	@Column(type = Types.VARCHAR,length = 50,name = "product_color",displayName = "产品颜色")
+	@ApiModelProperty(value = "产品颜色")
 	private String productColor;
 	@Column(type = Types.VARCHAR,length = 50,name = "product_spec",displayName = "产品尺寸")
+	@ApiModelProperty(value = "产品尺寸")
 	private String productSpec;
 	@Column(type = Types.TINYINT,nullable = false,name = "status",displayName = "产品状态：0 - 正常；1 - 禁用；")
+	@ApiModelProperty(value = "产品状态")
 	private Integer status;
 	@Column(type = Types.CHAR,length = 13,nullable = false,updatable = false,name = "creator",displayName = "创建人")
+	@ApiModelProperty(value = "创建人")
 	private String creator;
 	@Column(type = TypesExtend.DATETIME,nullable = false,updatable = false,name = "created",displayName = "创建时间")
+	@ApiModelProperty(value = "创建时间")
 	private Date created;
 	@Column(type = Types.TINYINT,nullable = false,name = "unit",displayName = "计算单位：0 - 个；1 - 张；2 - 米；3 - 平米；4 - 包，定义为枚举类")
+	@ApiModelProperty(value = "计算单位")
 	private Integer unit;
-	@Column(type = Types.TINYINT,name = "type",displayName = "")
+	@Column(type = Types.TINYINT,name = "type",displayName = "产品用途Id")
+	@ApiModelProperty(value = "产品用途Id")
 	private Integer type;
 	@Column(type = Types.INTEGER,name = "thickness",displayName = "厚度(mm 毫米)")
+	@ApiModelProperty(value = "厚度(mm 毫米)")
 	private Integer thickness;
-	@Column(type = Types.DECIMAL,precision = 10,scale=2,name = "factory_price",displayName = "出厂价")
-	private BigDecimal factoryPrice;
+	@Column(type = Types.DECIMAL,precision = 10,scale=2,name = "factory_price",displayName = "吊柜市场价")
+	@ApiModelProperty(value = "吊柜市场价")
+	private BigDecimal factoryPriceWall;
 	@Column(type = Types.VARCHAR,length = 50,nullable = false,name = "model",displayName = "型号")
+	@ApiModelProperty(value = "型号")
 	private String model;
 	@Column(type = Types.VARCHAR,length = 50,name = "series",displayName = "系列")
+	@ApiModelProperty(value = "系列")
 	private String series;
 	@Column(type = Types.VARCHAR,length = 200,name = "remarks",displayName = "备注")
+	@ApiModelProperty(value = "备注")
 	private String remarks;
-	@Column(type = Types.BIT,defaultValue = "0",nullable = false,name = "is_lower_shelf",displayName = "是否下架 0 false 上架 1 true 下架")
+	@Column(type = Types.BIT,defaultValue = "0",nullable = false,name = "is_lower_shelf",displayName = "是否推荐 0 false 不推荐 1 true 推荐")
+	@ApiModelProperty(value = "是否推荐 0 false 不推荐 1 true 推荐")
 	private Boolean lowerShelf;
+	@ApiModelProperty(value = "企业Id")
+	private String branchId;;
+	@Column(type = Types.DECIMAL,precision = 10,scale=2,name = "factory_price",displayName = "地柜市场价")
+	@ApiModelProperty(value = "地柜市场价")
+	private BigDecimal factoryPriceFloor;
+	@Column(type = Types.DECIMAL,precision = 10,scale=2,name = "factory_price",displayName = "吊柜拿货价")
+	@ApiModelProperty(value = "吊柜拿货价")
+	private BigDecimal takeAwayPriceWall;
+	@Column(type = Types.DECIMAL,precision = 10,scale=2,name = "factory_price",displayName = "地柜拿货价")
+	@ApiModelProperty(value = "地柜拿货价")
+	private BigDecimal takeAwayPriceFloor;
+	@Column(type = Types.DECIMAL,precision = 10,scale=2,name = "factory_price",displayName = "吊柜上样价")
+	@ApiModelProperty(value = "吊柜上样价")
+	private BigDecimal samplePriceWall;
+	@Column(type = Types.DECIMAL,precision = 10,scale=2,name = "factory_price",displayName = "地柜上样价")
+	@ApiModelProperty(value = "地柜上样价")
+	private BigDecimal samplePriceFloor;
+
 
 	public Product() {
 	}
@@ -133,7 +172,8 @@ public class Product extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("name","notes","productCategoryId","productMaterial","productColor","productSpec","status","unit","type","thickness","factoryPrice","model","series","remarks","lowerShelf");
+	private final static List<String> propertiesList = Arrays.asList("name","notes","productCategoryId","productMaterial","productColor","productSpec","status","unit","type","thickness",
+			"factoryPriceWall","model","series","remarks","lowerShelf","factoryPriceFloor","takeAwayPriceWall","takeAwayPriceFloor","samplePriceWall","samplePriceFloor");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -352,14 +392,6 @@ public class Product extends IdEntity  {
 		return thickness;
 	}
 
-	public void setFactoryPrice(BigDecimal factoryPrice){
-		this.factoryPrice=factoryPrice;
-	}
-
-	public BigDecimal getFactoryPrice(){
-		return factoryPrice;
-	}
-
 	public void setModel(String model){
 		this.model=model;
 	}
@@ -390,5 +422,61 @@ public class Product extends IdEntity  {
 
 	public Boolean getLowerShelf(){
 		return lowerShelf;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public BigDecimal getFactoryPriceWall() {
+		return factoryPriceWall;
+	}
+
+	public void setFactoryPriceWall(BigDecimal factoryPriceWall) {
+		this.factoryPriceWall = factoryPriceWall;
+	}
+
+	public BigDecimal getFactoryPriceFloor() {
+		return factoryPriceFloor;
+	}
+
+	public void setFactoryPriceFloor(BigDecimal factoryPriceFloor) {
+		this.factoryPriceFloor = factoryPriceFloor;
+	}
+
+	public BigDecimal getTakeAwayPriceWall() {
+		return takeAwayPriceWall;
+	}
+
+	public void setTakeAwayPriceWall(BigDecimal takeAwayPriceWall) {
+		this.takeAwayPriceWall = takeAwayPriceWall;
+	}
+
+	public BigDecimal getTakeAwayPriceFloor() {
+		return takeAwayPriceFloor;
+	}
+
+	public void setTakeAwayPriceFloor(BigDecimal takeAwayPriceFloor) {
+		this.takeAwayPriceFloor = takeAwayPriceFloor;
+	}
+
+	public BigDecimal getSamplePriceWall() {
+		return samplePriceWall;
+	}
+
+	public void setSamplePriceWall(BigDecimal samplePriceWall) {
+		this.samplePriceWall = samplePriceWall;
+	}
+
+	public BigDecimal getSamplePriceFloor() {
+		return samplePriceFloor;
+	}
+
+	public void setSamplePriceFloor(BigDecimal samplePriceFloor) {
+		this.samplePriceFloor = samplePriceFloor;
 	}
 }

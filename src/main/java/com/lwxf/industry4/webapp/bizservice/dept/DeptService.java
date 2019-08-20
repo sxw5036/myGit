@@ -24,9 +24,9 @@ public interface DeptService extends BaseService <Dept, String> {
 
 	PaginatedList<Dept> selectByFilter(PaginatedFilter paginatedFilter);
 
-	Dept findDeptByNameAndParentId(String name,String parentId);
+	Dept findDeptByNameAndParentId(String name,String parentId,String branchId);
 
-	Dept findDeptByKey(String key);
+	Dept findDeptByKey(String key,String branchId);
 
 	List<Dept> selectDeptByCompanyIdAndParentId(String companyId, String parentId);
 
@@ -44,4 +44,6 @@ public interface DeptService extends BaseService <Dept, String> {
 	List<Dept> findListByParentId(String id);
 
 	List<Dept> findListByCompanyIdAndParent(String companyId);
+
+	List<Dept> findListByUserId(String currUserId);
 }

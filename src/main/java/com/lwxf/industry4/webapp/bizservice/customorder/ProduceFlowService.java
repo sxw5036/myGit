@@ -30,4 +30,8 @@ public interface ProduceFlowService extends BaseService <ProduceFlow, String> {
 	ProduceFlow findOneByProduceIdAndNode(String id, Integer node);
 
 	ProduceFlowDto findOneById(String id);
+
+	int deleteByOrderId(String orderId);
+
+	List<ProduceFlowDto> findListByProduceOrderId(String productId);
 }

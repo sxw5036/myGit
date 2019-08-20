@@ -48,6 +48,8 @@ public class StorageOutputIn extends IdEntity  {
 	private Integer status;
 	@Column(type = Types.CHAR,length = 13,updatable = false,name = "supplier_id",displayName = "供应商id：存在供应商时保存供应商的公司id")
 	private String supplierId;
+	@Column(type = Types.CHAR,length = 13,updatable = false,name = "branch_id",displayName = "企业id")
+	private String branchId;
 
 	public StorageOutputIn() {
 	}
@@ -138,6 +140,13 @@ public class StorageOutputIn extends IdEntity  {
 		}
 	}
 
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
 
 	public void setNo(String no){
 		this.no=no;

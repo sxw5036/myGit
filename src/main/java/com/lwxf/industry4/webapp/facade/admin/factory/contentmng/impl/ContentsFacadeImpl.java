@@ -3,6 +3,9 @@ package com.lwxf.industry4.webapp.facade.admin.factory.contentmng.impl;
 import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.bizservice.contentmng.ContentsFilesService;
 import com.lwxf.industry4.webapp.bizservice.contentmng.ContentsService;
+import com.lwxf.industry4.webapp.common.aop.syslog.OperationMoudule;
+import com.lwxf.industry4.webapp.common.aop.syslog.OperationType;
+import com.lwxf.industry4.webapp.common.aop.syslog.SysOperationLog;
 import com.lwxf.industry4.webapp.common.component.UploadInfo;
 import com.lwxf.industry4.webapp.common.component.UploadType;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
@@ -41,10 +44,12 @@ public class ContentsFacadeImpl extends BaseFacadeImpl implements ContentsFacade
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "添加内容",operationType = OperationType.INSERT,operationMoudule = OperationMoudule.CONTENTS)
     public RequestResult addContent(ContentsDto contentsDto) {
         contentsDto.setStatus(0);
         contentsDto.setCreated(DateUtil.getSystemDate());
         contentsDto.setCreator(WebUtils.getCurrUserId());
+        contentsDto.setBranchId(WebUtils.getCurrUser().getBranchId());
         //更新图片信息
         //更新图片的contentId
         this.contentsService.add(contentsDto);
@@ -54,12 +59,6 @@ public class ContentsFacadeImpl extends BaseFacadeImpl implements ContentsFacade
         map.put("status",1);
         this.contentsFilesService.updateByMapContext(map);
         //删除多余图片垃圾信息
-
-        //修改内容链接
-        MapContext mapContext = new MapContext();
-        mapContext.put(WebConstant.KEY_ENTITY_ID,contentsDto.getId());
-        mapContext.put(WebConstant.KEY_COMMON_LINK,AppBeanInjector.configuration.getContentPath().concat("?type=1&id=").concat(contentsDto.getId()));
-        this.contentsService.updateByMapContext(mapContext);
         return ResultFactory.generateSuccessResult();
     }
 
@@ -136,6 +135,7 @@ public class ContentsFacadeImpl extends BaseFacadeImpl implements ContentsFacade
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "删除内容",operationType = OperationType.DELETE,operationMoudule = OperationMoudule.CONTENTS)
     public RequestResult deleteContent(String id) {
         Contents content = this.contentsService.findById(id);
         if(content==null){
@@ -154,6 +154,7 @@ public class ContentsFacadeImpl extends BaseFacadeImpl implements ContentsFacade
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "修改内容",operationType = OperationType.UPDATE,operationMoudule = OperationMoudule.CONTENTS)
     public RequestResult updateContent(MapContext mapContext) {
         return  ResultFactory.generateRequestResult(this.contentsService.updateByMapContext(mapContext));
     }
@@ -171,7 +172,7 @@ public class ContentsFacadeImpl extends BaseFacadeImpl implements ContentsFacade
 
     @Override
     @Transactional(value = "transactionManager")
-    public RequestResult uploadContentsImages(List<MultipartFile> multipartFileList, String contentsId) {
+    public MapContext uploadContentsImages(MultipartFile multipartFile, String contentsId) {
         if(contentsId==null|| contentsId.equals("")){
             contentsId = UniqueKeyUtil.getStringId();
         }
@@ -181,17 +182,17 @@ public class ContentsFacadeImpl extends BaseFacadeImpl implements ContentsFacade
         contentsFiles.setStatus(0);
         contentsFiles.setContentsId(contentsId);
         List pathList = new ArrayList();
-        for(MultipartFile multipartFile:multipartFileList){
-            //赋值给uploadinfo,数据进行处理
-            UploadInfo uploadInfo = AppBeanInjector.baseFileUploadComponent.doUploadByModule(UploadType.TEMP, multipartFile, UploadResourceType.CONTENT);
-            contentsFiles.setMime(uploadInfo.getFileMimeType().getRealType());
-            contentsFiles.setOriginalMime(uploadInfo.getFileMimeType().getOriginalType());
-            contentsFiles.setPath(uploadInfo.getRelativePath());
-            contentsFiles.setFullPath(AppBeanInjector.configuration.getUploadFileRootDir().concat(uploadInfo.getRealPath()));
-            contentsFiles.setName(uploadInfo.getFileName());
-            this.contentsFilesService.add(contentsFiles);
-            pathList.add(contentsFiles);
-        }
-        return ResultFactory.generateRequestResult(pathList);
+        //赋值给uploadinfo,数据进行处理
+        UploadInfo uploadInfo = AppBeanInjector.baseFileUploadComponent.doUploadByModule(UploadType.TEMP, multipartFile, UploadResourceType.CONTENT);
+        contentsFiles.setMime(uploadInfo.getFileMimeType().getRealType());
+        contentsFiles.setOriginalMime(uploadInfo.getFileMimeType().getOriginalType());
+        contentsFiles.setPath(uploadInfo.getRelativePath());
+        contentsFiles.setFullPath(AppBeanInjector.configuration.getUploadFileRootDir().concat(uploadInfo.getRealPath()));
+        contentsFiles.setName(uploadInfo.getFileName());
+        this.contentsFilesService.add(contentsFiles);
+        pathList.add(contentsFiles);
+        MapContext map = MapContext.newOne();
+        map.put("location",contentsFiles.getPath());
+        return map;
     }
 }

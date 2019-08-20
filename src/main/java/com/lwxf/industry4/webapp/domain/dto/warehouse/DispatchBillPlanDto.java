@@ -20,6 +20,8 @@ import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillPlanItem;
 public class DispatchBillPlanDto extends DispatchBillPlan {
 	@ApiModelProperty(value = "配送计划条目信息")
 	private List<DispatchBillPlanItem> dispatchBillPlanItems;
+	@ApiModelProperty(value = "订单集合")
+	private List<String> orderIds;
 
 	public List<DispatchBillPlanItem> getDispatchBillPlanItems() {
 		return dispatchBillPlanItems;
@@ -27,5 +29,13 @@ public class DispatchBillPlanDto extends DispatchBillPlan {
 
 	public void setDispatchBillPlanItems(List<DispatchBillPlanItem> dispatchBillPlanItems) {
 		this.dispatchBillPlanItems = dispatchBillPlanItems;
+	}
+
+	public List<String> getOrderIds() {
+		return orderIds;
+	}
+
+	public void setOrderIds(List<String> orderIds) {
+		this.orderIds = orderIds;
 	}
 }

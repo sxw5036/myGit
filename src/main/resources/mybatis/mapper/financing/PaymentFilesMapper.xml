@@ -113,5 +113,8 @@ WHERE  id = #{id}
         where payment = #{paymentId}
     </select>
 
+    <delete id="deleteByPaymentId">
+        delete from payment_files where payment = #{paymentId}
+    </delete>
 
 </mapper>

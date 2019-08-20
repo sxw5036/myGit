@@ -53,4 +53,10 @@ public class OrderAccountLogDaoImpl extends BaseDaoImpl<OrderAccountLog, String>
 		String sqlId = this.getNamedSqlId("findTimeByOrderId");
 		return this.getSqlSession().selectOne(sqlId,orderId);
 	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
 }

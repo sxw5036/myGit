@@ -8,6 +8,7 @@
         <result column="notes" property="notes" jdbcType="VARCHAR"/>
         <result column="parent_id" property="parentId" jdbcType="CHAR"/>
         <result column="company_Id" property="companyId" jdbcType="CHAR"/>
+        <result column="branch_id" property="branchId"/>
     </resultMap>
     <resultMap id="EmployeeDeptDtoMap" type="com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto">
         <id column="id" property="id" jdbcType="CHAR" />
@@ -25,13 +26,13 @@
         <result column="birthday" property="birthday"/>
     </resultMap>
     <sql id="columns">
-id, name, `key`, notes, parent_id, company_Id
+id, name, `key`, notes, parent_id, company_Id,branch_id
 </sql>
     <sql id="AScolumns">
-d.id, d.name, d.`key`, d.notes, d.parent_id, d.company_Id
+d.id, d.name, d.`key`, d.notes, d.parent_id, d.company_Id,d.branch_id
 </sql>
     <sql id="EmployeeDeptDtoColumns">
-dp.id, dp.company_id, dp.user_id, dp.role_id, dp.created, dp.status, dp.no,u.name userName,u.mobile mobile,dp.roleName,u.sex,u.birthday,u.email
+dp.id, dp.company_id, dp.user_id, dp.role_id, dp.created, dp.status, dp.no,u.name userName,u.mobile mobile,dp.roleName,u.sex,u.birthday,u.email,dp.branch_id
     </sql>
     <select id="selectById" resultMap="DeptMap" parameterType="String">
         SELECT
@@ -64,6 +65,9 @@ dp.id, dp.company_id, dp.user_id, dp.role_id, dp.created, dp.status, dp.no,u.nam
                 <if test="companyId != null">
                     AND company_Id = #{companyId}
                 </if>
+                <if test="branchId != null">
+                    AND branch_id = #{branchId}
+                </if>
             </trim>
         </where>
 
@@ -71,8 +75,8 @@ dp.id, dp.company_id, dp.user_id, dp.role_id, dp.created, dp.status, dp.no,u.nam
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-  dept(id, name, `key`, notes, parent_id, company_Id)
-VALUES(#{id}, #{name}, #{key}, #{notes}, #{parentId}, #{companyId})
+  dept(id, name, `key`, notes, parent_id, company_Id,branch_id)
+VALUES(#{id}, #{name}, #{key}, #{notes}, #{parentId}, #{companyId},#{branchId})
 </insert>
 
     <update id="updateByMapContext">
@@ -105,12 +109,15 @@ WHERE  id = #{id}
         <if test="parentId!=null">
             and parent_id = #{parentId}
         </if>
+        <if test="branchId != null">
+            AND branch_id = #{branchId}
+        </if>
     </select>
 
     <select id="findDeptByKey" resultMap="DeptMap">
         select
         <include refid="columns"/>
-        from dept where `key` = #{key}
+        from dept where `key` = #{key} and branch_id = #{branchId}
     </select>
 
     <select id="selectDeptByCompanyIdAndParentId" resultMap="DeptMap">
@@ -149,6 +156,9 @@ WHERE  id = #{id}
                 <if test="key != null">
                     `key` = #{key}
                 </if>
+                <if test="parentId != null">
+                     AND parent_id = #{parentId}
+                </if>
                 AND company_Id = #{companyId}
             </trim>
         </where>
@@ -169,7 +179,8 @@ WHERE  id = #{id}
     </select>
 
     <select id="findOneByUserId" resultMap="EmployeeDeptDtoMap">
-        select <include refid="EmployeeDeptDtoColumns"/> from user u RIGHT join
+        select dp.id, dp.company_id, dp.user_id, dp.role_id, dp.created, dp.status, dp.no,u.name userName,u.mobile mobile,dp.roleName,u.sex,u.birthday,u.email
+        from user u RIGHT join
         (select ce.*,r.name roleName from role r RIGHT JOIN
         company_employee ce
         on r.id = ce.role_id ) dp on u.id = dp.user_id
@@ -189,5 +200,12 @@ WHERE  id = #{id}
     <select id="findListByCompanyIdAndParent" resultMap="DeptMap">
         select <include refid="columns"/> from dept
         where company_id = #{companyId} and parent_id is null
+    </select>
+
+    <select id="findListByUserId" resultMap="DeptMap">
+        select d.* from dept d
+        left join dept_member m on d.id = m.dept_id
+        left join company_employee ce on m.employee_id = ce.id
+        where ce.user_id = #{currUserId}
     </select>
 </mapper>

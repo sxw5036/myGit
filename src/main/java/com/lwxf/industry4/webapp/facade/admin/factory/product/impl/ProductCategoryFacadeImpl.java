@@ -16,6 +16,7 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.StorageDto;
 import com.lwxf.industry4.webapp.domain.entity.product.*;
 import com.lwxf.industry4.webapp.domain.entity.warehouse.Storage;
@@ -48,19 +49,23 @@ public class ProductCategoryFacadeImpl extends BaseFacadeImpl implements Product
 	private StorageService storageService;
 	@Override
 	public RequestResult findAll() {
-		return ResultFactory.generateRequestResult(this.productCategoryService.findAll());
+		return ResultFactory.generateRequestResult(this.productCategoryService.findAllByBranchId(WebUtils.getCurrBranchId()));
 	}
 
 	@Override
 	public RequestResult selectProductCategoryByFilter(MapContext mapContext) {
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		return ResultFactory.generateRequestResult(this.productCategoryService.selectProductCategoryByFilter(mapContext));
 	}
 
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult addProductCategory(ProductCategory productCategory) {
+		//企业id
+		String branchId= WebUtils.getCurrBranchId();
 		MapContext key = new MapContext();
 		key.put("key", productCategory.getKey());
+		key.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		List<ProductCategory> keyProducts = this.productCategoryService.selectProductCategoryByFilter(key);
 		//如果key重复则返回 不允许重复错误
 		if(keyProducts.size()!=0){
@@ -68,13 +73,14 @@ public class ProductCategoryFacadeImpl extends BaseFacadeImpl implements Product
 			result.put("key",AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
 		}
-		ProductCategory nameProducts = this.productCategoryService.selectProductCategoryByName(productCategory.getName());
+		ProductCategory nameProducts = this.productCategoryService.selectProductCategoryByName(productCategory.getName(),branchId);
 		//如果name重复则返回 不允许重复错误
 		if(nameProducts!=null){
 			HashMap<String, String> result = new HashMap<>();
 			result.put("name",AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
 		}
+		productCategory.setBranchId(branchId);
 		this.productCategoryService.add(productCategory);
 		return ResultFactory.generateRequestResult(productCategory);
 	}
@@ -82,6 +88,8 @@ public class ProductCategoryFacadeImpl extends BaseFacadeImpl implements Product
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult updateByMapContent(MapContext mapContext,String id) {
+		//企业id
+		String branchId= WebUtils.getCurrBranchId();
 		if(!this.productCategoryService.isExist(id)){
 			return ResultFactory.generateResNotFoundResult();
 		}
@@ -92,6 +100,7 @@ public class ProductCategoryFacadeImpl extends BaseFacadeImpl implements Product
 			}else {
 				MapContext map = new MapContext();
 				map.put("key", key);
+				map.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 				List<ProductCategory> keyProducts = this.productCategoryService.selectProductCategoryByFilter(map);
 				//如果key重复则返回 不允许重复错误
 				if (keyProducts.size() != 0 && !keyProducts.get(0).getId().equals(id)) {
@@ -103,7 +112,7 @@ public class ProductCategoryFacadeImpl extends BaseFacadeImpl implements Product
 		}
 		String name = (String) mapContext.get("name");
 		if(name!=null){
-			ProductCategory nameProducts = this.productCategoryService.selectProductCategoryByName(name);
+			ProductCategory nameProducts = this.productCategoryService.selectProductCategoryByName(name,branchId);
 			//如果name重复则返回 不允许重复错误
 			if(nameProducts!=null&&!nameProducts.getId().equals(id)){
 				HashMap<String, String> result = new HashMap<>();

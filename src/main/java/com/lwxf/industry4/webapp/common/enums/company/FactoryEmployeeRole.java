@@ -11,7 +11,9 @@ package com.lwxf.industry4.webapp.common.enums.company;
 public enum FactoryEmployeeRole {
 	DESIGN_SUPERVISOR("014","设计主管"),
 	Lv10("110","Lv10"),
-	DESIGNER("015","设计人员");
+	DESIGNER("015","设计人员"),
+	CHAIRMAN("008","董事长"),
+	SUPER_COOL("super_cool","管理层");
 	private String value;
 	private String name;
 

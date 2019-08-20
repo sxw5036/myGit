@@ -42,6 +42,9 @@
         <result column="consignee_tel" property="consigneeTel" jdbcType="VARCHAR" />
         <result column="documentary_time" property="documentaryTime" jdbcType="TIMESTAMP" />
         <result column="is_coordination" property="coordination" jdbcType="BIT" />
+        <result column="branch_id" property="branchId"/>
+        <result column="discounts_note" property="discountsNote" jdbcType="VARCHAR"/>
+        <result column="receiver" property="receiver" jdbcType="CHAR"/>
     </resultMap>
 
     <resultMap id="CustomOrderMapDto" type="com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDto">
@@ -67,8 +70,8 @@
         <result column="design_style" property="designStyle" jdbcType="CHAR"/>
         <result column="type" property="type" jdbcType="TINYINT"/>
         <result column="parent_id" property="parentId" jdbcType="CHAR"/>
-        <result column="estimated_delivery_date" property="estimatedDeliveryDate" jdbcType="DATE"/>
-        <result column="delivery_date" property="deliveryDate" jdbcType="DATE"/>
+        <result column="estimated_delivery_date" property="estimatedDeliveryDate" jdbcType="TIMESTAMP"/>
+        <result column="delivery_date" property="deliveryDate" jdbcType="TIMESTAMP"/>
         <result column="design_fee" property="designFee" jdbcType="INTEGER"/>
         <result column="factory_price" property="factoryPrice" jdbcType="DECIMAL"/>
         <result column="customer_tel" property="customerTel" jdbcType="CHAR"/>
@@ -96,6 +99,20 @@
         <result column="cityId" property="cityId"/>
         <result column="businessManagerName" property="businessManagerName"/>
         <result column="businessManagerTel" property="businessManagerTel"/>
+        <result column="doorCount" property="doorCount"/>
+        <result column="hardwareCount" property="hardwareCount"/>
+        <result column="cabinetCount" property="cabinetCount"/>
+        <result column="existDoor" property="existDoor"/>
+        <result column="existCabinet" property="existCabinet"/>
+        <result column="existHardware" property="existHardware"/>
+        <result column="branch_id" property="branchId"/>
+        <result column="orderStatus" property="orderStatus"/>
+        <result column="customerAddress" property="customerAddress"/>
+        <result column="typeName" property="typeName"/>
+        <result column="designName" property="designName"/>
+        <result column="is_design" property="isDesign" jdbcType="TINYINT"/>
+        <result column="receiver" property="receiver" jdbcType="CHAR"/>
+        <result column="receiverName" property="receiverName"/>
     </resultMap>
     <resultMap id="OrderQuoteMapDto" type="com.lwxf.industry4.webapp.domain.dto.customorder.OrderQuoteDto">
         <id column="id" property="id" jdbcType="CHAR"/>
@@ -114,6 +131,16 @@
         <result column="is_confirm_fprice" property="confirmFprice" jdbcType="BIT"/>
         <result column="is_confirm_cprice" property="confirmCprice" jdbcType="BIT"/>
         <result column="company_id" property="companyId" jdbcType="CHAR"/>
+        <result column="branch_id" property="branchId"/>
+    </resultMap>
+    <resultMap id="WxCustomOrderDtoMap" type="com.lwxf.industry4.webapp.domain.dto.customorder.WxCustomOrderDto">
+        <result column="id" property="orderId" />
+        <result column="no" property="orderNo" />
+        <result column="customerName" property="customerName"/>
+        <result column="status" property="status"/>
+        <result column="dealerName" property="dealerName"/>
+        <result column="created" property="orderCreated"/>
+        <result column="salesmanName" property="salesmanName"/>
     </resultMap>
     <resultMap id="orderCountDto" type="com.lwxf.industry4.webapp.domain.dto.customorder.OrderCountDto">
         <id column="orderNum" property="orderNum" jdbcType="INTEGER"/>
@@ -123,10 +150,106 @@
         <result column="creatTime" property="creatTime" jdbcType="VARCHAR" />
         <result column="count" property="count" jdbcType="INTEGER" />
     </resultMap>
-
+    <resultMap id="dealerOrderRankDtoMap" type="com.lwxf.industry4.webapp.domain.dto.dealer.DealerOrderRankDto">
+        <result column="company_id" property="company_id" jdbcType="VARCHAR" />
+        <result column="price" property="price" jdbcType="VARCHAR" />
+        <result column="companyName" property="companyName" jdbcType="VARCHAR" />
+        <result column="orderNum" property="orderNum" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="WxFactoryStatementDto" type="com.lwxf.industry4.webapp.domain.dto.statement.WxFactoryStatementDto">
+        <result column="jiedan" property="jiedan" jdbcType="INTEGER"/>
+        <result column="fukuan" property="fukuan" jdbcType="INTEGER"/>
+        <result column="shengchan" property="shengchan" jdbcType="INTEGER"/>
+        <result column="yanqi" property="yanqi" jdbcType="INTEGER"/>
+        <result column="shouru" property="shouru" jdbcType="INTEGER"/>
+        <result column="zhichu" property="zhichu" jdbcType="DECIMAL"/>
+    </resultMap>
+    <resultMap id="WxDealerInfoDto" type="com.lwxf.industry4.webapp.domain.dto.dealer.WxDealerInfoDto">
+        <result column="dingdanxinzeng" property="dingdanxinzeng" jdbcType="INTEGER"/>
+        <result column="dingdanyouxiao" property="dingdanyouxiao" jdbcType="INTEGER"/>
+        <result column="dingdanwancheng" property="dingdanwancheng" jdbcType="INTEGER"/>
+        <result column="fankuixinzeng" property="fankuixinzeng" jdbcType="INTEGER"/>
+        <result column="buliaoxinzeng" property="buliaoxinzeng" jdbcType="INTEGER"/>
+        <result column="wancheng" property="wancheng" jdbcType="DECIMAL"/>
+    </resultMap>
+    <resultMap id="WxCustomerOrderInfoDtoMap" type="com.lwxf.industry4.webapp.domain.dto.customorder.WxCustomerOrderInfoDto">
+        <result column="dealerName" property="dealerName" />
+        <result column="customerMobile" property="customerMobile"  />
+        <result column="leaderMobile" property="leaderMobile"  />
+        <result column="customerName" property="customerName" />
+        <result column="merchandiserName" property="merchandiserName"  />
+        <result column="orderNo" property="orderNo" />
+        <result column="isDesign" property="isDesign" />
+        <result column="orderCreated" property="orderCreated" />
+        <result column="estimatedDeliveryDate" property="estimatedDeliveryDate" />
+        <result column="factoryFinalPrice" property="factoryFinalPrice" />
+        <result column="factoryPrice" property="factoryPrice" />
+        <result column="discountsNote" property="discountsNote" />
+        <result column="orderStatus" property="orderStatus" />
+        <result column="financeStatus" property="financeStatus" />
+        <result column="audited" property="audited" />
+        <result column="auditorName" property="auditorName" />
+        <result column="documentaryTime" property="documentaryTime" />
+        <result column="deliveryDate" property="deliveryDate" />
+        <result column="creatorName" property="creatorName" />
+        <result column="documentaryNotes" property="documentaryNotes" />
+        <result column="customerAddress" property="customerAddress"/>
+    </resultMap>
+    <resultMap id="OfferPrintTableDto" type="com.lwxf.industry4.webapp.domain.dto.printTable.OfferPrintTableDto">
+        <id column="id" property="id" jdbcType="CHAR"/>
+        <result column="no" property="no" jdbcType="VARCHAR"/>
+        <result column="customer_id" property="customerId" jdbcType="CHAR"/>
+        <result column="company_id" property="companyId" jdbcType="CHAR"/>
+        <result column="city_area_id" property="cityAreaId" jdbcType="CHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="acreage" property="acreage" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="salesman" property="salesman" jdbcType="CHAR"/>
+        <result column="merchandiser" property="merchandiser" jdbcType="CHAR"/>
+        <result column="creator" property="creator" jdbcType="CHAR"/>
+        <result column="receiver" property="receiver" jdbcType="CHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="designer" property="designer" jdbcType="CHAR"/>
+        <result column="design_scheme" property="designScheme" jdbcType="CHAR"/>
+        <result column="earnest" property="earnest" jdbcType="INTEGER"/>
+        <result column="imprest" property="imprest" jdbcType="DECIMAL"/>
+        <result column="retainage" property="retainage" jdbcType="DECIMAL"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="notes" property="notes" jdbcType="VARCHAR"/>
+        <result column="design_style" property="designStyle" jdbcType="CHAR"/>
+        <result column="type" property="type" jdbcType="TINYINT"/>
+        <result column="parent_id" property="parentId" jdbcType="CHAR"/>
+        <result column="estimated_delivery_date" property="estimatedDeliveryDate" jdbcType="DATE"/>
+        <result column="delivery_date" property="deliveryDate" jdbcType="DATE"/>
+        <result column="design_fee" property="designFee" jdbcType="INTEGER"/>
+        <result column="factory_price" property="factoryPrice" jdbcType="DECIMAL"/>
+        <result column="customer_tel" property="customerTel" jdbcType="CHAR"/>
+        <result column="market_price" property="marketPrice" jdbcType="DECIMAL"/>
+        <result column="discounts" property="discounts" jdbcType="DECIMAL"/>
+        <result column="factory_discounts" property="factoryDiscounts" jdbcType="DECIMAL"/>
+        <result column="factory_final_price" property="factoryFinalPrice" jdbcType="DECIMAL"/>
+        <result column="is_confirm_fprice" property="confirmFprice" jdbcType="BIT"/>
+        <result column="is_confirm_cprice" property="confirmCprice" jdbcType="BIT"/>
+        <result column="is_design" property="isDesign" jdbcType="TINYINT"/>
+        <result column="time_consuming" property="timeConsuming" jdbcType="VARCHAR" />
+        <result column="documentary_notes" property="documentaryNotes" jdbcType="VARCHAR" />
+        <result column="consignee_name" property="consigneeName" jdbcType="VARCHAR" />
+        <result column="consignee_tel" property="consigneeTel" jdbcType="VARCHAR" />
+        <result column="documentary_time" property="documentaryTime" jdbcType="TIMESTAMP" />
+        <result column="is_coordination" property="coordination" jdbcType="BIT" />
+        <result column="branch_id" property="branchId"/>
+        <result column="discounts_note" property="discountsNote" jdbcType="VARCHAR"/>
+        <result column="customerName" property="customerName"/>
+        <result column="community" property="community"/>
+        <result column="phone" property="phone"/>
+        <result column="dealerName" property="dealerName"/>
+        <result column="dealerTel" property="dealerTel"/>
+        <result column="leaderName" property="leaderName"/>
+        <result column="receiverName" property="receiverName"/>
+    </resultMap>
 
     <sql id="columns">
-id, no, customer_id, company_id, city_area_id, address, acreage, status, salesman, merchandiser, creator, created, designer, design_scheme, earnest, imprest, retainage, amount, notes, design_style, type, parent_id, estimated_delivery_date, delivery_date, design_fee, factory_price, customer_tel, market_price, discounts, factory_discounts, factory_final_price, is_confirm_fprice, is_confirm_cprice,is_design, time_consuming, is_coordination,documentary_time,documentary_notes,consignee_tel,consignee_name
+id, no, customer_id, company_id, city_area_id, address, acreage, status, salesman, merchandiser, creator, created, designer, design_scheme, earnest, imprest, retainage, amount, notes, design_style, type, parent_id, estimated_delivery_date, delivery_date, design_fee, factory_price, customer_tel, market_price, discounts, factory_discounts, factory_final_price, is_confirm_fprice, is_confirm_cprice,is_design, time_consuming, is_coordination,documentary_time,documentary_notes,consignee_tel,consignee_name,branch_id,discounts_note,receiver
 </sql>
 
     <sql id="Bcolumns">
@@ -142,19 +265,27 @@ o.id, o.no, us.name as customerName, customer_tel,o.address,c.merger_name as cit
 
     <select id="findByOrderId" resultMap="CustomOrderMapDto">
         select
-        o.*, us.name as customerName, c.merger_name as cityName,u.name as salesmanName,u.mobile as salesmanTel,u.avatar
+        o.*, c.merger_name as cityName,u.name as salesmanName,u.mobile as salesmanTel,u.avatar
         as salesmanAvatar,uses.name designerName,uu.name creatorName,cc.parent_id provinceId,ccc.parent_id cityId
         FROM
-        (select o.*,c2.name dealerName,c2.leader_tel dealerTel,c2.city_area_id dealerCityAreaId,c2.address dealerAddress,uuu.name businessManagerName,
-        uuu.mobile businessManagerTel
+        (select o.*,b.value orderStatus,bb.value typeName,bbb.value designName,
+        c2.name dealerName,c2.leader_tel dealerTel,c2.city_area_id dealerCityAreaId,c2.address dealerAddress,uuu.name businessManagerName,
+        uuu.mobile businessManagerTel,cc.address customerAddress,uuuu.name receiverName,cc.name as customerName
         from custom_order o
         left join company c2 on o.company_id = c2.id
         left join user uuu on uuu.id = c2.business_manager
+        left join basecode b on b.code = o.status
+        left join company_customer cc on cc.id = o.customer_id
+        left join basecode bb on bb.code = o.type
+        left join basecode bbb on bbb.code = o.is_design
+        left join user uuuu on uuuu.id = o.receiver
+        where b.type = 'orderStatus'
+        and bb.type = 'orderType'
+        and bbb.type = 'orderDesign'
         )
         o
         left join city_area c on o.city_area_id = c.id
         left join user u on u.id = o.salesman
-        left join user us on us.id = o.customer_id
         left join user uses on uses.id = o.designer
         left join user uu on uu.id = o.creator
         left join city_area cc on o.city_area_id = cc.id
@@ -289,6 +420,12 @@ o.id, o.no, us.name as customerName, customer_tel,o.address,c.merger_name as cit
                 <if test="consigneeTel != null">
                     AND consignee_tel = #{consigneeTel}
                 </if>
+                <if test="branchId != null">
+                    AND branch_id = #{branchId}
+                </if>
+                <if test="createdNow!=null">
+                    AND to_days(created) = to_days(now())
+                </if>
             </trim>
         </where>
 
@@ -296,8 +433,8 @@ o.id, o.no, us.name as customerName, customer_tel,o.address,c.merger_name as cit
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO
-custom_order(id, no, customer_id, company_id, city_area_id, address, acreage, status, salesman, merchandiser, creator, created, designer, design_scheme, earnest, imprest, retainage, amount, notes, design_style, type, parent_id, estimated_delivery_date, delivery_date, design_fee, factory_price, customer_tel, market_price, discounts, factory_discounts, factory_final_price, is_confirm_fprice, is_confirm_cprice,is_design, time_consuming, is_coordination,documentary_notes,documentary_time,consignee_tel,consignee_name)
-      VALUES(#{id}, #{no}, #{customerId}, #{companyId}, #{cityAreaId}, #{address}, #{acreage}, #{status}, #{salesman}, #{merchandiser}, #{creator}, #{created}, #{designer}, #{designScheme}, #{earnest}, #{imprest}, #{retainage}, #{amount}, #{notes}, #{designStyle}, #{type}, #{parentId}, #{estimatedDeliveryDate}, #{deliveryDate}, #{designFee}, #{factoryPrice}, #{customerTel}, #{marketPrice}, #{discounts}, #{factoryDiscounts}, #{factoryFinalPrice}, #{confirmFprice}, #{confirmCprice},#{isDesign}, #{timeConsuming}, #{coordination},#{documentaryNotes},#{documentaryTime},#{consigneeTel},#{consigneeName})
+custom_order(id, no, customer_id, company_id, city_area_id, address, acreage, status, salesman, merchandiser, creator, created, designer, design_scheme, earnest, imprest, retainage, amount, notes, design_style, type, parent_id, estimated_delivery_date, delivery_date, design_fee, factory_price, customer_tel, market_price, discounts, factory_discounts, factory_final_price, is_confirm_fprice, is_confirm_cprice,is_design, time_consuming, is_coordination,documentary_notes,documentary_time,consignee_tel,consignee_name,branch_id,discounts_note,receiver)
+      VALUES(#{id}, #{no}, #{customerId}, #{companyId}, #{cityAreaId}, #{address}, #{acreage}, #{status}, #{salesman}, #{merchandiser}, #{creator}, #{created}, #{designer}, #{designScheme}, #{earnest}, #{imprest}, #{retainage}, #{amount}, #{notes}, #{designStyle}, #{type}, #{parentId}, #{estimatedDeliveryDate}, #{deliveryDate}, #{designFee}, #{factoryPrice}, #{customerTel}, #{marketPrice}, #{discounts}, #{factoryDiscounts}, #{factoryFinalPrice}, #{confirmFprice}, #{confirmCprice},#{isDesign}, #{timeConsuming}, #{coordination},#{documentaryNotes},#{documentaryTime},#{consigneeTel},#{consigneeName},#{branchId},#{discountsNote},#{receiver})
 </insert>
 
     <update id="updateByMapContext">
@@ -413,13 +550,19 @@ custom_order(id, no, customer_id, company_id, city_area_id, address, acreage, st
                      documentary_notes = #{documentaryNotes},
                 </if>
                 <if test="_parameter.containsKey('documentaryTime')">
-                     documentary_time = #{documentaryTime}
+                     documentary_time = #{documentaryTime},
                 </if>
                 <if test="_parameter.containsKey('consigneeTel')">
-                    consignee_tel = #{consigneeTel}
+                    consignee_tel = #{consigneeTel},
                 </if>
                 <if test="_parameter.containsKey('consigneeName')">
-                    consignee_name = #{consigneeName}
+                    consignee_name = #{consigneeName},
+                </if>
+                <if test="_parameter.containsKey('discountsNote')">
+                    discounts_note = #{discountsNote},
+                </if>
+                <if test="_parameter.containsKey('receiver')">
+                    receiver = #{receiver}
                 </if>
             </trim>
         </set>
@@ -477,7 +620,9 @@ WHERE  id = #{id}
         left join user u on u.id = o.salesman
         left join user us on us.id = o.customer_id
         left join user uses on uses.id =o.designer
-        where o.status in
+        where
+        o.branch_id = #{branchId} and
+        o.status in
         <foreach collection="status" open="(" close=")" separator="," item="statu">
             #{statu}
         </foreach>
@@ -582,16 +727,51 @@ WHERE  id = #{id}
         o.*, us.name as customerName, c.merger_name as cityName,u.name as salesmanName,u.mobile as salesmanTel,u.avatar
         as salesmanAvatar,uses.name designerName,uu.name creatorName
         FROM
-        (select o.*,c2.name dealerName,c2.leader_tel dealerTel,c2.city_area_id dealerCityAreaId,c2.address dealerAddress
-        from custom_order o left join company c2 on o.company_id = c2.id
-        <if test="dealerTel!=null">
-            where c2.leader_tel like CONCAT('%',#{dealerTel},'%')
-        </if>
+        (select distinct o.*,b.value orderStatus,bb.value typeName,bbb.value designName ,c2.name dealerName,c2.leader_tel dealerTel,c2.city_area_id dealerCityAreaId,c2.address dealerAddress
+        ,p.pay_time payTime
+        from custom_order o
+        left join company c2 on o.company_id = c2.id
+        left join basecode b on b.code = o.status
+        left join basecode bb on bb.code = o.type
+        left join basecode bbb on bbb.code = o.is_design
+        left join payment p on o.id = p.custom_order_id
+        <where>
+            <trim prefixOverrides="and">
+                b.type = 'orderStatus'
+                and bb.type = 'orderType'
+                and bbb.type = 'orderDesign'
+                and (p.funds = #{funds} or p.funds is null)
+                <if test="dealerTel!=null">
+                    AND c2.leader_tel like CONCAT('%',#{dealerTel},'%')
+                </if>
+                <if test="address!=null">
+                    AND o.address like CONCAT('%',#{address},'%')
+                </if>
+                <if test="companyName!=null">
+                    AND c2.name like CONCAT('%',#{companyName},'%')
+                </if>
+                <if test="customerTel!=null">
+                    and o.customer_tel like CONCAT('%',#{customerTel},'%')
+                </if>
+                <if test="_parameter.containsKey('startTime') and startTime != null">
+                    and DATE_FORMAT(o.created,'%Y-%m-%d') &gt;= #{startTime}
+                </if>
+                <if test="_parameter.containsKey('endTime') and endTime != null">
+                    and DATE_FORMAT(o.created,'%Y-%m-%d') &lt;= #{endTime}
+                </if>
+                <if test="_parameter.containsKey('branchId') and branchId != null">
+                    and  o.branch_id = #{branchId}
+                </if>
+                <if test="_parameter.containsKey('design') and design != null">
+                    and  o.is_design = #{design}
+                </if>
+            </trim>
+        </where>
         )
         o
         left join city_area c on o.city_area_id = c.id
         left join user u on u.id = o.salesman
-        left join user us on us.id = o.customer_id
+        left join company_customer us on us.id = o.customer_id
         left join user uses on uses.id = o.designer
         left join user uu on uu.id = o.creator
         <where>
@@ -613,6 +793,9 @@ WHERE  id = #{id}
                 </if>
                 <if test="companyId!=null">
                     AND o.company_id = #{companyId}
+                </if>
+                <if test="customerName!=null">
+                    AND us.name like CONCAT('%',#{customerName},'%')
                 </if>
                 <if test="_parameter.containsKey('designer')">
                     <choose>
@@ -637,8 +820,9 @@ WHERE  id = #{id}
     <select id="findOrderCountByStatus" resultType="integer">
         select count(*) from custom_order
         <where><trim prefixOverrides="AND">
+                branch_id=#{branchId}
             <if test="_parameter.containsKey('companyId') and companyId != null">
-                company_id = #{companyId}
+                and company_id = #{companyId}
             </if>
             <if test="_parameter.containsKey('saleMan') and saleMan != null">
                 AND salesman = #{saleMan}
@@ -655,6 +839,7 @@ WHERE  id = #{id}
     <select id="findOrderNumByUidAndCid" resultMap="orderCountDto">
         select count(*)as orderNum,IFNULL(SUM(amount),0)as orderMoney from custom_order
         <where><trim prefixOverrides="AND">
+            branch_id=#{branchId}
             <if test="_parameter.containsKey('companyId') and companyId != null">
                 company_id = #{companyId}
             </if>
@@ -670,6 +855,7 @@ WHERE  id = #{id}
     <select id="findByCidAndSalemanId" resultMap="CustomOrderMap">
         select  <include refid="columns"/> from custom_order
         <where><trim prefixOverrides="AND">
+              branch_id=#{branchId}
             <if test="_parameter.containsKey('companyId') and companyId != null">
                 company_id = #{companyId}
             </if>
@@ -690,6 +876,7 @@ WHERE  id = #{id}
     <select id="findOrderNumByCreatedAndCid" resultMap="DateNumMap">
         select date_format(created,'%Y-%m-%d') creatTime,IFNULL(COUNT(*) ,0) as count from custom_order
         <where><trim prefixOverrides="AND">
+            branch_id=#{branchId}
             <if test="_parameter.containsKey('companyId') and companyId != null">
                 company_id = #{companyId}
             </if>
@@ -704,32 +891,9 @@ WHERE  id = #{id}
         GROUP BY date_format(created,'%Y-%m-%d') order by created
     </select>
 
-    <select id="findOrderNumByCreated" resultType="java.lang.Integer">
-        select count(id)
-        from custom_order
-        where created like '%${_parameter}%'
-    </select>
-
     <select id="findOrderListByCidAndUid" resultType="com.lwxf.mybatis.utils.MapContext">
-        select id orderId,no orderNo from custom_order where company_id=#{companyId} and customer_id=#{userId} and status in (14,15,16)
+        select id orderId,no orderNo from custom_order where company_id=#{companyId} and customer_id=#{userId} and status=6
     </select>
-    <select id="findByCid" resultType="com.lwxf.mybatis.utils.MapContext">
-        select id orderId,no orderNo from custom_order where company_id=#{dealerId} and status in (14,15,16)
-    </select>
-
-    <select id="findCustomerOrderInfo" resultType="com.lwxf.mybatis.utils.MapContext">
-        select co.id orderId,co.no orderNo,co.created,co.factory_final_price factoryPrice,u.name salemanName from custom_order co left join user u on co.salesman=u.id where company_id=#{companyId} and customer_id=#{customerId}
-    </select>
-
-
-    <select id="findOrderListByStatusList" resultMap="CustomOrderMap">
-        select id,no from custom_order where status in
-        <foreach item="status" collection="list"
-                 open="(" separator="," close=")">
-            #{status}
-        </foreach>
-    </select>
-
     <select id="findOrderMoneyCount" resultType="integer">
         select count(*) from custom_order
         <where><trim prefixOverrides="AND">
@@ -750,275 +914,6 @@ WHERE  id = #{id}
             </if>
         </trim>
         </where>
-    </select>
-
-    <select id="findOrderNumByCustomIdAndCid" resultMap="CustomOrderMap">
-        select  <include refid="columns"/> from custom_order
-        <where><trim prefixOverrides="AND">
-            <if test="_parameter.containsKey('companyId') and companyId != null">
-                company_id = #{companyId}
-            </if>
-            <if test="_parameter.containsKey('customerId') and customerId != null">
-                AND customer_id = #{customerId}
-            </if>
-            <if test="_parameter.containsKey('selectTime') and selectTime != null">
-                AND date_format(created,'%Y-%m')=#{selectTime}
-            </if>
-            <if test="_parameter.containsKey('status') and status != null">
-                AND status=#{status}
-            </if>
-        </trim>
-        </where>
-    </select>
-
-    <select id="findByCreated" resultType="java.util.Map">
-      select
-      o.id,o.status,u.name as customName,
-      cod.name as demandName,o.created
-      from custom_order o
-      left join user u on u.id = o.customer_id
-      left join custom_order_demand cod on cod.custom_order_id = o.id
-      <where><trim prefixOverrides="and">
-          <if test="created!=null">
-              o.created like '%${created}%'
-          </if>
-          <if test="beginTime!=null">
-              and #{beginTime}&lt;= o.created
-          </if>
-          <if test="endTime!=null">
-              and (o.created &lt;= #{endTime} or o.created like '%${endTime}%')
-          </if>
-          <if test="status!=null">
-              and (o.status = ${status})
-          </if>
-          <if test="name!=null">
-              and (o.company_id in
-              (select id from company
-              where name like '%${name}%')
-              or o.customer_id in
-              (select id from user
-              where name like '%${name}%')
-              or o.no like '%${name}%')
-          </if>
-      </trim></where>
-      group by o.id
-      order by o.created desc
-    </select>
-
-
-    <select id="findOrderInfoByOrderId" resultType="java.util.Map">
-        SELECT
-        o.id,o.no,o.created,o.estimated_delivery_date,
-        u.name as customName,ca.merger_name,
-        o.address,c.name as companyName,
-        c.leader_tel,us.name as merchandiserName, o.notes
-        from custom_order o
-        left join user u on u.id = o.customer_id
-        left join city_area ca on ca.id = o.city_area_id
-        left join company c on c.id = o.company_id
-        left join user us on us.id = o.merchandiser
-        where o.id = #{orderId} limit 1
-    </select>
-    <select id="findPaidOrderNumByCreated" resultType="java.lang.Integer">
-        select count(id)
-        from dealer_account_log
-        where type = 2
-        and  resource_id in
-        (
-            select id from custom_order
-            where created like '%${created}%'
-        )
-    </select>
-
-    <select id="findPaidOrderNumByTime" resultType="java.lang.Integer">
-     select count(id)
-     from dealer_account_log
-     <where><trim prefixOverrides="and">
-         <if test="beginTime!=null">
-             and created &gt;= #{beginTime}
-         </if>
-         <if test="endTime!=null">
-             and (created &lt;= #{endTime} or created like '%${endTime}%')
-         </if>
-         <if test="created!=null">
-             and created like '%${created}%'
-         </if>
-     </trim></where>
-     and type = 2
-    </select>
-
-    <select id="findUnpaidOrderNumByTime" resultType="java.lang.Integer">
-        select count(id) from custom_order
-        <where><trim prefixOverrides="and">
-            <if test="beginTime!=null">
-                and created &gt;= #{beginTime}
-            </if>
-            <if test="endTime!=null">
-                and (created &lt;= #{endTime} or created like '%${endTime}%')
-            </if>
-            <if test="created!=null">
-                and created like '%${created}%'
-            </if>
-        </trim></where>
-        and id not in
-        (
-            select resource_id from dealer_account_log
-             where created like '%${created}%'
-             and type = 2
-         )
-    </select>
-
-    <select id="findDesignNumByCreated" resultType="java.lang.Integer">
-        select count(id) from custom_order_design
-        where created like '%${_parameter}%'
-    </select>
-
-    <select id="findIsDesignNumByTime" resultType="java.lang.Integer">
-        select count(id) from custom_order
-        <where><trim>
-            <if test="created!=null">
-                created like '%${created}%'
-            </if>
-            <if test="isDesign!=null">
-                and is_design = #{isDesign}
-            </if>
-        </trim></where>
-    </select>
-
-    <select id="findByConditions" resultType="java.util.Map">
-        select
-        o.id,o.no,o.created,c.name,
-        o.estimated_delivery_date as deliveryDate,
-        o.documentary_time as processTime
-        from  custom_order o
-        left join company c on c.id = o.company_id
-        <where><trim prefixOverrides="and">
-            <if test="created!=null">
-                and o.created like '%${created}%'
-            </if>
-            <if test="beginTime!=null">
-                and #{beginTime}&lt;= o.created
-            </if>
-            <if test="endTime!=null">
-                and (o.created &lt;= #{endTime} or o.created like '%${endTime}%')
-            </if>
-            <if test="cityName!=null">
-                and o.city_area_id = (
-                select id from city_area
-                where merger_name = #{cityName})
-            </if>
-            <if test="valid!=null">
-                and  o.id in (
-                select resource_id from
-                dealer_account_log where type = 2)
-            </if>
-            <if test="unValid!=null">
-                and  o.id not in (
-                select resource_id from
-                dealer_account_log where type = 2)
-            </if>
-            <if test="businessManager!=null">
-                and o.company_id in (
-                select id from company where business_manager = #{businessManager})
-            </if>
-            <if test="designer!=null">
-                and o.designer = #{designer}
-            </if>
-            <if test="isCoordination!=null">
-                and o.is_coordination = #{isCoordination}
-            </if>
-            <if test="merchandiser!=null">
-                and o.merchandiser = #{merchandiser}
-            </if>
-            <if test="name!=null">
-                and (o.company_id in
-                (select id from company
-                where name like '%${name}%')
-                or o.customer_id in
-                (select id from user
-                where name like '%${name}%')
-                or o.no like '%${name}%')
-            </if>
-            <if test="pType!=null">
-                and o.id in (
-                select distinct custom_order_id from order_product
-                where type = #{pType}
-                )
-            </if>
-        </trim></where>
-        order by o.created desc
-    </select>
-
-
-    <select id="findFactoryOrderInfoById" resultType="java.util.Map">
-        select
-        id,no,created,estimated_delivery_date,
-        factory_final_price as amount,status,salesman,
-        company_id,customer_id,designer,merchandiser,time_consuming,documentary_time,
-        (case is_coordination
-         WHEN 0 THEN
-            '自产'
-        WHEN 1 THEN
-            '外协'
-        ELSE
-            '未知'
-        END
-        ) isCoordination,
-         (
-        CASE is_design
-        WHEN 0 THEN
-            '正常'
-        WHEN 1 THEN
-            '散单'
-        ELSE
-            '未知'
-        END
-    ) isDesign
-        from  custom_order
-        where id = #{orderId}
-    </select>
-    <select id="findFProcessOrderList" resultType="java.util.Map">
-        select distinct o.id,o.no,o.estimated_delivery_date,c.name as companyName,o.created,dal.created as shTime,o.documentary_time
-        from custom_order o
-        left join produce_order po on o.id = po.custom_order_id
-        left join company c on c.id = o.company_id
-        left join dealer_account_log dal on dal.resource_id = o.id and dal.type = 2
-        <where><trim prefixOverrides="and">
-            <if test="companyName!=null">
-                and o.company_id in
-                ( select id from company
-                where name like '%${companyName}%'
-                )
-            </if>
-            <if test="customerName!=null">
-                and o.customer_id in
-                ( select id from user
-                  where name like '%${customerName}%'
-                )
-            </if>
-            <if test="beginTime!=null">
-                and #{beginTime}&lt;= o.created
-            </if>
-            <if test="endTime!=null">
-                and (o.created &lt;= #{endTime} or o.created like '%${endTime}%')
-            </if>
-            <if test="no!=null">
-                and o.no like '%${no}%'
-            </if>
-            <if test="status!=null">
-                and (o.status = ${status})
-            </if>
-            <if test="documentaryTime!=null">
-                and o.documentary_time <![CDATA[!=]]> null
-            </if>
-            <if test="type!=null">
-                and po.type in (${type})
-            </if>
-            <if test="way!=null">
-                and po.way in (${way})
-            </if>
-            and po.state in (${state})
-        </trim> </where>
     </select>
 
 
@@ -1068,14 +963,6 @@ WHERE  id = #{id}
         where co.id = #{orderId}
     </select>
 
-    <select id="findShipmentsInfoByOrderId" resultType="java.util.Map">
-        select
-        ca.merger_name,co.consignee_tel,co.consignee_name,co.address
-        from custom_order co
-        left join city_area ca on ca.id = co.city_area_id
-        where co.id = #{orderId}
-    </select>
-
 
 
     <select id="findByIds" resultMap="CustomOrderMap">
@@ -1095,11 +982,16 @@ WHERE  id = #{id}
     <select id="findPacksOrderList" resultMap="CustomOrderMapDto">
         select
         o.*, us.name as customerName, c.merger_name as cityName,u.name as salesmanName,u.mobile as salesmanTel,u.avatar
-        as salesmanAvatar,uses.name designerName,uu.name creatorName,f.c counts,uuu.name merchandiserName,p.pay_time payTime
+        as salesmanAvatar,uses.name designerName,uu.name creatorName,f.c counts,uuu.name merchandiserName,p.pay_time payTime,
+        IFNULL(ff.c,0) cabinetCount,IFNULL(fff.c,0) doorCount,IFNULL(ffff.c,0) hardwareCount
         FROM
-        (select o.*,c2.name dealerName,c2.leader_tel dealerTel,c2.city_area_id dealerCityAreaId,c2.address dealerAddress
+        (select o.*,c2.name dealerName,c2.leader_tel dealerTel,c2.city_area_id dealerCityAreaId,c2.address dealerAddress,
+        IFNULL(p.c,0) as 'existCabinet',IFNULL(pp.c,0) as 'existDoor',IFNULL(ppp.c,0) as 'existHardware'
         from custom_order o left join company c2 on o.company_id = c2.id
-        where o.status >= #{status}
+        left join (select count(*) as c,custom_order_id from produce_order where type = 0 GROUP BY custom_order_id) p on p.custom_order_id = o.id
+        left join (select count(*) as c,custom_order_id from produce_order where type = 1 GROUP BY custom_order_id) pp on pp.custom_order_id = o.id
+        left join (select count(*) as c,custom_order_id from produce_order where type = 2 GROUP BY custom_order_id) ppp on ppp.custom_order_id = o.id
+        where o.status >= #{status} and o.branch_id = #{branchId}
         )
         o
         left join city_area c on o.city_area_id = c.id
@@ -1110,6 +1002,9 @@ WHERE  id = #{id}
         left join user uuu on uuu.id = o.merchandiser
         left join payment p on p.custom_order_id = o.id
         left join (select f.*,count(item.id) as c from finished_stock f  left join finished_stock_item item on f.id = item.finished_stock_id   GROUP BY item.finished_stock_id) f on o.id = f.order_id
+        left join (select f.*,count(item.id) as c from finished_stock f  left join finished_stock_item item on f.id = item.finished_stock_id where item.type = 0 GROUP BY item.finished_stock_id ) ff on o.id = ff.order_id
+        left join (select f.*,count(item.id) as c from finished_stock f  left join finished_stock_item item on f.id = item.finished_stock_id where item.type = 1 or item.type = 2 or item.type = 3 GROUP BY item.finished_stock_id ) fff on o.id = fff.order_id
+        left join (select f.*,count(item.id) as c from finished_stock f  left join finished_stock_item item on f.id = item.finished_stock_id where item.type = 4 GROUP BY item.finished_stock_id ) ffff on o.id = ffff.order_id
         where (f.packages >f.c or f.packages is null)
         and p.funds = #{funds} and p.status = #{payStatus}
                 <if test="orderNo!=null">
@@ -1117,103 +1012,198 @@ WHERE  id = #{id}
                 </if>
     </select>
 
+    <select id="findByCustomerIdAndCid" resultMap="CustomOrderMap">
+        select <include refid="columns"/> from custom_order co
+        where  co.branch_id=#{branchId} and co.customer_id=#{uId}
 
-
-
-
-
-
-    <select id="findPaidOrderListByTime" resultType="java.util.Map">
-        select
-        o.id,o.no,o.created,c.name,
-        o.estimated_delivery_date as deliveryDate,
-        o.documentary_time as processTime
-        from  custom_order o
-        left join company c on c.id = o.company_id
-        where o.id in
-        (
-            select resource_id from dealer_account_log
-             where created like '%${created}%'
-             and type = 2
-         )
     </select>
 
-    <select id="findUnpaidOrderListByTime" resultType="java.util.Map">
-        select
-        o.id,o.no,o.created,c.name,
-        o.estimated_delivery_date as deliveryDate,
-        o.documentary_time as processTime
-        from  custom_order o
-        left join company c on c.id = o.company_id
-        where o.created like '%${created}%'
-        and o.id not in
-        (
-            select resource_id from dealer_account_log
-             where created like '%${created}%'
-             and type = 2
-         )
+    <select id="findByCustomerIdAndCidAndStatus" resultMap="CustomOrderMap">
+        select <include refid="columns"/> from custom_order co
+        where  co.branch_id=#{branchId} and co.customer_id=#{uId} and co.status <![CDATA[!= ]]>  #{status}
+
     </select>
 
-    <select id="findIsDesignListByTime" resultType="java.util.Map">
-        select
-        o.id,o.no,o.created,c.name,
-        o.estimated_delivery_date as deliveryDate,
-        o.documentary_time as processTime
-        from  custom_order o
-        left join company c on c.id = o.company_id
-        <where><trim>
-            <if test="created!=null">
-                o.created like '%${created}%'
-            </if>
-            <if test="isDesign!=null">
-                and o.is_design = #{isDesign}
-            </if>
-        </trim></where>
+    <select id="findByUidAndBranchId" resultMap="CustomOrderMap">
+        select co.amount ,co.id
+               from custom_order co
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="branchId != null">
+                    co.branch_id=#{branchId}
+                </if>
+                <if test="customId != null">
+                   and co.customer_id=#{customId}
+                </if>
+                <if test="companyId != null">
+                    and co.company_id=#{companyId}
+                </if>
+            </trim>
+        </where>
+  order by co.created limit 1
+
     </select>
-    <select id="getAllByCreated" resultType="java.lang.Integer">
-        select count(id) from custom_order
-        <where><trim prefixOverrides="and">
-            <if test="beginTime!=null">
-              and created &gt;= #{beginTime}
-            </if>
-            <if test="endTime!=null">
-                and (created &lt;= #{endTime} or created like '%${endTime}%')
-            </if>
-            <if test="created!=null">
-                and created like '%${created}%'
-            </if>
-        </trim></where>
+
+    <select id="findByCidAndBranchId" resultMap="CustomOrderMap">
+        select co.amount ,co.id
+        from custom_order co
+        where  co.branch_id=#{branchId} and co.company_id=#{cId}
+        order by co.created limit 1
     </select>
-    <select id="getAllOrderByCreated" resultMap="CustomOrderMap">
+    <select id="findWxOrderByorderId" resultMap="WxCustomerOrderInfoDtoMap">
+        select cc.name customerName,cc.phone customerMobile,cc.address customerAddress,c2.leader_tel leaderMobile,c2.name dealerName,u1.name merchandiserName,co.no orderNo,co.is_design isDesign,co.created orderCreated,co.estimated_delivery_date estimatedDeliveryDate,
+               co.factory_final_price factoryFinalPrice,co.factory_price factoryPrice,co.discounts_note discountsNote,co.status orderStatus,co.time_consuming timeConsuming,co.documentary_time documentaryTime,co.delivery_date deliveryDate,co.documentary_notes documentaryNotes,
+               u2.name creatorName
+        from custom_order co
+        left join company_customer cc on co.customer_id=cc.id
+        left join company c2 on co.company_id = c2.id
+        left join user u1 on co.merchandiser=u1.id
+        left join user u2 on co.creator=u2.id
+        where  co.id=#{orderId}
+    </select>
+    <select id="findTodayOrderCount" resultType="integer">
+        select count(co.id)
+        from custom_order co
+        <where>
+        <trim prefixOverrides="AND">
+            to_days(co.created) = to_days(now())
+        <if test="branchId != null">
+            and   co.branch_id=#{branchId}
+        </if>
+         <if test="dealerId != null">
+             and   co.company_id=#{dealerId}
+         </if>
+        </trim>
+        </where>
+    </select>
+    <select id="findTodayInvalidOrder" resultType="integer">
+        select count(co.id)
+        from custom_order co
+        <where>
+            <trim prefixOverrides="AND">
+                to_days(co.created) = to_days(now())
+                <if test="branchId != null">
+                    and   co.branch_id=#{branchId}
+                </if>
+                <if test="dealerId != null">
+                    and   co.company_id=#{dealerId}
+                </if>
+                <if test="status != null">
+                    and co.status <![CDATA[ <= ]]>#{status}
+                </if>
+            </trim>
+        </where>
+
+    </select>
+    <select id="findTodayEffectiveOrder" resultType="integer">
+        select count(co.id)
+        from custom_order co
+        <where>
+            <trim prefixOverrides="AND">
+                to_days(co.created) = to_days(now())
+                <if test="branchId != null">
+                    and   co.branch_id=#{branchId}
+                </if>
+                <if test="dealerId != null">
+                    and   co.company_id=#{dealerId}
+                </if>
+                <if test="status != null">
+                    and co.status<![CDATA[ > ]]>#{status}
+                </if>
+            </trim>
+        </where>
+    </select>
+
+    <select id="findWxOrderList" resultMap="WxCustomOrderDtoMap">
+        select co.id,co.no,co.created ,c.name dealerName,cc.name customerName,u.name salesmanName,
+                co.status
+        from custom_order co
+          left join company c on co.company_id=c.id
+        left  join company_customer cc on co.customer_id=cc.id
+             left join user u on co.salesman = u.id
+        <where>
+        <trim prefixOverrides="AND">
+        <if test="branchId != null">
+            co.branch_id=#{branchId}
+        </if>
+        <if test="condation != null">
+            AND (co.company_id in (select id from company where leader_tel like '%${condation}%')
+           or cc.name like '%${condation}%'
+           or co.no like '%${condation}%')
+        </if>
+            <if test="cityId != null">
+              and  co.city_area_id=#{cityId}
+            </if>
+            <if test="dealerId != null">
+               and  co.company_id=#{dealerId}
+            </if>
+            <if test="customerId != null">
+                and  co.customer_id=#{customerId}
+            </if>
+            <if test="salesman != null">
+                and  co.salesman=#{salesman}
+            </if>
+            <if test="startTime != null">
+                AND date_format(co.created,'%Y-%m-%d')<![CDATA[ >= ]]> #{startTime}
+            </if>
+            <if test="endTime != null">
+                AND date_format(co.created,'%Y-%m-%d') <![CDATA[ <= ]]> #{endTime}
+            </if>
+        </trim>
+        </where>
+         order by created desc
+    </select>
+
+    <!--微信小程序工厂端报表 -->
+    <select id="statementWxFactory" parameterType="String" resultMap="WxFactoryStatementDto">
         select
-        <include refid="columns"></include>
+        (select count(*) from custom_order where to_days(created) = TO_DAYS(now()) and branch_id = #{branchId}) as jiedan,
+        (select count(*) from payment where funds = 31 and status =1 and to_days(created) = TO_DAYS(now()) and branch_id = #{branchId}) as fukuan,
+        (select count(*) from custom_order where status >7 and branch_id = #{branchId})  as shengchan,
+        (select count(*) from custom_order where estimated_delivery_date > now() and branch_id = #{branchId}) as yanqi,
+        ifnull((select sum(amount) from payment_simple where type=1 and to_days(created) = TO_DAYS(now()) and branch_id = #{branchId}),0) as shouru,
+        ifnull((select sum(amount) from payment_simple where type=2 and to_days(created) = TO_DAYS(now()) and branch_id = #{branchId}),0) as zhichu
+    </select>
+
+    <!--微信小程序工厂端报表 -->
+    <select id="selectDealerInfo" parameterType="String" resultMap="WxDealerInfoDto">
+        select
+        (select count(*) from custom_order where to_days(created) = TO_DAYS(now()) and company_id=#{companyId}) as dingdanxinzeng,
+        (select count(*) from payment where funds = 31 and status =1 and to_days(audited) = TO_DAYS(now()) and company_id=#{companyId}) as dingdanyouxiao,
+        (select count(*) from custom_order where status >14 and company_id=#{companyId})  as dingdanwancheng,
+        (select count(*) from aftersale_apply where type=4 and  to_days(created) = TO_DAYS(now()) and company_id=#{companyId}) as fankuixinzeng,
+        (select count(*) from aftersale_apply where type=5 and  to_days(created) = TO_DAYS(now()) and company_id=#{companyId}) as buliaoxinzeng,
+        (select count(*) from aftersale_apply where `status`=3 and to_days(finish_date) = TO_DAYS(now()) and company_id=#{companyId}) as wancheng
+    </select>
+    <select id="findOrderPrintTable" resultType="com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto">
+        select
+         co.is_design as isDesign,co.no as orderNo,u.name as orderTaker,c.name as dealerCompanyName,substring(ca.merger_name,4) as cityArea,
+         c.founder_name founderName, c.leader_tel leaderTel, co.consignee_name consigneeName,co.consignee_tel consigneeTel,co.address,
+         cc.name customerName,cc.phone customerTel,cc.community,co.estimated_delivery_date estimatedDeliveryDate,co.delivery_date deliveryDate
+        from custom_order co
+        left join company_customer cc on co.customer_id=cc.id
+        left join company c on co.company_id=c.id
+        left join city_area ca on c.city_area_id=ca.id
+        left join user u on co.creator=u.id
+        where  co.id=#{orderId}
+
+    </select>
+
+    <select id="findOfferPrintTableInfo" resultMap="OfferPrintTableDto">
+        select o.*,
+        c3.name customerName,c3.phone phone,c3.community community,
+        c2.name dealerName,c2.leader_tel dealerTel,c2.founder_name leaderName
+        from custom_order o
+        left join company c2 on o.company_id = c2.id
+        left join company_customer c3 on c3.id = o.customer_id
+where o.id=#{id}
+    </select>
+
+    <select id="findOverdueOrderCount" resultType="integer">
+        select count(*)
         from custom_order
-        <where><trim prefixOverrides="and">
-            <if test="beginTime!=null">
-              and created &gt;= #{beginTime}
-            </if>
-            <if test="endTime!=null">
-                and (created &lt;= #{endTime} or created like '%${endTime}%')
-            </if>
-            <if test="created!=null">
-                and created like '%${created}%'
-            </if>
-        </trim></where>
+           where branch_id=#{branchId} and
+                 delivery_date > estimated_delivery_date or( DATE_FORMAT(estimated_delivery_date,'%Y-%m-%d')=DATE_FORMAT(NOW(),'%Y-%m-%d') and delivery_date is null)
     </select>
-    <select id="findPaidOrderAmountByTime" resultType="java.math.BigDecimal">
-        select sum(amount)
-        from dealer_account_log
-        <where><trim prefixOverrides="and">
-            <if test="beginTime!=null">
-                and created &gt;= #{beginTime}
-            </if>
-            <if test="endTime!=null">
-                and (created &lt;= #{endTime} or created like '%${endTime}%')
-            </if>
-            <if test="created!=null">
-                and created like '%${created}%'
-            </if>
-        </trim></where>
-        and type = 2
-    </select>
+
 </mapper>

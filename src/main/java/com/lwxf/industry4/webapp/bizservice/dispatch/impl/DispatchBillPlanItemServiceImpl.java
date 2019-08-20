@@ -60,4 +60,14 @@ public class DispatchBillPlanItemServiceImpl extends BaseServiceImpl<DispatchBil
 		return this.dao.updateStatusByFinishedItemId(updatePlanItem);
 	}
 
+	@Override
+	public int deleteByOrderId(String orderId) {
+		return this.dao.deleteByOrderId(orderId);
+	}
+
+	@Override
+	public MapContext findCountByBranchId(String branchId) {
+		return this.dao.findCountByBranchId(branchId);
+	}
+
 }

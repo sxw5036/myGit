@@ -24,4 +24,10 @@ public interface BasecodeService extends BaseService<Basecode, String> {
 	List<Basecode> selectByFilter(MapContext paginatedFilter);
 
 	List<Basecode> findAll();
+
+	Basecode findByTypeAndValue(String type, String value);
+
+	List<Basecode> findByType(String type);
+
+	Basecode findByTypeAndCode(String typeString, String type);
 }

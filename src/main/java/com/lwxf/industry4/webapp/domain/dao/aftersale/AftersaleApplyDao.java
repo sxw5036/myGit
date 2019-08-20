@@ -9,7 +9,10 @@ import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.AftersaleDto;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.AftersaleOrderDto;
+import com.lwxf.industry4.webapp.domain.dto.aftersale.AftersaleStatementDto;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
+import com.lwxf.industry4.webapp.domain.dto.printTable.AftersalesPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto;
 import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApply;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.mybatis.utils.MapContext;
@@ -27,6 +30,9 @@ import com.lwxf.mybatis.utils.MapContext;
 public interface AftersaleApplyDao extends BaseDao<AftersaleApply, String> {
 
 	PaginatedList<AftersaleDto> selectByFilter(PaginatedFilter paginatedFilter);
+
+	//该方法升级售后单列表的查询，上面的查询sql过于复杂但不采取删除
+	PaginatedList<AftersaleDto> selectDtoByFilter(PaginatedFilter paginatedFilter);
 
 	AftersaleDto findAftersaleMessage(String aftersaleId);
 
@@ -64,4 +70,19 @@ public interface AftersaleApplyDao extends BaseDao<AftersaleApply, String> {
 	List<AftersaleApply> findByOrderId(String orderId);
 
 	AftersaleApply findByAftersaleNo(String aftersaleOrderNo);
+
+
+	List<AftersaleApply> findAftersaleListByOrderId(String orderId);
+
+	int deleteByResultOrderId(String orderId);
+
+	Map<String,Long> countAftersale(String branchId);
+
+	MapContext countAftersaleForPageIndex(String branchId);
+
+	PaginatedList<MapContext> findWxAftersaleApplyList(PaginatedFilter paginatedFilter);
+
+	AftersalesPrintTableDto findAftersalesPrintInfo(String id);
+
+	OrderPrintTableDto findOrderPrintTable(MapContext mapContext);
 }

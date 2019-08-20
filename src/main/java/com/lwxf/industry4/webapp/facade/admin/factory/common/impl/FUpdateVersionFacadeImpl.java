@@ -92,7 +92,7 @@ public class FUpdateVersionFacadeImpl extends BaseFacadeImpl implements FUpdateV
 		//添加图片到数据库
 		UploadFiles uploadFiles = new UploadFiles();
 		uploadFiles.setCreated(DateUtil.getSystemDate());
-		uploadFiles.setFullPath(uploadInfo.getRealPath());
+		uploadFiles.setFullPath(WebUtils.getDomainUrl() + uploadInfo.getRelativePath());
 		uploadFiles.setMime(uploadInfo.getFileMimeType().getRealType());
 		uploadFiles.setName(uploadInfo.getFileName());
 		uploadFiles.setOriginalMime(uploadInfo.getFileMimeType().getOriginalType());

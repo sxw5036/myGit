@@ -34,4 +34,6 @@ public interface ProduceFlowDao extends BaseDao<ProduceFlow, String> {
 	List<ProduceFlowDto> findListByProduceOrderId(String id);
 
 	ProduceFlowDto findOneById(String id);
+
+	int deleteByOrderId(String orderId);
 }

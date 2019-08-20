@@ -9,10 +9,11 @@ import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.FileMimeTypeUtil;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.domain.dto.company.CompanyAccountInfoDto;
 import com.lwxf.industry4.webapp.domain.dto.company.CompanyPaymentInfoDto;
 import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
-import com.lwxf.industry4.webapp.facade.app.factory.financing.CompanyFinanceFacade;
+import com.lwxf.industry4.webapp.facade.admin.factory.finance.CompanyFinanceFacade;
 import com.lwxf.mybatis.utils.MapContext;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
@@ -40,26 +41,33 @@ public class CompanyFinanceController {
     private CompanyFinanceFacade companyFinanceFacade;
 
     /**
-     * 条件查询经销商
+     * 条件查询经销商财务明细
      * @return
      */
     @ApiResponse(code = 200, message = "查询成功")
     @ApiOperation(value = "经销商财务信息", notes = "",response = CompanyFinanceListDto.class)
     @GetMapping("/companies/payments")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "companyId", value = "经销商ID", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "beginTime", value = "起始时间 eg:2018-01-01", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "endTime", value = "终止时间 eg:2018-01-01", dataType = "string", paramType = "query"),
             @ApiImplicitParam(name = "companyName", value = "公司名称", dataType = "string", paramType = "query"),
-            @ApiImplicitParam(name = "type", value = "类型:0：生产商/制造商/总店；1：直营店；2：店中店；3：专卖店；4：加盟店；5：散单;6:供应商", dataType = "integer", paramType = "query" ),
+            @ApiImplicitParam(name = "type", value = "1：收入，2：支出，3扣款", dataType = "integer", paramType = "query" ),
+            @ApiImplicitParam(name = "way", value = "支付方式", dataType = "integer", paramType = "query" ),
             @ApiImplicitParam(name = "order", value = "排序列，按时间传递：created,按金额排序传递：amount", dataType = "string", paramType = "query" ),
-            @ApiImplicitParam(name = "sort", value = "排序方式，desc：倒序,asc：正序", dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "sort", value = "排序方式，desc：倒序,asc：正序", dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "status", value = "状态，0:代付款，1：已审核", dataType = "string", paramType = "query")
     })
     private String findCompanyFinanceList(
                                    @PathVariable
+                                   @RequestParam(required = false) String companyId,
                                    @RequestParam(required = false) String beginTime,
                                    @RequestParam(required = false) String endTime,
                                    @RequestParam(required = false) String companyName,
                                    @RequestParam(required = false) Integer funds,
+                                   @RequestParam(required = false) Integer way,
+                                   @RequestParam(required = false) Integer type,
+                                   @RequestParam(required = false) Integer status,
                                    @RequestParam(required = false) Integer pageSize,
                                    @RequestParam(required = false) Integer pageNum,
                                    @RequestParam(required = false) String order,
@@ -71,8 +79,51 @@ public class CompanyFinanceController {
         if (null == pageSize) {
             pageSize = AppBeanInjector.configuration.getPageSizeLimit();
         }
-        MapContext map = createMapContent(beginTime,endTime,companyName,funds,order,sort);
+        MapContext map = createMapContent(beginTime,endTime,companyName,funds,order,sort,companyId,way,status,type);
+        map.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
         RequestResult result=this.companyFinanceFacade.findCompanyFinanceList(map,pageNum,pageSize);
+        return jsonMapper.toJson(result);
+    }
+
+    /**
+     * 条件查询经销商账户金额
+     * @return
+     */
+    @ApiResponse(code = 200, message = "查询成功")
+    @ApiOperation(value = "经销商余额信息", notes = "",response = CompanyAccountInfoDto.class)
+    @GetMapping("/companies/accounts")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "companyName", value = "公司名称", dataType = "string", paramType = "query"),
+    })
+    private String findCompanyFinanceList(
+            @PathVariable
+            @RequestParam(required = false) String companyName,
+            @RequestParam(required = false) Integer pageSize,
+            @RequestParam(required = false) Integer pageNum){
+        JsonMapper jsonMapper=new JsonMapper();
+        if (null == pageNum) {
+            pageNum = 1;
+        }
+        if (null == pageSize) {
+            pageSize = AppBeanInjector.configuration.getPageSizeLimit();
+        }
+        MapContext mapContext = MapContext.newOne();
+        mapContext.put("companyName", companyName);
+        mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
+        RequestResult result=this.companyFinanceFacade.findAccountListInfo(mapContext,pageNum,pageSize);
+        return jsonMapper.toJson(result);
+    }
+
+    /**
+     * 条件查询经销商账户金额
+     * @return
+     */
+    @ApiResponse(code = 200, message = "查询成功")
+    @ApiOperation(value = "首页统计信息", notes = "")
+    @GetMapping("/companies/countPayments")
+    private String countPayments(){
+        JsonMapper jsonMapper=new JsonMapper();
+        RequestResult result=this.companyFinanceFacade.countPaymentForPageIndex();
         return jsonMapper.toJson(result);
     }
 
@@ -94,10 +145,17 @@ public class CompanyFinanceController {
     @ApiResponse(code = 200, message = "查询成功")
     @ApiOperation(value="添加经销商财务信息",notes="添加经销商财务信息",response = CompanyPaymentInfoDto.class)
     @PostMapping("/add")
-    @ApiImplicitParam(name = "paymentId", value = "公司id", dataType = "string", paramType = "path")
     private RequestResult addCompanyPayment(@RequestBody CompanyPaymentInfoDto companyPaymentInfoDto){
         JsonMapper jsonMapper=new JsonMapper();
         return this.companyFinanceFacade.addCompanyPayment(companyPaymentInfoDto);
+    }
+
+    @ApiResponse(code = 200, message = "编辑成功")
+    @ApiOperation(value="编辑财务信息",notes="编辑财务信息")
+    @PostMapping("/edit")
+    private RequestResult editCompanyPayment(@RequestBody MapContext map){
+        JsonMapper jsonMapper=new JsonMapper();
+        return this.companyFinanceFacade.editCompanyPayment(map);
     }
 
     /**
@@ -105,16 +163,28 @@ public class CompanyFinanceController {
      * @param beginTime  开始时间
      * @return
      */
-    private MapContext createMapContent(String beginTime, String endTime,String companyName,Integer funds,String order,String sort) {
+    private MapContext createMapContent(String beginTime, String endTime,String companyName,Integer funds,String order,String sort,String companyId,Integer way,Integer status,Integer type) {
         MapContext mapContext = MapContext.newOne();
+        if (companyId!=null) {
+            mapContext.put("companyId", companyId);
+        }
         if (beginTime!=null) {
             mapContext.put("beginTime", beginTime);
         }
         if (endTime!=null) {
             mapContext.put("endTime", endTime);
         }
-        if (endTime!=null) {
+        if (funds!=null) {
             mapContext.put("funds", funds);
+        }
+        if (status!=null) {
+            mapContext.put("status", status);
+        }
+        if (way!=null) {
+            mapContext.put("way", way);
+        }
+        if (type!=null) {
+            mapContext.put("type", type);
         }
         if (companyName!=null) {
             mapContext.put("companyName", companyName);
@@ -167,6 +237,16 @@ public class CompanyFinanceController {
             }
         }
         map.put("fundsOut",listOut);
+        List<MapContext> listOthers = new ArrayList<>();
+        for (PaymentFunds s : PaymentFunds.values()) {
+            if(s.getValue().intValue()>30) {
+                MapContext mapCompanyStatus = MapContext.newOne();
+                mapCompanyStatus.put("name", s.getName());
+                mapCompanyStatus.put("id", s.getValue());
+                listOthers.add(mapCompanyStatus);
+            }
+        }
+        map.put("fundsOthers",listOthers);
         return jsonMapper.toJson(ResultFactory.generateRequestResult(map));
     }
 
@@ -222,4 +302,15 @@ public class CompanyFinanceController {
         return this.companyFinanceFacade.uploadImage(uid,cid,multipartFileList);
     }
 
+    /**
+     * 删除记账信息
+     * @param paymentId  记账信息id
+     * @return
+     */
+    @ApiOperation(value="删除记账信息",notes="删除记账信息")
+    @DeleteMapping(value = "/{paymentId}")
+    public String delete(@PathVariable String paymentId) {
+        JsonMapper jsonMapper=new JsonMapper();
+        return jsonMapper.toJson(this.companyFinanceFacade.deleteById(paymentId));
+    }
 }

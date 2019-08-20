@@ -1,5 +1,8 @@
 package com.lwxf.industry4.webapp.controller.mobile;
 
+import com.lwxf.industry4.webapp.domain.dto.financing.PaymentSimpleDto;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import me.chanjar.weixin.common.error.WxErrorException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,16 +57,18 @@ import static com.lwxf.industry4.webapp.facade.AppBeanInjector.wxMpService;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 @RestController
+@Api(value="WeixinController",tags={"F端微信服务号接口:服务号相关接口"})
 @RequestMapping(value = "/api")
 public class WeixinController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	// 微信基础token验证
+	@ApiOperation(value = "微信基础token验证", notes = "")
 	@RequestMapping(value = "/wx",method ={RequestMethod.GET, RequestMethod.POST})
 	public String checkToken(HttpServletRequest request, @RequestParam String signature, @RequestParam String timestamp, @RequestParam String nonce, @RequestParam(required = false) String echostr){
 		// 验证签名
-		if(!wxMpService.checkSignature(timestamp, nonce,signature)){
-			return "";
-		}
+//		if(!wxMpService.checkSignature(timestamp, nonce,signature)){
+//			return "";
+//		}
 
 		// 接入验证
 		if(null != echostr){
@@ -77,7 +82,7 @@ public class WeixinController {
 			// 发送会员离开的消息
 			Map<String,Object> userLeaveData = (Map)WebUtils.getDataFromRequestMap(WebConstant.WX_TEMPLATE_MSG_USER_LEAVE_DATA);
 			if(null != userLeaveData){
-				User user = (User)userLeaveData.get("user");
+				User user = (User)userLeaveData.get("userController");
 				if(null == user){
 					return WebConstant.STRING_EMPTY;
 				}
@@ -105,6 +110,7 @@ public class WeixinController {
 	}
 
 	// 为用户生成关注微信二维码
+	@ApiOperation(value = "为用户生成关注微信二维码", notes = "")
 	@PostMapping(value = "/users/0/qrcode",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON)
 	public String postQrCode(){
 		JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
@@ -165,12 +171,14 @@ public class WeixinController {
 	}
 
 	// 解绑微信号（不取消关注）
+	@ApiOperation(value = "解绑微信号（不取消关注）", notes = "")
 	@DeleteMapping(value = "/users/0/wx",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON)
 	public RequestResult deleteUnbind(){
 		return weixinFacade.unbindWeixinByUserId(WebUtils.getCurrUserId());
 	}
 
 	// 创建微信服务号菜单
+	@ApiOperation(value = "创建微信服务号菜单", notes = "", response = PaymentSimpleDto.class)
 	@RequestMapping(value = "/users/0/wx/menu",method = RequestMethod.POST, produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON)
 	public String createMenu(@RequestParam(required = true) String menu){
 		String result = this.checkCurrUser();
@@ -180,6 +188,7 @@ public class WeixinController {
 		return weixinFacade.createMenu(menu);
 	}
 	// 删除微信服务号菜单
+	@ApiOperation(value = "删除微信服务号菜单", notes = "")
 	@RequestMapping(value = "/users/0/wx/menu",method = RequestMethod.GET, produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON)
 	public String deleteMenu(){
 		String result = this.checkCurrUser();
@@ -190,6 +199,7 @@ public class WeixinController {
 	}
 
 	// 获取微信的config信息（微信签名相关信息）
+	@ApiOperation(value = "获取微信的config信息（微信签名相关信息）", notes = "")
 	@RequestMapping(value = "/wx/jscfg",method = RequestMethod.GET, produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON)
 	public String getJSSDKConfig(@RequestParam String url){
 		return weixinFacade.getJSSDKConfig(url);
@@ -206,6 +216,7 @@ public class WeixinController {
 	}
 
 	// 为用户生成绑定店主微信二维码
+	@ApiOperation(value = "为用户生成绑定店主微信二维码", notes = "")
 	@PostMapping(value = "/users/0/qrcodes/bingshopkeeper",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON)
 	public RequestResult postBingShopKeeper(){
 		JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();
@@ -275,6 +286,7 @@ public class WeixinController {
 	}
 
 	// 为用户生成添加店员微信二维码
+	@ApiOperation(value = "为用户生成添加店员微信二维码", notes = "")
 	@PostMapping(value = "/users/0/qrcodes/addclerk",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON)
 	public RequestResult postBingclerk(){
 		JsonMapper jsonMapper = JsonMapper.nonEmptyMapper();

@@ -103,6 +103,7 @@ public class DesignScheme extends IdEntity  {
 	@ApiModelProperty(value = "3D_VR的路径")
 	private String vrVideoPath;
 	@Column(type = Types.VARCHAR,length = 150,name = "link",displayName = "链接路径")
+	@ApiModelProperty(value = "链接路径")
 	private String link;
 
 	public DesignScheme() {

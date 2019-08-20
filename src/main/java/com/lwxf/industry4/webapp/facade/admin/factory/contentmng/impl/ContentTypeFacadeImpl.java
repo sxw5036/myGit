@@ -2,12 +2,16 @@ package com.lwxf.industry4.webapp.facade.admin.factory.contentmng.impl;
 
 import com.lwxf.industry4.webapp.bizservice.contentmng.ContentsService;
 import com.lwxf.industry4.webapp.bizservice.contentmng.ContentsTypeService;
+import com.lwxf.industry4.webapp.common.aop.syslog.OperationMoudule;
+import com.lwxf.industry4.webapp.common.aop.syslog.OperationType;
+import com.lwxf.industry4.webapp.common.aop.syslog.SysOperationLog;
 import com.lwxf.industry4.webapp.common.exceptions.ErrorCodes;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.UniqueKeyUtil;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.contentmng.ContentsDto;
 import com.lwxf.industry4.webapp.domain.entity.contentmng.Contents;
 import com.lwxf.industry4.webapp.domain.entity.contentmng.ContentsType;
@@ -33,6 +37,7 @@ public class ContentTypeFacadeImpl extends BaseFacadeImpl implements ContentType
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "添加内容",operationType = OperationType.INSERT,operationMoudule = OperationMoudule.CONTENTS)
     public RequestResult addContentType(ContentsType contentType) {
         //判断code是否重复
         ContentsType content=contentsTypeService.findContentsListByCode(contentType.getCode());
@@ -50,17 +55,19 @@ public class ContentTypeFacadeImpl extends BaseFacadeImpl implements ContentType
     @Override
     @Transactional(value = "transactionManager")
     public RequestResult findContentTypes() {
-        return ResultFactory.generateRequestResult(this.contentsTypeService.findContentsTypeList());
+        return ResultFactory.generateRequestResult(this.contentsTypeService.findContentsTypeListByBranchId(WebUtils.getCurrBranchId()));
     }
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "修改内容",operationType = OperationType.UPDATE,operationMoudule = OperationMoudule.CONTENTS)
     public RequestResult updateContentType(MapContext mapContext) {
         return  ResultFactory.generateRequestResult(this.contentsTypeService.updateByMapContext(mapContext));
     }
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "删除内容",operationType = OperationType.DELETE,operationMoudule = OperationMoudule.CONTENTS)
     public RequestResult deleteContentType(String id) {
 //        List<ContentsDto> list = this.contentsService.(id);
 //        if(list!=null && list.size()>0){

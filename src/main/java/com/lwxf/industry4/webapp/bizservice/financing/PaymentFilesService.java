@@ -26,4 +26,5 @@ public interface PaymentFilesService extends BaseService <PaymentFiles, String> 
 	List<PaymentFiles> findByPaymentId (String paymentId);
 
 
+	int deleteByPaymentId(String paymentId);
 }

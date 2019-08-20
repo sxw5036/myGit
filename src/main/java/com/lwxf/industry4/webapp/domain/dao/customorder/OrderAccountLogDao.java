@@ -29,4 +29,6 @@ public interface OrderAccountLogDao extends BaseDao<OrderAccountLog, String> {
 	List<OrderAccountLogDto> findByOrderId(String orderId);
 
     String findTimeByOrderId(String orderId);
+
+	int deleteByOrderId(String orderId);
 }

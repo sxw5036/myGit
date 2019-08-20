@@ -22,7 +22,7 @@ import com.lwxf.industry4.webapp.domain.entity.product.ProductCategory;
 public interface ProductCategoryService extends BaseService <ProductCategory, String> {
 
 	PaginatedList<ProductCategory> selectByFilter(PaginatedFilter paginatedFilter);
-	List<ProductCategory> findAll();
+	List<ProductCategory> findAllByBranchId(String branchId);
 	List<ProductCategory> selectProductCategoryByFilter(MapContext map);
-	ProductCategory selectProductCategoryByName(String name);
+	ProductCategory selectProductCategoryByName(String name,String branchId);
 }

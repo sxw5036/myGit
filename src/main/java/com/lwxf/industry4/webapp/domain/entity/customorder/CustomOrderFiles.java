@@ -389,7 +389,7 @@ public class CustomOrderFiles extends IdEntity  {
 		file.setPath(uploadInfo.getRelativePath());
 		file.setStatus(uploadType.getValue());
 		file.setCustomOrderId(customOrderId);
-		file.setFullPath(uploadInfo.getRealPath());
+		file.setFullPath(WebUtils.getDomainUrl() + uploadInfo.getRelativePath());
 		file.setType(type);
 		file.setCategory(category);
 		return file;

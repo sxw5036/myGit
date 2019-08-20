@@ -22,6 +22,30 @@
         <result column="target" property="target" jdbcType="TINYINT" />
         <result column="status" property="status" jdbcType="TINYINT" />
         <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+        <result column="branch_id" property="branchId" jdbcType="CHAR" />
+    </resultMap>
+    <resultMap id="ActivityInfoDtoMap" type="com.lwxf.industry4.webapp.domain.dto.activity.ActivityInfoDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="cover" property="cover" jdbcType="VARCHAR" />
+        <result column="summary" property="summary" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="LONGVARCHAR" />
+        <result column="link" property="link" jdbcType="VARCHAR" />
+        <result column="is_inner" property="inner" jdbcType="TINYINT" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="begin_time" property="beginTime" jdbcType="DATE" />
+        <result column="end_time" property="endTime" jdbcType="DATE" />
+        <result column="conditions" property="conditions" jdbcType="VARCHAR" />
+        <result column="regulation" property="regulation" jdbcType="VARCHAR" />
+        <result column="views" property="views" jdbcType="INTEGER" />
+        <result column="classify" property="classify" jdbcType="TINYINT" />
+        <result column="target" property="target" jdbcType="TINYINT" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="company_id" property="companyId" jdbcType="VARCHAR" />
+        <result column="creatorName" property="creatorName"/>
     </resultMap>
     <sql id="columns">
 id, no, type, name, cover, summary, content, link, is_inner, creator, created, begin_time, end_time, conditions, regulation, views, classify, target, status,company_id
@@ -97,14 +121,18 @@ FROM   activity_info
 <if test="companyId != null">
     AND company_id = #{companyId}
 </if>
+
+    <if test="branchId != null">
+        AND branch_id = #{branchId}
+    </if>
 </trim></where>
 
 </select>
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-activity_info(id, no, type, name, cover, summary, content, link, is_inner, creator, created, begin_time, end_time, conditions, regulation, views, classify, target, status,company_id)
-       VALUES(#{id}, #{no}, #{type}, #{name}, #{cover}, #{summary}, #{content}, #{link}, #{inner}, #{creator}, #{created}, #{beginTime}, #{endTime}, #{conditions}, #{regulation}, #{views}, #{classify}, #{target}, #{status},#{companyId})
+activity_info(id, no, type, name, cover, summary, content, link, is_inner, creator, created, begin_time, end_time, conditions, regulation, views, classify, target, status,company_id,branch_id)
+       VALUES(#{id}, #{no}, #{type}, #{name}, #{cover}, #{summary}, #{content}, #{link}, #{inner}, #{creator}, #{created}, #{beginTime}, #{endTime}, #{conditions}, #{regulation}, #{views}, #{classify}, #{target}, #{status},#{companyId},#{branchId})
 </insert>
 
     <update id="updateByMapContext">
@@ -277,7 +305,7 @@ WHERE  id = #{id}
         order by status asc,created desc
     </select>
     <select id="findByFCompanyId" resultType="java.util.Map">
-        select ai.id,
+        select ai.id,ai.link,
         ai.name,ai.cover,ai.summary,
         ai.created, u.name as userName,u.avatar as userAvatar
         from activity_info ai
@@ -296,5 +324,8 @@ WHERE  id = #{id}
         order by created desc
     </select>
 
+    <select id="findOneById" resultMap="ActivityInfoDtoMap">
+        select a.*,u.name creatorName from activity_info a left join user u on a.creator = u.id where a.id = #{id}
+    </select>
 
 </mapper>

@@ -37,4 +37,5 @@ public interface ExcelParam {
 	 */
 	void createBody(HSSFWorkbook workbook, HSSFSheet sheet, HSSFCellStyle bodyStyle, List<Map<String, Object>> mapList);
 
+	String getFileName();
 }

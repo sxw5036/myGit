@@ -3,6 +3,9 @@ package com.lwxf.industry4.webapp.domain.dto.aftersale;
 import java.util.Date;
 import java.util.List;
 
+import com.lwxf.industry4.webapp.common.enums.aftersale.AftersaleStatus;
+import com.lwxf.industry4.webapp.common.enums.aftersale.AftersaleType;
+import com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto;
 import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApply;
 import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApplyFiles;
 
@@ -16,7 +19,6 @@ import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApplyFiles;
  */
 public class AftersaleDto extends AftersaleApply {
 	private String orderNo;//订单编号
-	private String customerName;//客户名称
 	private String customerMobile;//客户电话
 	private String customerAddress;//客户地址
 	private String mergerName;//省市区合并后的名称
@@ -28,7 +30,40 @@ public class AftersaleDto extends AftersaleApply {
     private String checkerName;// 审核人姓名
 	private String aftersaleType;//申请单类型
 	private String aftersaleOrderNo;//售后订单编号
+	private String companyName;//经销商名称
+	private String typeName;//类型名称
+	private String statusName;//状态名称
+	private String operator;//经销商名称
 	private List<AftersaleApplyFiles> aftersaleApplyFilesList;
+	private List<OrderProductDto> productDtos;
+
+	public String getOperator() {
+		return operator;
+	}
+
+	public void setOperator(String operator) {
+		this.operator = operator;
+	}
+
+	public String getTypeName() {
+		return AftersaleType.getByValue(this.getType()).getName();
+	}
+
+	public String getStatusName() {
+		return AftersaleStatus.getByValue(this.getStatus()).getName();
+	}
+
+	public void setStatusName(String statusName) {
+		this.statusName = statusName;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
 
 	public String getCheckerName() {
 		return checkerName;
@@ -62,13 +97,6 @@ public class AftersaleDto extends AftersaleApply {
 		this.orderNo = orderNo;
 	}
 
-	public String getCustomerName() {
-		return customerName;
-	}
-
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
-	}
 
 	public String getCustomerMobile() {
 		return customerMobile;
@@ -139,5 +167,17 @@ public class AftersaleDto extends AftersaleApply {
 
 	public void setAftersaleOrderNo(String aftersaleOrderNo) {
 		this.aftersaleOrderNo = aftersaleOrderNo;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+	public List<OrderProductDto> getProductDtos() {
+		return productDtos;
+	}
+
+	public void setProductDtos(List<OrderProductDto> productDtos) {
+		this.productDtos = productDtos;
 	}
 }

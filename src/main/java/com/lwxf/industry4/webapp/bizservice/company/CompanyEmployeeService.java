@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.domain.dto.company.companyEmployeeDto.CompanyEmploeeDto;
 import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
 import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto;
@@ -80,4 +81,6 @@ public interface CompanyEmployeeService extends BaseService <CompanyEmployee, St
 	List<Map> findAllEmployeesByCid(String companyid);
 
 	List<String> findAllDianzhuId();
+
+	List<MapContext> findsalemans(String branchId);
 }

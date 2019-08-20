@@ -1,4 +1,6 @@
 package com.lwxf.industry4.webapp.domain.entity.warehouse;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.*;
 import java.sql.*;
 import java.util.Date;
@@ -48,6 +50,10 @@ public class FinishedStock extends IdEntity  {
 	private Integer way;
 	@Column(type = Types.VARCHAR,length = 20,name = "flag",displayName = "标记：用于描述该订单包含什么，其值为A、B、C的组合（柜体、门板、五金）")
 	private String flag;
+	private String branchId;
+	@Column(type = Types.TINYINT,name = "resource_type",displayName = "0:订单,1:售后单")
+	@ApiModelProperty(value = "0:订单,1:售后单")
+	private Integer resourceType;
 
     public FinishedStock() {  
      } 
@@ -86,6 +92,9 @@ public class FinishedStock extends IdEntity  {
 		}
 		if (this.created == null) {
 			validResult.put("created", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}
+		if (this.resourceType == null) {
+			validResult.put("resourceType", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
 		}
 		if (this.orderNo == null) {
 			validResult.put("orderNo", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
@@ -248,4 +257,19 @@ public class FinishedStock extends IdEntity  {
 		return flag;
 	}
 
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public Integer getResourceType() {
+		return resourceType;
+	}
+
+	public void setResourceType(Integer resourceType) {
+		this.resourceType = resourceType;
+	}
 }

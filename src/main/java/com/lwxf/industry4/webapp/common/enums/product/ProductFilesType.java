@@ -12,7 +12,10 @@ public enum ProductFilesType {
 	APP_COVER_MAP(0,"app封面图"),
 	APP_MASTER_GRAPH(1,"app主图"),
 	PC_COVER_MAP(2,"pc封面"),
-	PC_MASTER_GRAPH(3,"pc主图");
+	PC_MASTER_GRAPH(3,"pc主图"),
+	WX_COVER_MAP(4,"wx封面"),
+	WX_ATLAS(5,"wx图集"),
+	WX_OFFER(6,"wx报价图");
 
 	private Integer value;
 	private String name;

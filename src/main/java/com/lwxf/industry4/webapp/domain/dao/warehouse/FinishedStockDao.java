@@ -43,8 +43,11 @@ public interface FinishedStockDao extends BaseDao<FinishedStock, String> {
 
     Map findMapByOrderId(String orderId);
 
-    Map findGoStockByPOId(String produceOrderId);
-
-
 	PaginatedList<MapContext> findDispathcBillList(PaginatedFilter paginatedFilter);
+
+	int deleteByOrderId(String orderId);
+
+	List<FinishedStockDto> findWxFinishedList(String orderId);
+
+	MapContext findCountByBranchId(String branchId);
 }

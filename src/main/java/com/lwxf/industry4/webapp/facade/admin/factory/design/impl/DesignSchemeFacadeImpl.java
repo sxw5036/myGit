@@ -28,7 +28,9 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import com.lwxf.industry4.webapp.common.utils.LoginUtil;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.domain.dto.user.LoginedUser;
 import com.lwxf.industry4.webapp.domain.entity.company.CompanyEmployee;
 import com.lwxf.industry4.webapp.domain.entity.design.*;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
@@ -65,6 +67,8 @@ public class DesignSchemeFacadeImpl extends BaseFacadeImpl implements DesignSche
 	@Override
 	public RequestResult findDesignSchemeList(MapContext mapContext, Integer pageNum, Integer pageSize) {
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		String branchId= WebUtils.getCurrBranchId();
+		mapContext.put("branchId",branchId);
 		paginatedFilter.setFilters(mapContext);
 		Pagination pagination = new Pagination();
 		pagination.setPageNum(pageNum);
@@ -98,7 +102,7 @@ public class DesignSchemeFacadeImpl extends BaseFacadeImpl implements DesignSche
 				designScheme.setDesigner(null);
 			}else{
 				CompanyEmployee companyEmployee = this.companyEmployeeService.findOneByCompanyIdAndUserId(WebUtils.getCurrCompanyId(), designScheme.getDesigner());
-				if (companyEmployee == null || !companyEmployee.getRoleId().equals(this.roleService.findRoleByKey(FactoryEmployeeRole.DESIGNER.getValue()).getId())) {
+				if (companyEmployee == null || !companyEmployee.getRoleId().equals(this.roleService.selectByKey(FactoryEmployeeRole.DESIGNER.getValue(),WebUtils.getCurrBranchId()).getId())) {
 					return ResultFactory.generateResNotFoundResult();
 				}
 			}
@@ -119,7 +123,7 @@ public class DesignSchemeFacadeImpl extends BaseFacadeImpl implements DesignSche
 		//修改案例链接
 		MapContext mapContext = new MapContext();
 		mapContext.put(WebConstant.KEY_ENTITY_ID,designScheme.getId());
-		mapContext.put(WebConstant.KEY_COMMON_LINK,AppBeanInjector.configuration.getContentPath().concat("?type=1&id=").concat(designScheme.getId()));
+		mapContext.put(WebConstant.KEY_COMMON_LINK,AppBeanInjector.configuration.getDomainUrl().concat(AppBeanInjector.configuration.getSchemeContentPath()).concat("?type=0&id=").concat(designScheme.getId()));
 		this.designSchemeService.updateByMapContext(mapContext);
 		return ResultFactory.generateRequestResult(this.designSchemeService.findOneById(designScheme.getId()));
 	}
@@ -144,7 +148,7 @@ public class DesignSchemeFacadeImpl extends BaseFacadeImpl implements DesignSche
 		designSchemeFiles.setMime(uploadInfo.getFileMimeType().getRealType());
 		designSchemeFiles.setOriginalMime(uploadInfo.getFileMimeType().getOriginalType());
 		designSchemeFiles.setPath(uploadInfo.getRelativePath());
-		designSchemeFiles.setFullPath(uploadInfo.getRealPath());
+		designSchemeFiles.setFullPath(WebUtils.getDomainUrl() + uploadInfo.getRelativePath());
 		designSchemeFiles.setName(uploadInfo.getFileName());
 		if (type == 0) {
 			designSchemeFiles.setStatus(1);
@@ -215,7 +219,7 @@ public class DesignSchemeFacadeImpl extends BaseFacadeImpl implements DesignSche
 				mapContext.remove("designer");
 			}else{
 				CompanyEmployee companyEmployee = this.companyEmployeeService.findOneByCompanyIdAndUserId(WebUtils.getCurrCompanyId(), designer);
-				if (companyEmployee == null || !companyEmployee.getRoleId().equals(this.roleService.findRoleByKey(FactoryEmployeeRole.DESIGNER.getValue()).getId())) {
+				if (companyEmployee == null || !companyEmployee.getRoleId().equals(this.roleService.selectByKey(FactoryEmployeeRole.DESIGNER.getValue(),WebUtils.getCurrBranchId()).getId())) {
 					return ResultFactory.generateResNotFoundResult();
 				}
 			}

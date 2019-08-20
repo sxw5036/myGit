@@ -64,6 +64,7 @@ public class StorageOutputInFacadeImpl extends BaseFacadeImpl implements Storage
 	@Override
 	public RequestResult findStorageOutPutInList(MapContext mapContext,Integer pageNum,Integer pageSize) {
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		paginatedFilter.setFilters(mapContext);
 		Pagination pagination = new Pagination();
 		pagination.setPageSize(pageSize);
@@ -80,8 +81,9 @@ public class StorageOutputInFacadeImpl extends BaseFacadeImpl implements Storage
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult addStorageInput(StorageOutputInDto storageOutputInDto) {
+		String branchId=WebUtils.getCurrBranchId();
 		//判断编号是否重复
-		if(this.storageOutputInService.findOneByNo(storageOutputInDto.getNo())!=null){
+		if(this.storageOutputInService.findOneByNo(storageOutputInDto.getNo(),branchId)!=null){
 			Map result = new HashMap<String,String>();
 			result.put(WebConstant.STRING_NO,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
@@ -184,8 +186,9 @@ public class StorageOutputInFacadeImpl extends BaseFacadeImpl implements Storage
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult addStorageOutput(StorageOutputInDto storageOutputInDto) {
+		String branchId=WebUtils.getCurrBranchId();
 		//判断编号是否重复
-		if(this.storageOutputInService.findOneByNo(storageOutputInDto.getNo())!=null){
+		if(this.storageOutputInService.findOneByNo(storageOutputInDto.getNo(),branchId)!=null){
 			Map result = new HashMap<String,String>();
 			result.put(WebConstant.STRING_NO,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);

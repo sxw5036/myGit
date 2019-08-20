@@ -13,6 +13,7 @@
         <result column="res_id" property="resId" jdbcType="CHAR" />
         <result column="status" property="status" jdbcType="TINYINT" />
         <result column="supplier_id" property="supplierId" jdbcType="CHAR" />
+        <result column="branch_id" property="branchId" jdbcType="CHAR" />
     </resultMap>
     <resultMap id="StorageOutputInDtoMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.StorageOutputInDto">
         <id column="id" property="id" jdbcType="CHAR" />
@@ -85,8 +86,8 @@ s.id, s.no, s.type, s.flow, s.creator, s.created, s.storage_id, s.notes, s.res_i
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO
-storage_output_in(id, no, type, flow, creator, created, storage_id, notes, res_id, status,supplier_id)
-           VALUES(#{id}, #{no}, #{type}, #{flow}, #{creator}, #{created}, #{storageId}, #{notes}, #{resId}, #{status}, #{supplierId})
+storage_output_in(id, no, type, flow, creator, created, storage_id, notes, res_id, status,supplier_id,branch_id)
+           VALUES(#{id}, #{no}, #{type}, #{flow}, #{creator}, #{created}, #{storageId}, #{notes}, #{resId}, #{status}, #{supplierId},#{branchId})
 </insert>
 
     <update id="updateByMapContext">
@@ -158,12 +159,15 @@ WHERE  id = #{id}
             <if test="supplierId != null">
                 AND supplier_id = #{supplierId}
             </if>
+            <if test="branchId != null">
+                AND sto.branch_id = #{branchId}
+            </if>
         </trim></where>
         ) s on u.id = s.creator
     </select>
 
     <select id="findOneByNo" resultMap="StorageOutputInMap">
-        select <include refid="columns"/> from storage_output_in where no = #{no}
+        select <include refid="columns"/> from storage_output_in   where no = #{no}  and branch_id=#{branchId}
     </select>
 
 </mapper>

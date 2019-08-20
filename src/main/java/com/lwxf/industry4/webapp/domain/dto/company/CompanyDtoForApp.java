@@ -12,6 +12,7 @@ import java.util.Date;
 @ApiModel(value="经销商公司模型",description="经销商公司模型")
 public class CompanyDtoForApp  implements Serializable {
     private static final long serialVersionUID = 1L;
+    @ApiModelProperty(value="公司id",name="id")
     private String id;//公司id
     @ApiModelProperty(value="公司名称",name="companyName")
     private String companyName;
@@ -27,6 +28,8 @@ public class CompanyDtoForApp  implements Serializable {
     private String custCount;
     @ApiModelProperty(value="所在地区",name="area",required=true)
     private String areaName;
+    @ApiModelProperty(value="所在地区(XX-XX-XX)",name="mergerName")
+    private String mergerName;
     @ApiModelProperty(value="负责人",name="leaderName",required=true)
     private String leaderName;
     @ApiModelProperty(value="大区经理",name="businessManager",required=true)
@@ -37,6 +40,8 @@ public class CompanyDtoForApp  implements Serializable {
     private Integer status;
     @ApiModelProperty(value="状态名称",name="statusName")
     private String statusName;
+    @ApiModelProperty(value="负责人电话",name="dealerMobile")
+    private String dealerMobile;
 
     public String getAreaName() {
         return areaName;
@@ -139,11 +144,38 @@ public class CompanyDtoForApp  implements Serializable {
     }
 
     public String getGradeName() {
-        return  CompanyGrade.getByValue(this.grade).getName();
+        String gradeName="";
+        if(this.grade!=null){
+            gradeName=CompanyGrade.getByValue(this.grade).getName();
+        }
+        return gradeName ;
     }
 
     public String getCustCount() {
         return "客户数:"+this.custCount;
     }
 
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getDealerMobile() {
+        return dealerMobile;
+    }
+
+    public void setDealerMobile(String dealerMobile) {
+        this.dealerMobile = dealerMobile;
+    }
+
+    public String getMergerName() {
+        String merger=this.areaName;
+        if(merger!=null&&!merger.equals("")){
+            merger=merger.replaceAll(",","-");
+        }
+        return merger;
+    }
+
+    public void setMergerName(String mergerName) {
+        this.mergerName = mergerName;
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.domain.dao.org.DeptDao;
 import com.lwxf.industry4.webapp.domain.dto.company.companyEmployeeDto.CompanyEmploeeDto;
 import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
@@ -180,5 +181,10 @@ public class CompanyEmployeeServiceImpl extends BaseServiceImpl<CompanyEmployee,
 	@Override
 	public List<String> findAllDianzhuId() {
 		return this.dao.findAllDianzhuId();
+	}
+
+	@Override
+	public List<MapContext> findsalemans(String branchId) {
+		return this.dao.findsalemans(branchId);
 	}
 }

@@ -25,16 +25,10 @@ public interface RoleDao extends BaseDao<Role, String> {
 
 	PaginatedList<Role> selectByFilter(PaginatedFilter paginatedFilter);
 
-	Role selectByKey(String key);
+	Role selectByKey(String key,String branchId);
 
-	List<Role> findListByType(Integer type,String key);
+	List<Role> findListByType(Integer type,String key,String branchId);
 
 
 	Role findRoleByCidAndUid(String userId,String companyId);
-
-
-
-	List<Role> findAllFactoryRole();
-
-	Role findRoleByKey(String key);
 }

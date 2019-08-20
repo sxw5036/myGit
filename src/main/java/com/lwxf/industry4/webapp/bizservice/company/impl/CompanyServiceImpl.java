@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.domain.dto.company.*;
+import com.lwxf.industry4.webapp.domain.dto.companyEmployee.WxDealerUserInfoDto;
 import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto;
 import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
 import com.lwxf.mybatis.utils.MapContext;
@@ -47,8 +49,13 @@ public class CompanyServiceImpl extends BaseServiceImpl<Company, String, Company
 	}
 
 	@Override
-	public Company selectByNo(String no) {
-		return this.dao.selectByNo(no);
+	public Company selectByNo(String no,String branchId) {
+		return this.dao.selectByNo(no,branchId);
+	}
+
+	@Override
+	public Company findByTelAndName(String tel, String name,String branchId) {
+		return this.dao.findByTelAndName(tel,name,branchId);
 	}
 
 	@Override
@@ -138,5 +145,55 @@ public class CompanyServiceImpl extends BaseServiceImpl<Company, String, Company
 		params.put("endTime", endTime);
 		params.put("created",day );
 		return this.dao.findCompanyNumByOrderCreated(params);
+	}
+
+	@Override
+	public PaginatedList<CompanyDtoForApp> findWxDealers(PaginatedFilter paginatedFilter) {
+		return this.dao.findWxDealers(paginatedFilter);
+	}
+
+	@Override
+	public Integer findAllCompanyCount(String branchId) {
+		return this.dao.findAllCompanyCount(branchId);
+	}
+
+	@Override
+	public Integer findIntentionDealer(Integer intention, String branchId) {
+		return this.dao.findIntentionDealer(intention,branchId);
+	}
+
+	@Override
+	public Integer findSignedDealer(Integer signed, String branchId) {
+		return this.dao.findSignedDealer(signed,branchId);
+	}
+
+	@Override
+	public WxCompanyDto findByBranchIdAndDealerId(String branchId, String dealerId) {
+		return this.dao.findByBranchIdAndDealerId(branchId,dealerId);
+	}
+
+	@Override
+	public List<Map> findWxDealersAddCustomer(MapContext mapContext) {
+		return this.dao.findWxDealersAddCustomer(mapContext);
+	}
+
+	@Override
+	public MapContext findDealerCount(String branchId) {
+		return this.dao.findDealerCount(branchId);
+	}
+
+	@Override
+	public WxDealerDto findWxDealerInfoByCId(String currCompanyId) {
+		return this.dao.findWxDealerInfoByCId(currCompanyId);
+	}
+
+	@Override
+	public WxDealerUserInfoDto findDealerUserInfoByUid(String currUserId) {
+		return this.dao.findDealerUserInfoByUid(currUserId);
+	}
+
+	@Override
+	public PaginatedList<CompanyAccountInfoDto> findAccountListInfo(PaginatedFilter paginatedFilter) {
+		return this.dao.findAccountListInfo(paginatedFilter);
 	}
 }

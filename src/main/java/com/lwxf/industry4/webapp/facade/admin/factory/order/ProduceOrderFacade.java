@@ -1,5 +1,6 @@
 package com.lwxf.industry4.webapp.facade.admin.factory.order;
 
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.facade.base.BaseFacade;
 
 /**
@@ -11,4 +12,8 @@ import com.lwxf.industry4.webapp.facade.base.BaseFacade;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 public interface ProduceOrderFacade extends BaseFacade {
+	RequestResult findCoordinationCount(String branchId);
+	RequestResult findProduceOrderOverview();
+
+	RequestResult findCoordinationPrintInfo(String id);
 }

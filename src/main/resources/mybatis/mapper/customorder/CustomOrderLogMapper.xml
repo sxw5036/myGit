@@ -11,6 +11,7 @@
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="path" property="path" jdbcType="VARCHAR" />
         <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
     </resultMap>
 
     <resultMap id="CustomOrderLogMapDto" type="com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderLogDto">
@@ -66,14 +67,17 @@ FROM   custom_order_log
 <if test="customOrderId != null">
     AND custom_order_id = #{customOrderId}
 </if>
+    <if test="companyId != null">
+        AND company_id = #{companyId}
+    </if>
 </trim></where>
 
 </select>
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-custom_order_log(id, stage, content, creator, created, notes, custom_order_id,name,path)
-          VALUES(#{id}, #{stage}, #{content}, #{creator}, #{created}, #{notes}, #{customOrderId},#{name},#{path})
+custom_order_log(id, stage, content, creator, created, notes, custom_order_id,name,path,company_id)
+          VALUES(#{id}, #{stage}, #{content}, #{creator}, #{created}, #{notes}, #{customOrderId},#{name},#{path},#{companyId})
 </insert>
 
     <update id="updateByMapContext">
@@ -103,6 +107,9 @@ UPDATE custom_order_log
     <if test="_parameter.containsKey('customOrderId') and customOrderId != null">
     custom_order_id = #{customOrderId}
 </if>
+    <if test="_parameter.containsKey('companyId') and companyId != null">
+        company_id = #{companyId}
+    </if>
 </trim></set>
 WHERE  id = #{id}
 </update>
@@ -120,6 +127,27 @@ WHERE  id = #{id}
         WHERE
         col.custom_order_id = #{orderId}
         and col.stage = #{stage}
+        order by col.created desc
+    </select>
+
+    <select id="findByOrderId" resultMap="CustomOrderLogMap">
+        select <include refid="columns" />
+        from custom_order_log col
+        WHERE
+        col.custom_order_id = #{orderId}
+        order by col.created asc
+    </select>
+
+    <select id="findMessageOrderInfo" resultType="map">
+        select
+            co.no orderNo,co.id orderId,co.created orderCreated,col.content,u.name operateName,col.created operateTime,
+               cc.name,cc.community
+        from custom_order_log col
+                 left join user u on u.id = col.creator
+        left join custom_order co on col.custom_order_id = co.id
+        left join company_customer cc on co.customer_id=cc.id
+        WHERE
+           col.company_id=#{companyId}
         order by col.created desc
     </select>
 

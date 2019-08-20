@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lwxf.industry4.webapp.baseservice.tsmanager.TSManualData;
 import com.lwxf.industry4.webapp.bizservice.company.CompanyEmployeeService;
+import com.lwxf.industry4.webapp.bizservice.company.EmployeePermissionService;
 import com.lwxf.industry4.webapp.bizservice.system.MenusService;
 import com.lwxf.industry4.webapp.bizservice.system.OperationsService;
 import com.lwxf.industry4.webapp.bizservice.system.RolePermissionService;
@@ -54,26 +55,25 @@ public class RoleFacadeImpl extends BaseFacadeImpl implements RoleFacade {
 	private MenusService menusService;
 	@Resource(name = "operationsService")
 	private OperationsService operationsService;
-	@Override
-	public RequestResult findAllRoles() {
-		return ResultFactory.generateRequestResult(this.roleService.findAllFactoryRole());
-	}
+	@Resource(name = "employeePermissionService")
+	private EmployeePermissionService employeePermissionService;
 
 	@Override
 	public RequestResult findListByType(Integer type,String key) {
-		return ResultFactory.generateRequestResult(this.roleService.findListByType(type,key));
+		return ResultFactory.generateRequestResult(this.roleService.findListByType(type,key,WebUtils.getCurrBranchId()));
 	}
 
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult addRoles(Role role) {
 		//判断key 是否重复
-		Role oldRole = this.roleService.selectByKey(role.getKey());
+		Role oldRole = this.roleService.selectByKey(role.getKey(),WebUtils.getCurrBranchId());
 		if(oldRole!=null){
 			MapContext mapContext = MapContext.newOne();
 			mapContext.put("key",AppBeanInjector.i18nUtil.getMessage("VALIDATE_ILLEGAL_ARGUMENT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,mapContext);
 		}
+		role.setBranchId(WebUtils.getCurrBranchId());
 		this.roleService.add(role);
 		return ResultFactory.generateRequestResult(role);
 	}
@@ -165,5 +165,46 @@ public class RoleFacadeImpl extends BaseFacadeImpl implements RoleFacade {
 		}
 		mapContext.put(WebConstant.KEY_PRELOAD_OPERATIONS,this.operationsService.findListByMapContext(filter));
 		return ResultFactory.generateRequestResult(mapContext);
+	}
+
+	@Override
+	@Transactional(value = "transactionManager")
+	public RequestResult settingDefault() {
+//		String[] userIds = new String[]{"4vqav3l0av40","4v14mj3ampdx","4v14mj3ampdy","4v14mj3ampdz","4v14mj3ampe0","4v1dagld44cg","4v1daglfm0ow","4v1daglfm0ox","4v1daglfm0oy","4vu5azlsbri8","4v1daglfm0p1","4v1daglfm0p2","4v1daglfm0p3"};
+		List<Menus> menusList = this.menusService.findAllByTypeAndDisabled(MenusType.FACTORY_BACKSTAGE.getValue(),MenusDisabled.UNDISABLED.getValue());
+//		Set<Role> roleSet = new HashSet<Role>();
+//		for (int i = 0; i < userIds.length; i++) {
+//			CompanyEmployee companyEmployee = this.companyEmployeeService.selectByUserId(userIds[i]);
+//			Role role = this.roleService.findById(companyEmployee.getRoleId());
+//			roleSet.add(role);
+//		}
+		String[] roleIds = new String[]{"52l1fojmje2w","4k8e27rahm2r","52l1fojmje2u","4k8cbm6hbswf","52l1fojmje2r"};
+		for(String roleId:roleIds){
+			for(Menus menus:menusList){
+				RolePermission rolePermission = new RolePermission();
+				rolePermission.setShow(1);
+				rolePermission.setRoleId(roleId);
+				rolePermission.setMenuKey(menus.getKey());
+				rolePermission.setModuleKey(menus.getKey());
+				rolePermission.setOperations("view,approval,edit,submit,update_status,enabled,disabled,delete");
+				this.rolePermissionService.add(rolePermission);
+			}
+		}
+
+//		for (int i = 0; i < userIds.length; i++) {
+//			CompanyEmployee companyEmployee = this.companyEmployeeService.selectByUserId(userIds[i]);
+//			//查询新角色下的权限
+//			List<RolePermission> rolePermissions = this.rolePermissionService.selectRolePermissionList(companyEmployee.getRoleId());
+//			if(rolePermissions!=null&&rolePermissions.size()!=0){
+//				for(RolePermission rolePermission:rolePermissions){
+//					//重新生成主键ID
+//					rolePermission.setId(AppBeanInjector.idGererateFactory.nextStringId());
+//					//用公司员工主键ID替换权限ID
+//					rolePermission.setRoleId(companyEmployee.getId());
+//				}
+//				this.employeePermissionService.addList(rolePermissions);
+//			}
+//		}
+		return null;
 	}
 }

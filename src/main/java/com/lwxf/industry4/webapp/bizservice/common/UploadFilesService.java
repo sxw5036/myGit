@@ -8,9 +8,9 @@ import java.util.Set;
 import com.lwxf.industry4.webapp.bizservice.base.BaseService;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.uploadFiles.UploadFileDto;
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
-import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
-import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.mybatis.utils.MapContext;
 
 
 /**
@@ -38,7 +38,7 @@ public interface UploadFilesService extends BaseService <UploadFiles, String> {
 
 	int updateMicImageStatusAndresourceIdAndbelongId(String[] ids,String resourceId,String belongId);
 
-	int updateMicImageStatus (String[] ids);
+	int updateMicImageStatus (List<String> ids);
 
 	List<UploadFiles> isNullByIds(String[] ids);
 
@@ -55,7 +55,7 @@ public interface UploadFilesService extends BaseService <UploadFiles, String> {
 
 	List<UploadFiles> findByResourceId(String ResourcedId);
 
-	List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId,boolean status,int typeId );
+	List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId,Integer status );
 	List<UploadFiles> findByResourceIdsAndStatusAndTypeId(Collection<String> resourcedIds, boolean status, int typeId );
 
 	int updateFormalByPath(String schemeId,List uploadFilesList);
@@ -64,4 +64,8 @@ public interface UploadFilesService extends BaseService <UploadFiles, String> {
 	UploadFiles findCoverImageByCidAndStatusAndResourceType(String dealerShopId, Integer status, Integer resourceType1);
 
 	List<UploadFiles> findShowImageByCidAndStatusAndResType(String companyId, Integer status, Integer resourceType);
+
+	int updateByIds(MapContext mapContext);
+
+	List<UploadFileDto> findByCidAndStatusAndType(MapContext params);
 }

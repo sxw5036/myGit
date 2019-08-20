@@ -4,7 +4,7 @@
     <resultMap id="ProduceFlowMap" type="com.lwxf.industry4.webapp.domain.entity.customorder.ProduceFlow">
         <id column="id" property="id" jdbcType="CHAR" />
         <result column="node" property="node" jdbcType="TINYINT" />
-        <result column="end_time" property="endTime" jdbcType="DATE" />
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP" />
         <result column="notes" property="notes" jdbcType="VARCHAR" />
         <result column="operator" property="operator" jdbcType="CHAR" />
         <result column="operation_time" property="operationTime" jdbcType="TIMESTAMP" />
@@ -116,4 +116,8 @@ WHERE  id = #{id}
     <select id="findOneById" resultMap="ProduceFlowDtoMap">
         select <include refid="columnDtos"/> from produce_flow f left join user u on f.operator = u.id where f.id = #{id}
     </select>
+
+    <delete id="deleteByOrderId">
+        delete from produce_flow where id in (SELECT a.id from (select p.id from produce_flow p left join produce_order o on p.produce_order_id = o.id where o.custom_order_id = #{orderId}) a)
+    </delete>
 </mapper>

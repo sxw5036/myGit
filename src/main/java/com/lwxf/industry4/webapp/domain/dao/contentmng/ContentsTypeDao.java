@@ -26,7 +26,7 @@ public interface ContentsTypeDao extends BaseDao<ContentsType, String> {
 
 	PaginatedList<ContentsType> selectByFilter(PaginatedFilter paginatedFilter);
 
-	List<ContentsType> findContentsTypeList();
+	List<ContentsType> findContentsTypeListByBranchId(String branchId);
 
 	ContentsType findContentsListByCode(String code);
 }

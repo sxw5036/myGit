@@ -5,15 +5,24 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.lwxf.industry4.webapp.domain.entity.activity.ActivityInfo;
+import com.lwxf.industry4.webapp.domain.entity.advertising.Advertising;
 import com.lwxf.industry4.webapp.domain.entity.company.*;
-import com.lwxf.industry4.webapp.domain.entity.contentmng.Contents;
-import com.lwxf.industry4.webapp.domain.entity.contentmng.ContentsContent;
-import com.lwxf.industry4.webapp.domain.entity.contentmng.ContentsFiles;
-import com.lwxf.industry4.webapp.domain.entity.contentmng.ContentsType;
-import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillPlan;
-import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillPlanItem;
+import com.lwxf.industry4.webapp.domain.entity.customorder.*;
+import com.lwxf.industry4.webapp.domain.entity.dealer.DealerAccount;
+import com.lwxf.industry4.webapp.domain.entity.dealer.DealerAccountDetails;
+import com.lwxf.industry4.webapp.domain.entity.dealer.DealerAccountLog;
+import com.lwxf.industry4.webapp.domain.entity.design.DesignScheme;
+import com.lwxf.industry4.webapp.domain.entity.design.DesignSchemeFiles;
+import com.lwxf.industry4.webapp.domain.entity.design.DesignStyle;
+import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBill;
+import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillItem;
+import com.lwxf.industry4.webapp.domain.entity.financing.Payment;
+import com.lwxf.industry4.webapp.domain.entity.financing.PaymentFiles;
+import com.lwxf.industry4.webapp.domain.entity.finished.FinishedProductSeries;
 import com.lwxf.industry4.webapp.domain.entity.product.ProductDoor;
-
+import com.lwxf.industry4.webapp.domain.entity.supplier.Material;
+import com.lwxf.industry4.webapp.domain.entity.system.LogisticsCompany;
+import com.lwxf.industry4.webapp.domain.entity.user.UserNotify;
 import org.junit.Test;
 
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
@@ -25,12 +34,21 @@ import com.lwxf.industry4.webapp.domain.entity.reservation.ReservationPayedRecor
 import com.lwxf.industry4.webapp.domain.entity.system.SystemActivity;
 import com.lwxf.industry4.webapp.domain.entity.user.User;
 import com.lwxf.industry4.webapp.domain.entity.user.UserAttention;
+import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
 import com.lwxf.industry4.webapp.domain.entity.company.Company;
 import com.lwxf.industry4.webapp.domain.entity.company.CompanyEmployee;
 import com.lwxf.industry4.webapp.domain.entity.company.CompanyShareMember;
 import com.lwxf.industry4.webapp.domain.entity.company.StoreConfig;
 import com.lwxf.industry4.webapp.domain.entity.company.StoreHomeNav;
-import com.lwxf.industry4.webapp.domain.entity.version.UpdateVersion;
+import com.lwxf.industry4.webapp.domain.entity.quickshare.Microblog;
+import com.lwxf.industry4.webapp.domain.entity.quickshare.MicroblogComment;
+import com.lwxf.industry4.webapp.domain.entity.quickshare.MicroblogPraise;
+import com.lwxf.industry4.webapp.domain.entity.reservation.Reservation;
+import com.lwxf.industry4.webapp.domain.entity.reservation.ReservationDesignFile;
+import com.lwxf.industry4.webapp.domain.entity.reservation.ReservationDesignRecord;
+import com.lwxf.industry4.webapp.domain.entity.reservation.ReservationPayedRecord;
+import com.lwxf.industry4.webapp.domain.entity.system.SystemActivity;
+import com.lwxf.industry4.webapp.domain.entity.warehouse.FinishedStock;
 import com.lwxf.mybatis.tool.MySqlTool;
 import com.lwxf.mybatis.tool.MySqlToolParams;
 
@@ -58,14 +76,14 @@ public class DaoMapper {
 		// 生成的java和xml文件的输出目录（默认为桌面）
 		String outputDir = "E:\\gencode\\app";
 		//生成的包前缀
-		String packageName  = "version";
+		String supplierPackageName  = "material";
 		// 是否使用带分页的 selectByFilter
 		boolean usePagedFilter = true;
 		MySqlToolParams params = new MySqlToolParams("SunXianWei(17838625030@163.com)","2018 V1.0","老屋新房","com.lwxf.industry4");
-		List<Class> entityList = Arrays.asList(UpdateVersion.class);
+		List<Class> entityList = Arrays.asList(Material.class);
 		if (entityList.size() > 0) {
 			for (Class c : entityList) {
-				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);
+				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, supplierPackageName,params);
 			}
 		}
 
@@ -99,13 +117,15 @@ public class DaoMapper {
 	@Test
 	public void test_batchGeneratecompanyDaoClassAndServiceClassAndDaoXmlFiles() throws IOException {
 		// 生成的java和xml文件的输出目录（默认为桌面）
-		String outputDir = "E:\\gencode\\app";
+		String outputDir = "E:\\gencode\\industry4";
 		//生成的包前缀
 		String packageName = "company";
 		// 是否使用带分页的 selectByFilter
 		boolean usePagedFilter = true;
 		MySqlToolParams params = new MySqlToolParams("dongshibo(F_baisi@163.com)","2018 V1.0","老屋新房","com.lwxf.app");
-		List<Class> entityList = Arrays.asList(Company.class,CompanyEmployee.class,CompanyShareMember.class,StoreConfig.class,StoreHomeNav.class);
+		List<Class> entityList = Arrays.asList(Company.class,CompanyEmployee.class,CompanyShareMember.class,StoreConfig.class,StoreHomeNav.class
+		,EmployeeCertificate.class,EmployeeEducationExperience.class,EmployeeExperience.class,EmployeeInfo.class,EmployeeAssessment.class,
+				OutsourcingFactory.class);
 		if (entityList.size() > 0) {
 			for (Class c : entityList) {
 				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);
@@ -128,27 +148,6 @@ public class DaoMapper {
 		boolean usePagedFilter = true;
 		MySqlToolParams params = new MySqlToolParams("F_baisi(F_baisi@163.com)","2018 V1.0","老屋新房","com.lwxf.app");
 		List<Class> entityList = Arrays.asList(SystemActivity.class);
-		if (entityList.size() > 0) {
-			for (Class c : entityList) {
-				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);
-			}
-		}
-	}
-
-	/**
-	 * 自动生成Company及Company相关的实体和mapper
-	 * @throws IOException
-	 */
-	@Test
-	public void test_batchGeneratesystemHomeNavDaoClassAndServiceClassAndDaoXmlFiles() throws IOException {
-		// 生成的java和xml文件的输出目录（默认为桌面）
-		String outputDir = "E:\\gencode\\app";
-		//生成的包前缀
-		String packageName = "company";
-		// 是否使用带分页的 selectByFilter
-		boolean usePagedFilter = true;
-		MySqlToolParams params = new MySqlToolParams("SunXianWei(17838625030@163.com)","2018 V1.0","老屋新房","com.lwxf.app");
-		List<Class> entityList = Arrays.asList(Company.class);
 		if (entityList.size() > 0) {
 			for (Class c : entityList) {
 				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);
@@ -227,11 +226,11 @@ public class DaoMapper {
 		// 生成的java和xml文件的输出目录（默认为桌面）
 		String outputDir = "E:\\gencode\\app";
 		//生成的包前缀
-		String packageName = "contentmng";
+		String packageName = "advertising";
 		// 是否使用带分页的 selectByFilter
 		boolean usePagedFilter = true;
-		MySqlToolParams params = new MySqlToolParams("SunXianWei(17838625030@163.com)","2018 V1.0","老屋新房","com.lwxf.industry4");
-		List<Class> entityList = Arrays.asList(Contents.class, ContentsContent.class, ContentsFiles.class, ContentsType.class);
+		MySqlToolParams params = new MySqlToolParams("panchenxiao(Mister_pan@126.com)","2018 V1.0","老屋新房","com.lwxf.industry4");
+		List<Class> entityList = Arrays.asList(Advertising.class);
 		if (entityList.size() > 0) {
 			for (Class c : entityList) {
 				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);
@@ -274,6 +273,46 @@ public class DaoMapper {
 		boolean usePagedFilter = true;
 		MySqlToolParams params = new MySqlToolParams("panchenxiao(Mister_pan@126.com)","2018 V1.0","老屋新房","com.lwxf.industry4");
 		List<Class> entityList = Arrays.asList(ActivityInfo.class);
+		if (entityList.size() > 0) {
+			for (Class c : entityList) {
+				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);
+			}
+		}
+	}
+	/**
+	 * 自动生成order相关的实体和mapper
+	 * @throws IOException
+	 */
+	@Test
+	public void test_batchGenerateOrderClassAndServiceClassAndDaoXmlFiles() throws IOException {
+		// 生成的java和xml文件的输出目录（默认为桌面）
+		String outputDir = "E:\\gencode\\industry4";
+		//生成的包前缀
+		String packageName = "customorder";
+		// 是否使用带分页的 selectByFilter
+		boolean usePagedFilter = true;
+		MySqlToolParams params = new MySqlToolParams("F_baisi(F_baisi@126.com)","2019 V1.0","老屋新房","com.lwxf.industry4");
+		List<Class> entityList = Arrays.asList(ProduceOrder.class,CustomOrder.class,OrderProduct.class,ProduceFlow.class);
+		if (entityList.size() > 0) {
+			for (Class c : entityList) {
+				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);
+			}
+		}
+	}
+	/**
+	 * 自动生成warehouse相关的实体和mapper
+	 * @throws IOException
+	 */
+	@Test
+	public void test_batchGenerateWarehouseClassAndServiceClassAndDaoXmlFiles() throws IOException {
+		// 生成的java和xml文件的输出目录（默认为桌面）
+		String outputDir = "E:\\gencode\\industry4";
+		//生成的包前缀
+		String packageName = "warehouse";
+		// 是否使用带分页的 selectByFilter
+		boolean usePagedFilter = true;
+		MySqlToolParams params = new MySqlToolParams("F_baisi(F_baisi@126.com)","2019 V1.0","老屋新房","com.lwxf.industry4");
+		List<Class> entityList = Arrays.asList(FinishedStock.class);
 		if (entityList.size() > 0) {
 			for (Class c : entityList) {
 				MySqlTool.generateDaoClassAndServiceClassAndXmlFiles(c, usePagedFilter, outputDir, packageName,params);

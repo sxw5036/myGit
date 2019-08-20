@@ -11,8 +11,6 @@ import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Repository;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.entity.financing.PaymentSimple;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,20 +48,25 @@ public class PaymentSimpleDaoImpl extends BaseDaoImpl<PaymentSimple, String> imp
 	}
 
 	@Override
+	public List<Map<String,String>> getUserForPaymentSimple(String roleId) {
+		String sqlId = this.getNamedSqlId("getUserForPaymentSimple");
+		return this.sqlSession.selectList(sqlId,roleId);
+	}
+
+	@Override
+	public List<PaymentSimpleListDtoForApp> selectCurrentDayListByFilterForApp() {
+		String sqlId = this.getNamedSqlId("selectCurrentDayListByFilterForApp");
+		return this.sqlSession.selectList(sqlId);
+	}
+	@Override
 	public Map<String,String> countPaymentSimpleForApp() {
 		String sqlId = this.getNamedSqlId("countPaymentSimpleForApp");
 		return this.sqlSession.selectOne(sqlId);
 	}
 
 	@Override
-	public List<PaymentSimpleListDtoForApp> selectCurrentDayListByFilterForApp() {
-		String sqlId = this.getNamedSqlId("paymentSimpleCurrentDayListDtoForApp");
-		return this.sqlSession.selectList(sqlId);
-	}
-
-	@Override
-	public List<Map<String,String>> getUserForPaymentSimple(String roleId) {
-		String sqlId = this.getNamedSqlId("getUserForPaymentSimple");
-		return this.sqlSession.selectList(sqlId,roleId);
+	public MapContext countPaymentForPageIndex(String branchId) {
+		String sqlId = this.getNamedSqlId("countPaymentForPageIndex");
+		return this.sqlSession.selectOne(sqlId,branchId);
 	}
 }

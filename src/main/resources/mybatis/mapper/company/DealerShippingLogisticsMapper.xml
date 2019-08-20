@@ -4,9 +4,10 @@
     <resultMap id="DealerShippingLogisticsMap" type="com.lwxf.industry4.webapp.domain.entity.company.DealerShippingLogistics">
         <result column="company_id" property="companyId" jdbcType="CHAR" />
         <result column="logistics_company_id" property="logisticsCompanyId" jdbcType="CHAR" />
+        <result column="branch_id" property="branchId" />
     </resultMap>
     <sql id="columns">
-company_id, logistics_company_id
+company_id, logistics_company_id,branch_id
 </sql>
 
     <select id="selectById" resultMap="DealerShippingLogisticsMap" parameterType="Long">
@@ -38,8 +39,8 @@ FROM   dealer_shipping_logistics
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-dealer_shipping_logistics(company_id, logistics_company_id)
-                   VALUES(#{companyId}, #{logisticsCompanyId})
+dealer_shipping_logistics(company_id, logistics_company_id,branch_id)
+                   VALUES(#{companyId}, #{logisticsCompanyId},#{branchId})
 </insert>
 
     <update id="updateByMapContext" />
@@ -51,5 +52,9 @@ WHERE  id = #{id}
     <select id="findOneByCompanyId" resultMap="DealerShippingLogisticsMap">
         select <include refid="columns"/> from dealer_shipping_logistics where company_id = #{companyId}
     </select>
+
+    <update id="updateByCompanyId">
+        update dealer_shipping_logistics set logistics_company_id = #{logisticsCompanyId} where company_id = #{companyId}
+    </update>
 
 </mapper>

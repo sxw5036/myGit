@@ -7,6 +7,7 @@ import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.financing.PaymentSimpleDao;
 import com.lwxf.industry4.webapp.domain.dto.financing.PaymentSimpleDto;
 import com.lwxf.industry4.webapp.domain.dto.financing.PaymentSimpleListDtoForApp;
+import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import com.lwxf.industry4.webapp.domain.entity.financing.PaymentSimple;
@@ -47,6 +48,11 @@ public class PaymentSimpleServiceImpl extends BaseServiceImpl<PaymentSimple, Str
 	}
 
 	@Override
+	public List<Map<String, String>> getUserForPaymentSimple(String roleId) {
+		return this.dao.getUserForPaymentSimple(roleId) ;
+	}
+
+	@Override
 	public Map<String,String> countPaymentSimpleForApp() {
 		return this.dao.countPaymentSimpleForApp();
 	}
@@ -57,7 +63,7 @@ public class PaymentSimpleServiceImpl extends BaseServiceImpl<PaymentSimple, Str
 	}
 
 	@Override
-	public List<Map<String, String>> getUserForPaymentSimple(String roleId) {
-		return this.dao.getUserForPaymentSimple(roleId) ;
+	public MapContext countPaymentForPageIndex(String branchId) {
+		return this.dao.countPaymentForPageIndex(branchId) ;
 	}
 }

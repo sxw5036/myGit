@@ -17,7 +17,7 @@ public interface ContentsFacade extends BaseFacade {
 
     RequestResult uploadCover(MultipartFile multipartFile);
 
-    RequestResult uploadContentsImages(List<MultipartFile> multipartFileList, String contentsId);
+    MapContext uploadContentsImages(MultipartFile multipartFileList, String contentsId);
 
     RequestResult updateCover(MultipartFile multipartFile, String contentsId);
 

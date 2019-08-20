@@ -84,6 +84,9 @@ public class PurchaseFacadeImpl extends BaseFacadeImpl implements PurchaseFacade
 
 	@Override
 	public RequestResult findRequestList(MapContext mapContext, Integer pageNum, Integer pageSize) {
+		//企业id
+		String branchId=WebUtils.getCurrBranchId();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
 		paginatedFilter.setFilters(mapContext);
 		Pagination pagination = new Pagination();
@@ -131,6 +134,9 @@ public class PurchaseFacadeImpl extends BaseFacadeImpl implements PurchaseFacade
 
 	@Override
 	public RequestResult findPurchaseList(MapContext mapContext, Integer pageNum, Integer pageSize) {
+		//企业id
+		String branchId=WebUtils.getCurrBranchId();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
 		Pagination pagination = new Pagination();
 		pagination.setPageSize(pageSize);
@@ -337,7 +343,8 @@ public class PurchaseFacadeImpl extends BaseFacadeImpl implements PurchaseFacade
 		this.storageOutputInService.add(storageOutputInDto);
 		for(StorageOutputInItemDto storageOutputInItemDto: storageOutputInDto.getStorageOutputInItemList()){
 			storageOutputInItemDto.setOutputInId(storageOutputInDto.getId());
-			storageOutputInItemDto.setProductId(this.supplierProductService.findById(storageOutputInItemDto.getProductId()).getProductId());
+			//由于供应商产品不再关联product表，这里需要修改成productid
+			//storageOutputInItemDto.setProductId(this.supplierProductService.findById(storageOutputInItemDto.getProductId()).getId());
 			RequestResult result = storageOutputInItemDto.validateFields();
 			if(result!=null){
 				return result;

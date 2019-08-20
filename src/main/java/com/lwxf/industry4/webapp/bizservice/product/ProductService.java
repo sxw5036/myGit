@@ -29,6 +29,8 @@ public interface ProductService extends BaseService <Product, String> {
 
 	List<Product> selectByColorId(String id);
 
+	List<Product> findProductsBySupplierId(String supplierId);
+
 	List<Product> selectByMaterialId(String id);
 
 	Product selectByModel(String no);
@@ -36,6 +38,8 @@ public interface ProductService extends BaseService <Product, String> {
 	ProductDto selectProductDtoById(String id);
 
 	List<Product> selectBySpecId(String id);
+
+	List<Product> findProductsRecommend(String companyId);
 
 	List findResourcesList(MapContext mapContent);
 }

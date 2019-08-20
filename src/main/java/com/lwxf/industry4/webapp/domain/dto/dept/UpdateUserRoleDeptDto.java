@@ -27,6 +27,9 @@ public class UpdateUserRoleDeptDto {
 	private MapContext employeeInfo;
 	@ApiModelProperty(value = "所需修改的用户基本信息")
 	private MapContext userBasis;
+	@ApiModelProperty(value = "员工编号")
+	private String no;
+
 
 	public MapContext getUserInfo() {
 		return userInfo;
@@ -74,5 +77,13 @@ public class UpdateUserRoleDeptDto {
 
 	public void setUserBasis(MapContext userBasis) {
 		this.userBasis = userBasis;
+	}
+
+	public String getNo() {
+		return no;
+	}
+
+	public void setNo(String no) {
+		this.no = no;
 	}
 }

@@ -27,5 +27,5 @@ public interface DesignStyleService extends BaseService <DesignStyle, String> {
 
 	List<DesignStyle> findListByFilter(MapContext mapContext);
 
-	DesignStyle selectOneByName(String name);
+	DesignStyle selectOneByName(String name,String branchId);
 }

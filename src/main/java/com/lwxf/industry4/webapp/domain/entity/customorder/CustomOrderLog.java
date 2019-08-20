@@ -17,6 +17,8 @@ import com.lwxf.industry4.webapp.domain.entity.base.IdEntity;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 功能：custom_order_log 实体类
  *
@@ -28,8 +30,10 @@ import com.lwxf.industry4.webapp.common.result.ResultFactory;
 @Table(name = "custom_order_log",displayName = "custom_order_log")
 public class CustomOrderLog extends IdEntity  {
 	private static final long serialVersionUID = 1L;
+	@ApiModelProperty(value = "订单阶段")
 	@Column(type = Types.TINYINT,nullable = false,name = "stage",displayName = "订单阶段：0 - 营销阶段（创建->设计确认（含设计确认））；1 - 生产阶段（财务审批->成品入库）;2 - 配送阶段（发货 -> 确认收货）；3 - 安装阶段（创建安装单 -> 安装完成）；4 - 售后阶段（补漏和物损等）；")
 	private Integer stage;
+	@ApiModelProperty(value = "操作内容：根据业务操作填写相关内容")
 	@Column(type = Types.VARCHAR,length = 300,nullable = false,name = "content",displayName = "操作内容：根据业务操作填写相关内容")
 	private String content;
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "creator",displayName = "操作人或创建人")
@@ -37,13 +41,20 @@ public class CustomOrderLog extends IdEntity  {
 	@Column(type = TypesExtend.DATETIME,nullable = false,name = "created",displayName = "操作时间或创建时间")
 	private Date created;
 	@Column(type = Types.VARCHAR,length = 100,name = "notes",displayName = "备注：附加说明")
+	@ApiModelProperty(value = "备注：附加说明")
 	private String notes;
 	@Column(type = Types.VARCHAR,length = 50,name = "name",displayName = "阶段名称")
+	@ApiModelProperty(value = "阶段名称:0:订单创建,1：财务审核，2：生产中，3：包装中，4:已发货")
 	private String name;
 	@Column(type = Types.VARCHAR,length = 100,name = "path",displayName = "图片、视频路径")
+	@ApiModelProperty(value = "图片、视频路径")
 	private String path;
+	@ApiModelProperty(value = "订单id")
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "custom_order_id",displayName = "")
 	private String customOrderId;
+	@ApiModelProperty(value = "经销商公司ID")
+	@Column(type = Types.CHAR,length = 13,nullable = false,name = "company_id",displayName = "公司id")
+	private String companyId;
 
     public CustomOrderLog() {  
      } 
@@ -93,7 +104,7 @@ public class CustomOrderLog extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("id","stage","name","path","content","creator","created","notes","customOrderId");
+	private final static List<String> propertiesList = Arrays.asList("id","stage","name","path","content","creator","created","notes","customOrderId","companyId");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -168,6 +179,11 @@ public class CustomOrderLog extends IdEntity  {
 				}
 			}
 		}
+		if(map.containsKey("companyId")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("companyId",String.class)) > 13) {
+				validResult.put("companyId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
 		}else {
@@ -238,5 +254,13 @@ public class CustomOrderLog extends IdEntity  {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public String getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }

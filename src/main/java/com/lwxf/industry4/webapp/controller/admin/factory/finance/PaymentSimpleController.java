@@ -52,6 +52,7 @@ public class PaymentSimpleController {
                                          @RequestParam(required = false) Integer type,
                                          @RequestParam(required = false) String order,
                                          @RequestParam(required = false) String sort,
+                                         @RequestParam(required = false) String bank,
                                          @RequestParam(required = false) Integer pageSize,
                                          @RequestParam(required = false) Integer pageNum){
         if (null == pageNum) {
@@ -61,7 +62,7 @@ public class PaymentSimpleController {
             pageSize = AppBeanInjector.configuration.getPageSizeLimit();
         }
         JsonMapper jsonMapper=new JsonMapper();
-        MapContext map = createMapContent(beginTime,endTime,funds,type,order,sort);
+        MapContext map = createMapContent(beginTime,endTime,funds,type,bank,order,sort);
         if(order==null || order==""){
             map.put("order","created");
         }
@@ -80,21 +81,10 @@ public class PaymentSimpleController {
     @PostMapping(value = "/payment_simples")
     public String addPaymentSimple(@RequestBody PaymentSimpleDto paymentSimple){
         JsonMapper jsonMapper=new JsonMapper();
-        paymentSimple.setFundsName(PaymentSimpleFunds.getByValue(paymentSimple.getFunds()).getName());
-        paymentSimple.setCreator(WebUtils.getCurrUserId());
+//        if(paymentSimple.getFunds()!=null) {
+//            paymentSimple.setFundsName(PaymentSimpleFunds.getByValue(paymentSimple.getFunds()).getName());
+//        }
         return jsonMapper.toJson(this.paymentSimpleFacade.addPaymentSimple(paymentSimple));
-    }
-
-    /**
-     * 记账信息首页
-     * @return
-     */
-    @ApiOperation(value = "日常账首页展示信息", notes = "")
-    @GetMapping("payment_simples/viewIndex")
-    private String viewCompanyIndex() {
-        JsonMapper jsonMapper=new JsonMapper();
-        RequestResult result = this.paymentSimpleFacade.viewIndex();
-        return jsonMapper.toJson(result);
     }
 
     /**
@@ -135,6 +125,19 @@ public class PaymentSimpleController {
     private String findCompanyInfo(@PathVariable String paymentSimpleId){
         JsonMapper jsonMapper=new JsonMapper();
         RequestResult result=this.paymentSimpleFacade.getPaymentSimpleById(paymentSimpleId);
+        return jsonMapper.toJson(result);
+    }
+
+    /**
+     * 条件查询经销商账户金额
+     * @return
+     */
+    @ApiResponse(code = 200, message = "查询成功")
+    @ApiOperation(value = "首页统计信息", notes = "")
+    @GetMapping("payment_simples/countPayments")
+    private String countPayments(){
+        JsonMapper jsonMapper=new JsonMapper();
+        RequestResult result=this.paymentSimpleFacade.countPaymentForPageIndex();
         return jsonMapper.toJson(result);
     }
 
@@ -244,6 +247,11 @@ public class PaymentSimpleController {
         }
         mapOut.put("items",list2Out);
         list1.add(mapOut);
+        MapContext mapBankTranse = MapContext.newOne();
+        mapBankTranse.put("name", "银行调拨");
+        mapBankTranse.put("hasChild","0");
+        mapBankTranse.put("id","3");
+        list1.add(mapBankTranse);
         return jsonMapper.toJson(ResultFactory.generateRequestResult(list1));
     }
 
@@ -259,6 +267,7 @@ public class PaymentSimpleController {
         JsonMapper jsonMapper=new JsonMapper();
         return jsonMapper.toJson(this.paymentSimpleFacade.updatePaymentSimple(paymentSimpleId,map));
     }
+
 
     /**
      * 删除记账信息
@@ -284,7 +293,7 @@ public class PaymentSimpleController {
      * @param beginTime  开始时间
      * @return
      */
-    private MapContext createMapContent(String beginTime,String endTime,String fund,Integer type,String order,String sort) {
+    private MapContext createMapContent(String beginTime,String endTime,String fund,Integer type,String bank,String order,String sort) {
         MapContext mapContext = MapContext.newOne();
         if (beginTime!=null && !beginTime.equals("")) {
             mapContext.put("beginTime", beginTime);
@@ -303,6 +312,9 @@ public class PaymentSimpleController {
         }
         if (type!=null && !type.equals("")) {
             mapContext.put("type", type);
+        }
+        if (bank!=null && !bank.equals("")) {
+            mapContext.put("bank", bank);
         }
         return mapContext;
     }

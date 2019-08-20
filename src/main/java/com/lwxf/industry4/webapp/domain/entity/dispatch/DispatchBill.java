@@ -32,18 +32,9 @@ import com.lwxf.industry4.webapp.common.result.ResultFactory;
 @ApiModel(value = "配送单信息",discriminator = "配送单信息")
 public class DispatchBill extends IdEntity  {
 	private static final long serialVersionUID = 1L;
-	@Column(type = Types.CHAR,length = 13,nullable = false,name = "order_id",displayName = "订单编号")
-	@ApiModelProperty(value = "订单编号")
-	private String orderId;
-	@Column(type = Types.VARCHAR,length = 50,nullable = false,name = "order_no",displayName = "订单编号：来自订单，不可修改")
-	@ApiModelProperty(value = "订单编号")
-	private String orderNo;
 	@Column(type = Types.VARCHAR,length = 50,name = "no",displayName = "发货单编号")
 	@ApiModelProperty(value = "发货单编号")
 	private String no;
-	@Column(type = Types.CHAR,length = 13,name = "finished_stock_id",displayName = "成品库记录id")
-	@ApiModelProperty(value = "成品库记录id")
-	private String finishedStockId;
 	@Column(type = Types.DATE,nullable = false,name = "plan_date",displayName = "计划发货日期：默认为订单的预发货日期，可修改")
 	@ApiModelProperty(value = "计划发货日期")
 	private Date planDate;
@@ -86,35 +77,15 @@ public class DispatchBill extends IdEntity  {
 	@Column(type = Types.CHAR,length = 11,name = "deliverer_tel",displayName = "发货人电话")
 	@ApiModelProperty(value = "发货人电话")
 	private String delivererTel;
+	private String branchId;
 
 	public DispatchBill() {
 	}
 
 	public RequestResult validateFields() {
 		Map<String, String> validResult = new HashMap<>();
-		if (this.orderId == null) {
-			validResult.put("orderId", ErrorCodes.VALIDATE_NOTNULL);
-		}else{
-			if (LwxfStringUtils.getStringLength(this.orderId) > 13) {
-				validResult.put("orderId", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-			}
-		}
-		if (this.orderNo == null) {
-			validResult.put("orderNo", ErrorCodes.VALIDATE_NOTNULL);
-		}else{
-			if (LwxfStringUtils.getStringLength(this.orderNo) > 50) {
-				validResult.put("orderNo", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-			}
-		}
 		if (LwxfStringUtils.getStringLength(this.no) > 50) {
 			validResult.put("no", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-		}
-		if (this.finishedStockId == null) {
-			validResult.put("finishedStockId", ErrorCodes.VALIDATE_NOTNULL);
-		}else{
-			if (LwxfStringUtils.getStringLength(this.finishedStockId) > 13) {
-				validResult.put("finishedStockId", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-			}
 		}
 		if (this.consignee == null) {
 			validResult.put("consignee", ErrorCodes.VALIDATE_NOTNULL);
@@ -185,7 +156,7 @@ public class DispatchBill extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("id","orderId","orderNo","no","finishedStockId","planDate","actualDate","consignee","consigneeTel","cityAreaId","address","logisticsCompanyId","logisticsNo","status","creator","created","notes","deliverer","delivererTel");
+	private final static List<String> propertiesList = Arrays.asList("id","no","planDate","actualDate","consignee","consigneeTel","cityAreaId","address","logisticsCompanyId","logisticsNo","status","creator","created","notes","deliverer","delivererTel");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -218,36 +189,9 @@ public class DispatchBill extends IdEntity  {
 				validResult.put("created", ErrorCodes.VALIDATE_INCORRECT_DATA_FORMAT);
 			}
 		}
-		if(map.containsKey("orderId")) {
-			if (map.getTypedValue("orderId",String.class)  == null) {
-				validResult.put("orderId", ErrorCodes.VALIDATE_NOTNULL);
-			}else{
-				if (LwxfStringUtils.getStringLength(map.getTypedValue("orderId",String.class)) > 13) {
-					validResult.put("orderId", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-				}
-			}
-		}
-		if(map.containsKey("orderNo")) {
-			if (map.getTypedValue("orderNo",String.class)  == null) {
-				validResult.put("orderNo", ErrorCodes.VALIDATE_NOTNULL);
-			}else{
-				if (LwxfStringUtils.getStringLength(map.getTypedValue("orderNo",String.class)) > 50) {
-					validResult.put("orderNo", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-				}
-			}
-		}
 		if(map.containsKey("no")) {
 			if (LwxfStringUtils.getStringLength(map.getTypedValue("no",String.class)) > 50) {
 				validResult.put("no", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-			}
-		}
-		if(map.containsKey("finishedStockId")) {
-			if (map.getTypedValue("finishedStockId",String.class)  == null) {
-				validResult.put("finishedStockId", ErrorCodes.VALIDATE_NOTNULL);
-			}else{
-				if (LwxfStringUtils.getStringLength(map.getTypedValue("finishedStockId",String.class)) > 13) {
-					validResult.put("finishedStockId", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
-				}
 			}
 		}
 		if(map.containsKey("consignee")) {
@@ -338,21 +282,6 @@ public class DispatchBill extends IdEntity  {
 	}
 
 
-	public void setOrderId(String orderId){
-		this.orderId=orderId;
-	}
-
-	public String getOrderId(){
-		return orderId;
-	}
-
-	public void setOrderNo(String orderNo){
-		this.orderNo=orderNo;
-	}
-
-	public String getOrderNo(){
-		return orderNo;
-	}
 
 	public void setNo(String no){
 		this.no=no;
@@ -360,14 +289,6 @@ public class DispatchBill extends IdEntity  {
 
 	public String getNo(){
 		return no;
-	}
-
-	public void setFinishedStockId(String finishedStockId){
-		this.finishedStockId=finishedStockId;
-	}
-
-	public String getFinishedStockId(){
-		return finishedStockId;
 	}
 
 	public void setPlanDate(Date planDate){
@@ -480,5 +401,13 @@ public class DispatchBill extends IdEntity  {
 
 	public String getDelivererTel(){
 		return delivererTel;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

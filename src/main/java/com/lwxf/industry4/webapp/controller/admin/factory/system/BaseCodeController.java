@@ -52,11 +52,11 @@ public class BaseCodeController {
     }
 
     /**
-     * 厂家添加活动
-     * @RequestBody 活动信息对象
+     * 厂家添加字典
+     * @RequestBody 字典数据对象
      * @return
      */
-    @ApiOperation(value = "字典添加", notes = "test")
+    @ApiOperation(value = "字典添加", notes = "字典添加")
     @PostMapping
     public String addBaseCode(@RequestBody  Basecode Basecode) {
         JsonMapper jsonMapper = new JsonMapper();

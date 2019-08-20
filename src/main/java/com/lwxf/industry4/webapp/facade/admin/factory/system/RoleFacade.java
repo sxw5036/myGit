@@ -17,8 +17,6 @@ import com.lwxf.mybatis.utils.MapContext;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 public interface RoleFacade extends BaseFacade {
-	RequestResult findAllRoles();
-
 	RequestResult findListByType(Integer type,String key);
 
 	RequestResult addRoles(Role role);
@@ -32,4 +30,6 @@ public interface RoleFacade extends BaseFacade {
 	RequestResult updateRoleMenus(String roleId, List<RolePermission> rolePermissions);
 
 	RequestResult findAllByType(Integer type);
+
+	RequestResult settingDefault();
 }

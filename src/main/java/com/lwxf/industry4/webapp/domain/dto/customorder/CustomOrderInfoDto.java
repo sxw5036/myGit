@@ -1,13 +1,14 @@
 package com.lwxf.industry4.webapp.domain.dto.customorder;
 
+import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillDto;
+import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBill;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
-import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
-import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderFiles;
-import com.lwxf.industry4.webapp.domain.entity.customorder.OrderProduct;
+import com.lwxf.industry4.webapp.domain.entity.customer.CompanyCustomer;
+import com.lwxf.industry4.webapp.domain.entity.customorder.*;
 
 /**
  * 功能：
@@ -33,8 +34,20 @@ public class CustomOrderInfoDto {
 	private List<OrderProductDto> orderProducts;
 	@ApiModelProperty(value = "生产拆单")
 	private List<ProduceOrderDto> produceOrderDtos;
+	@ApiModelProperty(value = "订单报价")
+	private OrderOffer orderOffer;
+	@ApiModelProperty(value = "报价条目")
+	private List<OfferItem> offerItems;
+	@ApiModelProperty(value = "客户信息")
+	private CompanyCustomer companyCustomer;
+	@ApiModelProperty(value = "发货信息")
+	private List<DispatchBillDto> dispatchBill;
 
-	public CustomOrderDto getCustomOrder() {
+    public List<DispatchBillDto> getDispatchBill() {return dispatchBill;}
+
+    public void setDispatchBill(List<DispatchBillDto> dispatchBill) {this.dispatchBill = dispatchBill;}
+
+    public CustomOrderDto getCustomOrder() {
 		return customOrder;
 	}
 
@@ -88,5 +101,29 @@ public class CustomOrderInfoDto {
 
 	public void setProduceOrderDtos(List<ProduceOrderDto> produceOrderDtos) {
 		this.produceOrderDtos = produceOrderDtos;
+	}
+
+	public OrderOffer getOrderOffer() {
+		return orderOffer;
+	}
+
+	public void setOrderOffer(OrderOffer orderOffer) {
+		this.orderOffer = orderOffer;
+	}
+
+	public List<OfferItem> getOfferItems() {
+		return offerItems;
+	}
+
+	public void setOfferItems(List<OfferItem> offerItems) {
+		this.offerItems = offerItems;
+	}
+
+	public CompanyCustomer getCompanyCustomer() {
+		return companyCustomer;
+	}
+
+	public void setCompanyCustomer(CompanyCustomer companyCustomer) {
+		this.companyCustomer = companyCustomer;
 	}
 }

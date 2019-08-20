@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.domain.dto.company.*;
-import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto;
-import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
+import com.lwxf.industry4.webapp.domain.dto.companyEmployee.WxDealerUserInfoDto;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
 import com.lwxf.industry4.webapp.domain.entity.company.Company;
@@ -29,7 +29,11 @@ public interface CompanyDao extends BaseDao<Company, String> {
 
 	PaginatedList<CompanyDtoForApp> selectByFilterForApp(PaginatedFilter paginatedFilter);
 
-	Company selectByNo(String no);
+	PaginatedList<CompanyAccountInfoDto> findAccountListInfo(PaginatedFilter paginatedFilter);
+
+	Company selectByNo(String no,String branchId);
+
+	Company findByTelAndName(String tel, String name,String branchId);
 
 	Map<String,String> findCompanyStatistics();
 
@@ -66,4 +70,22 @@ public interface CompanyDao extends BaseDao<Company, String> {
 	Company findCompanyByType(Integer type);
 
     Integer findCompanyNumByOrderCreated(MapContext params);
+
+	WxDealerDto findWxDealerInfoByCId(String currCompanyId);
+
+	WxDealerUserInfoDto findDealerUserInfoByUid(String currUserId);
+
+	PaginatedList<CompanyDtoForApp> findWxDealers(PaginatedFilter paginatedFilter);
+
+	Integer findAllCompanyCount(String branchId);
+
+	Integer findIntentionDealer(Integer intention, String branchId);
+
+	Integer findSignedDealer(Integer signed, String branchId);
+
+	WxCompanyDto findByBranchIdAndDealerId(String branchId, String dealerId);
+
+	List<Map> findWxDealersAddCustomer(MapContext mapContext);
+
+	MapContext findDealerCount(String branchId);
 }

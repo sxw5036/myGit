@@ -42,14 +42,8 @@ public class DoorStateDaoImpl extends BaseDaoImpl<DoorState, String> implements 
 	}
 
 	@Override
-	public List<DoorState> findAllDoorState() {
-		String sqlId = this.getNamedSqlId("findAllDoorState");
-		return this.getSqlSession().selectList(sqlId);
-	}
-
-	@Override
-	public DoorState findByName(String name) {
+	public DoorState findByName(MapContext mapContext) {
 		String sqlId = this.getNamedSqlId("findByName");
-		return this.getSqlSession().selectOne(sqlId,name);
+		return this.getSqlSession().selectOne(sqlId,mapContext);
 	}
 }

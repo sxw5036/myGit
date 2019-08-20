@@ -28,4 +28,8 @@ public interface DispatchBillPlanItemService extends BaseService <DispatchBillPl
 	List<DispatchBillPlanItem> findBydbpIdAndStatus(String dispatchBillPlanId, Integer status1);
 
 	int updateStatusByFinishedItemId(MapContext updatePlanItem);
+
+	int deleteByOrderId(String orderId);
+
+	MapContext findCountByBranchId(String branchId);
 }

@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import com.lwxf.industry4.webapp.common.utils.GenEntity;
 import com.lwxf.industry4.webapp.common.utils.GenEntity;
 
@@ -81,15 +79,16 @@ public class GenEntityTest {
 		mapDisabledUpdate.put("address","id,member_id，created");
 //		mapDisabledUpdate.put("city_area", "id");
 		mapDisabledUpdate.put("logistics", "id,companyId,deliverTime，receiptTime，created");
-		mapDisabledUpdate.put("order", "id,companyId,orderNumber,memberId,created");
+		mapDisabledUpdate.put("custom_order", "id,customerId,companyId,creator,created");
 		mapDisabledUpdate.put("paid_records","id,companyId,memberId,paidNum,paidPrice,paidTime,type,created,orderId");
 		mapDisabledUpdate.put("order_goods", "id,orderId,goodsExtendId");
+		mapDisabledUpdate.put("produce_order","id,customOrderId,customOrderNo,no,creator,created");
 //		mapDisabledUpdate.put("order_goods", "id");
 
 		//包
 		String orderPackageName = "member";
 		//表名集合
-		List<String> orderTableNameList = Arrays.asList("paid_records","address","logistics","order","order_goods");
+		List<String> orderTableNameList = Arrays.asList("paid_records","address","logistics","custom_order","order_goods","produce_order");
 		orderTableNameList.stream().forEach(
 				tableName -> new GenEntity(tableName, orderPackageName, appointPath, mapDisabledUpdate,"F_baisi(F_baisi@163.com)")
 		);
@@ -187,11 +186,11 @@ public class GenEntityTest {
 
 		/************************ advertising********************/
 		//包
-		String versionPackageName = "version";
+		String materialPackageName = "material";
 		//表名集合
-		List<String> versionNameList = Arrays.asList("update_version");
-		versionNameList.stream().forEach(
-				tableName -> new GenEntity(tableName, versionPackageName, appointPath, mapDisabledUpdate,"SunXianWei(17838625030@163.com)")
+		List<String> materialNameList = Arrays.asList("material");
+		materialNameList.stream().forEach(
+				tableName -> new GenEntity(tableName, materialPackageName, appointPath, mapDisabledUpdate,"SunXianWei(17838625030@163.com)")
 		);
 		/************************ news ********************/
 		mapDisabledUpdate.put("news_type","id,companyId,parentId");
@@ -239,10 +238,18 @@ public class GenEntityTest {
 		mapDisabledUpdate.put("share_member_permission","id,shareMemberId");
 		mapDisabledUpdate.put("company", "id,created,creator");
 		mapDisabledUpdate.put("dealer_shipping_logistics","companyId,logisticsCompanyId");
+		mapDisabledUpdate.put("employee_certificate","id,companyEmployeeId");
+		mapDisabledUpdate.put("employee_education_experience","id,companyEmployeeId");
+		mapDisabledUpdate.put("employee_experience","id,companyEmployeeId");
+		mapDisabledUpdate.put("employee_info","id,companyEmployeeId");
+		mapDisabledUpdate.put("employee_assessment","id,companyEmployeeId");
+		mapDisabledUpdate.put("outsourcing_factory","id,created,creator");
 		//包
 		String companyPackageName = "company";
 		//表名集合
-		List<String> companyTableNameList = Arrays.asList("company_employee","company_share_member","employee_permission","share_member_permission","company","dealer_shipping_logistics");
+		List<String> companyTableNameList = Arrays.asList("company_employee","company_share_member","employee_permission","share_member_permission","company","dealer_shipping_logistics"
+				,"employee_certificate","employee_education_experience","employee_experience","employee_info","employee_assessment",
+				"outsourcing_factory");
 		companyTableNameList.stream().forEach(
 				tableName -> new GenEntity(tableName, companyPackageName, appointPath, mapDisabledUpdate,"F_baisi(F_baisi@163.com)")
 		);
@@ -297,6 +304,15 @@ public class GenEntityTest {
 		List<String> dispatchingTableNameList = Arrays.asList("product_door");
 		dispatchingTableNameList.stream().forEach(
 				tableName -> new GenEntity(tableName, dispatchingPackageName, appointPath, mapDisabledUpdate,"panchenxiao(Mister_pan@126.com)")
+		);
+		mapDisabledUpdate.put("order_product","id,customOrderId,created,creator");
+		mapDisabledUpdate.put("produce_flow","id,endTime,operator,operationTime,produceOrderId");
+		//包
+		String customOrderPackageName = "customorder";
+		//表名集合
+		List<String> customOrderTableNameList = Arrays.asList("order_product","produce_flow");
+		customOrderTableNameList.stream().forEach(
+				tableName -> new GenEntity(tableName, customOrderPackageName, appointPath, mapDisabledUpdate,"F_baisi(F_baisi@163.com)")
 		);
 
 

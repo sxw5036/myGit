@@ -10,6 +10,8 @@ import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillDto;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillItemDto;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillPlanItemDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.DispatchPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBill;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.mybatis.utils.MapContext;
@@ -32,25 +34,17 @@ public interface DispatchBillDao extends BaseDao<DispatchBill, String> {
 
 	List<DispatchBillItemDto> findListByDispatchId(String id);
 
-	DispatchBill findOneByNo(String no);
-
 	List<DispatchBillItemDto> findItemListById(String id);
 
 	DispatchBillDto findDispatchsBillById(String dispatchId);
+
+	List<DispatchBillDto> findDispatchInfoForOrder(String orderId);
 
 	int findYSHItemCount(String orderId);
 
     String findTimeByOrderId(String orderId);
 
-	Integer findTodayCount();
-
-
-
-	Integer findThisMonthCount();
-
 	PaginatedList<DispatchBillPlanItemDto> findDispathcBillList(PaginatedFilter paginatedFilter);
-
-	Integer findTobeShipped();
 
 	List<DispatchBill> findDispatchListByOrderId(String orderId);
 
@@ -58,5 +52,9 @@ public interface DispatchBillDao extends BaseDao<DispatchBill, String> {
 
 	List<Map> findDispatchList(String resultOrderId);
 
-    Integer findNumByCreated(MapContext params);
+	List<Map> findDispatchListByFinishedItemId(List itemids);
+
+	List<FinishedStockDto> findFinishedItemTypeByDispatchId(String dispatchBillId, List itemids);
+
+	DispatchPrintTableDto findDispatchPrintInfo(String id);
 }

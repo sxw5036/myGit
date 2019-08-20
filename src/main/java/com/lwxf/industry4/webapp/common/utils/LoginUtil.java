@@ -128,6 +128,8 @@ public class LoginUtil {
             }
             MapContext map = MapContext.newOne();
             map.put("userId",userThirdInfos.getUserId());
+            map.put("branchId",userThirdInfos.getBranchId());
+            map.put("companyId",userThirdInfos.getCompanyId());
             return map;
         }
         return null;

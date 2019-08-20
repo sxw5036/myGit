@@ -36,6 +36,8 @@ public class FinishedStockItemDto extends FinishedStockItem {
 	private String address;
 	@ApiModelProperty(value = "客户电话")
 	private String customerTel;
+	@ApiModelProperty(value = "客户ID")
+	private String customerId;
 	@ApiModelProperty(value = "收货人姓名")
 	private String consigneeName;
 	@ApiModelProperty(value = "收货人电话")
@@ -46,8 +48,12 @@ public class FinishedStockItemDto extends FinishedStockItem {
 	private List<CustomOrderFiles> fileList;
 	@ApiModelProperty(value = "经销商姓名")
 	private String dealerName;
+	@ApiModelProperty(value = "经销商ID")
+	private String dealerId;
 	@ApiModelProperty(value = "经销商电话")
 	private String dealerTel;
+	@ApiModelProperty(value = "经销商地址")
+	private String dealerAddress;
 	@ApiModelProperty(value = "包裹资源文件主键ID")
 	private List<String> fileIds;
 	@ApiModelProperty(value = "计划创建人")
@@ -58,6 +64,20 @@ public class FinishedStockItemDto extends FinishedStockItem {
 	private String delivererNo;
 	@ApiModelProperty(value = "发货单主键ID")
 	private String dispatchId;
+	@ApiModelProperty(value = "城市名称")
+	private String cityName;
+	@ApiModelProperty(value = "省ID")
+	private String provinceId;
+	@ApiModelProperty(value = "市ID")
+	private String cityId;
+	@ApiModelProperty(value = "区ID")
+	private String cityAreaId;
+	@ApiModelProperty(value = "类型转义")
+	private String typeName;
+	@ApiModelProperty(value = "是否创建配送计划转义")
+	private String shippedName;
+	@ApiModelProperty(value = "是否入库转义")
+	private String inName;
 
 	public String getOperatorName() {
 		return operatorName;
@@ -209,5 +229,85 @@ public class FinishedStockItemDto extends FinishedStockItem {
 
 	public void setDispatchId(String dispatchId) {
 		this.dispatchId = dispatchId;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getProvinceId() {
+		return provinceId;
+	}
+
+	public void setProvinceId(String provinceId) {
+		this.provinceId = provinceId;
+	}
+
+	public String getCityId() {
+		return cityId;
+	}
+
+	public void setCityId(String cityId) {
+		this.cityId = cityId;
+	}
+
+	public String getCityAreaId() {
+		return cityAreaId;
+	}
+
+	public void setCityAreaId(String cityAreaId) {
+		this.cityAreaId = cityAreaId;
+	}
+
+	public String getDealerAddress() {
+		return dealerAddress;
+	}
+
+	public void setDealerAddress(String dealerAddress) {
+		this.dealerAddress = dealerAddress;
+	}
+
+	public String getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getDealerId() {
+		return dealerId;
+	}
+
+	public void setDealerId(String dealerId) {
+		this.dealerId = dealerId;
+	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+	public String getShippedName() {
+		return shippedName;
+	}
+
+	public void setShippedName(String shippedName) {
+		this.shippedName = shippedName;
+	}
+
+	public String getInName() {
+		return inName;
+	}
+
+	public void setInName(String inName) {
+		this.inName = inName;
 	}
 }

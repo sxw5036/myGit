@@ -7,6 +7,7 @@ import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 功能：
@@ -56,6 +57,31 @@ public class CustomOrderDto extends CustomOrder{
     private String businessManagerName;
     @ApiModelProperty(value = "业务经理电话")
     private String businessManagerTel;
+    @ApiModelProperty(value = "门板包裹数量")
+    private Integer doorCount;
+    @ApiModelProperty(value = "柜体包裹数量")
+    private Integer cabinetCount;
+    @ApiModelProperty(value = "五金包裹数量")
+    private Integer hardwareCount;
+    @ApiModelProperty(value = "是否存在门板生产单")
+    private Integer existDoor;
+    @ApiModelProperty(value = "是否存在柜体生产单")
+    private Integer existCabinet;
+    @ApiModelProperty(value = "是否存在五金生产单")
+    private Integer existHardware;
+    @ApiModelProperty(value = "订单状态")
+    private String orderStatus;
+    @ApiModelProperty(value = "客户地址")
+    private String customerAddress;
+    @ApiModelProperty(value = "类型转义")
+    private String typeName;
+    @ApiModelProperty(value = "是否需要设计转义")
+    private String designName;
+    @ApiModelProperty(value = "接单员名称")
+    private String receiverName;
+    @ApiModelProperty(value = "订单产品列表")
+    private List<OrderProductDto> orderProductDtoList;
+
 
     private BigDecimal orderAmount = new BigDecimal(0);//订单金额
 
@@ -218,6 +244,102 @@ public class CustomOrderDto extends CustomOrder{
 
     public void setBusinessManagerTel(String businessManagerTel) {
         this.businessManagerTel = businessManagerTel;
+    }
+
+    public Integer getDoorCount() {
+        return doorCount;
+    }
+
+    public void setDoorCount(Integer doorCount) {
+        this.doorCount = doorCount;
+    }
+
+    public Integer getCabinetCount() {
+        return cabinetCount;
+    }
+
+    public void setCabinetCount(Integer cabinetCount) {
+        this.cabinetCount = cabinetCount;
+    }
+
+    public Integer getHardwareCount() {
+        return hardwareCount;
+    }
+
+    public void setHardwareCount(Integer hardwareCount) {
+        this.hardwareCount = hardwareCount;
+    }
+
+    public Integer getExistDoor() {
+        return existDoor;
+    }
+
+    public void setExistDoor(Integer existDoor) {
+        this.existDoor = existDoor;
+    }
+
+    public Integer getExistCabinet() {
+        return existCabinet;
+    }
+
+    public void setExistCabinet(Integer existCabinet) {
+        this.existCabinet = existCabinet;
+    }
+
+    public Integer getExistHardware() {
+        return existHardware;
+    }
+
+    public void setExistHardware(Integer existHardware) {
+        this.existHardware = existHardware;
+    }
+
+    public String getOrderStatus() {
+        return orderStatus;
+    }
+
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public String getCustomerAddress() {
+        return customerAddress;
+    }
+
+    public void setCustomerAddress(String customerAddress) {
+        this.customerAddress = customerAddress;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    public String getDesignName() {
+        return designName;
+    }
+
+    public void setDesignName(String designName) {
+        this.designName = designName;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public List<OrderProductDto> getOrderProductDtoList() {
+        return orderProductDtoList;
+    }
+
+    public void setOrderProductDtoList(List<OrderProductDto> orderProductDtoList) {
+        this.orderProductDtoList = orderProductDtoList;
     }
 }
 

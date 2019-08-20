@@ -23,7 +23,6 @@ public interface DoorStateService extends BaseService <DoorState, String> {
 
 	PaginatedList<DoorState> selectByFilter(PaginatedFilter paginatedFilter);
 
-    List<DoorState> findAllDoorState();
 
-	DoorState findByName(String name);
+	DoorState findByName(MapContext mapContext);
 }

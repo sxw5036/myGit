@@ -44,6 +44,12 @@ public class CompanyEmployeeDto extends CompanyEmployee {
 	private String key;
 	@ApiModelProperty(value = "登录名")
 	private String loginName;
+	@ApiModelProperty(value = "公司名称")
+	private String companyName;
+	@ApiModelProperty(value = "企业Id")
+	private String branchId;
+	@ApiModelProperty(value = "用户状态")
+	private Integer userStatus;
 
 	public String getKey() {
 		return key;
@@ -163,5 +169,29 @@ public class CompanyEmployeeDto extends CompanyEmployee {
 
 	public void setLoginName(String loginName) {
 		this.loginName = loginName;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public Integer getUserStatus() {
+		return userStatus;
+	}
+
+	public void setUserStatus(Integer userStatus) {
+		this.userStatus = userStatus;
 	}
 }

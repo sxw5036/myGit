@@ -121,4 +121,62 @@ WHERE  id = #{id}
             #{fileId}
         </foreach>
     </update>
+
+    <select id="findListByOrderId" resultMap="AftersaleApplyFilesMap">
+        select <include refid="columns"/> from aftersale_apply_files where aftersale_apply_id in (select a.id from aftersale_apply a where custom_order_id = #{orderId})
+    </select>
+
+    <delete id="deleteByOrderId">
+        delete from aftersale_apply_files where aftersale_apply_id in (select a.id from aftersale_apply a where custom_order_id = #{orderId})
+    </delete>
+
+    <select id="findListByResultOrderId" resultMap="AftersaleApplyFilesMap">
+        select <include refid="columns"/> from aftersale_apply_files where aftersale_apply_id in (select a.id from aftersale_apply a where result_order_id = #{orderId})
+    </select>
+
+    <delete id="deleteByResultOrderId">
+        delete from aftersale_apply_files where aftersale_apply_id in (select a.id from aftersale_apply a where result_order_id = #{orderId})
+    </delete>
+    <update id="updateByIds">
+        update aftersale_apply_files
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('path') and path != null">
+                path = #{path},
+            </if>
+            <if test="_parameter.containsKey('fullPath') and fullPath != null">
+                full_path = #{fullPath},
+            </if>
+            <if test="_parameter.containsKey('mime') and mime != null">
+                mime = #{mime},
+            </if>
+            <if test="_parameter.containsKey('name') and name != null">
+                name = #{name},
+            </if>
+            <if test="_parameter.containsKey('aftersaleApplyId') and customOrderId != null">
+                aftersale_apply_id = #{aftersaleApplyId},
+            </if>
+            <if test="_parameter.containsKey('originalMime') and originalMime != null">
+                original_mime = #{originalMime},
+            </if>
+            <if test="_parameter.containsKey('status') and status != null">
+                status = #{status},
+            </if>
+            <if test="_parameter.containsKey('creator') and creator != null">
+                creator = #{creator},
+            </if>
+            <if test="_parameter.containsKey('created') and created != null">
+                created = #{created},
+            </if>
+            <if test="_parameter.containsKey('type') and type != null">
+                type = #{type},
+            </if>
+            <if test="_parameter.containsKey('category') and category != null">
+                category = #{category},
+            </if>
+        </trim></set>
+        where id in
+        <foreach collection="id" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

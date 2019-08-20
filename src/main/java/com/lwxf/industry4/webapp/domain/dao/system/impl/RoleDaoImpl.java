@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.mybatis.utils.MapContext;
@@ -42,17 +43,21 @@ public class RoleDaoImpl extends BaseDaoImpl<Role, String> implements RoleDao {
 	}
 
 	@Override
-	public Role selectByKey(String key) {
+	public Role selectByKey(String key,String branchId) {
 		String sql = this.getNamedSqlId("selectByKey");
-		return this.getSqlSession().selectOne(sql,key);
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_WxPay_KEY,key);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 	@Override
-	public List<Role> findListByType(Integer type,String key) {
+	public List<Role> findListByType(Integer type,String key,String branchId) {
 		String sql = this.getNamedSqlId("findListByType");
 		MapContext mapContext=MapContext.newOne();
 		mapContext.put("type",type);
 		mapContext.put("key",key);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		return this.getSqlSession().selectList(sql,mapContext);
 	}
 
@@ -64,20 +69,6 @@ public class RoleDaoImpl extends BaseDaoImpl<Role, String> implements RoleDao {
 		params.put("userId",userId);
 		params.put("companyId",companyId);
 		return this.getSqlSession().selectOne(sql,params);
-	}
-
-
-
-	@Override
-	public List<Role> findAllFactoryRole() {
-		String sql = this.getNamedSqlId("findAllFactoryRole");
-		return this.getSqlSession().selectList(sql);
-	}
-
-	@Override
-	public Role findRoleByKey(String key) {
-		String sql = this.getNamedSqlId("findRoleByKey");
-		return this.getSqlSession().selectOne(sql,key);
 	}
 
 }

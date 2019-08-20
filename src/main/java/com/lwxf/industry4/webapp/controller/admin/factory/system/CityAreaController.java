@@ -3,10 +3,13 @@ package com.lwxf.industry4.webapp.controller.admin.factory.system;
 import com.lwxf.commons.utils.LwxfStringUtils;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierDtoFowWx;
 import com.lwxf.industry4.webapp.domain.entity.common.CityArea;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
 import com.lwxf.industry4.webapp.facade.admin.factory.system.CityAreaFacade;
 import com.lwxf.mybatis.utils.MapContext;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -20,6 +23,7 @@ import javax.annotation.Resource;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 @RestController
+@Api(value="CityAreaController",tags={"F端后台管理接口:省市区管理"})
 @RequestMapping(value = "/api/f",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON_CHARTSET)
 public class CityAreaController {
 
@@ -37,10 +41,17 @@ public class CityAreaController {
         return allCityArea;
     }
 
+    /**
+     * 查询所有的地区信息
+     * @return
+     */
+    @ApiOperation(value = "查询当前省市区所有信息", notes = "")
+    @GetMapping(value = "/citiesInfo/{id}")
+    public RequestResult cityAllInfo(@PathVariable String id){
 
-
-
-
+        RequestResult allCityArea = this.cityAreaFacade.findParentCityById(id);
+        return allCityArea;
+    }
 
     @GetMapping("/cities/{id}")
     public CityArea findCityAreaById(@PathVariable("id")  String id)

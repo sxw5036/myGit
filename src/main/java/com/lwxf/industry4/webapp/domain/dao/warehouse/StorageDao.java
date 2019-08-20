@@ -29,13 +29,13 @@ public interface StorageDao extends BaseDao<Storage, String> {
 
 	PaginatedList<StorageDto> selectByFilter(PaginatedFilter paginatedFilter);
 
-	Storage findOneByName(String name);
+	Storage findOneByName(String name,String branchId);
 
 	StorageDto findOneById(String id);
 
 	List<StockDto> findAllProduct();
 
-    Storage findOneByProductCategoryId(String productCategoryId);
+    Storage findOneByProductCategoryKey(String key,String branchId);
 
     Map findByOrderId(String orderId);
 

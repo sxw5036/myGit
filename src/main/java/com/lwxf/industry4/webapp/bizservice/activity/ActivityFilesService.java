@@ -24,7 +24,6 @@ public interface ActivityFilesService extends BaseService <ActivityFiles, String
 	PaginatedList<ActivityFiles> selectByFilter(PaginatedFilter paginatedFilter);
 
 
-	ActivityFiles findByActivityAndPath(MapContext parmas);
 
 	ActivityFiles findByActivityId(String activityId);
 }

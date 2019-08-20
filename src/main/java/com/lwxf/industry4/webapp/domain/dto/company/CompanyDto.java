@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
 import com.lwxf.industry4.webapp.domain.entity.company.Company;
+import com.lwxf.industry4.webapp.domain.entity.dealer.DealerAccount;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -34,10 +35,24 @@ public class CompanyDto extends Company {
 	private String businessManagerName;
 	@ApiModelProperty(value = "保证金余额")
 	private String depositBalance;
+	@ApiModelProperty(value = "设计金余额")
+	private String designBalance;
 	@ApiModelProperty(value = "省ID")
 	private String provinceId;
 	@ApiModelProperty(value = "市ID")
 	private String cityId;
+	@ApiModelProperty(value = "级别转义")
+	private String gradeName;
+	@ApiModelProperty(value = "默认物流公司ID")
+	private String logisticsCompanyId;
+	@ApiModelProperty(value = "默认物流公司名称")
+	private String logisticsCompanyName;
+	@ApiModelProperty(value = "经销商账户列表")
+	private List<DealerAccount> accountList;
+
+	public List<DealerAccount> getAccountList() {return accountList;}
+
+	public void setAccountList(List<DealerAccount> accountList) {this.accountList = accountList;}
 
 	public String getCreatorName() {
 		return creatorName;
@@ -142,5 +157,37 @@ public class CompanyDto extends Company {
 
 	public void setCityId(String cityId) {
 		this.cityId = cityId;
+	}
+
+	public String getDesignBalance() {
+		return designBalance;
+	}
+
+	public void setDesignBalance(String designBalance) {
+		this.designBalance = designBalance;
+	}
+
+	public String getGradeName() {
+		return gradeName;
+	}
+
+	public void setGradeName(String gradeName) {
+		this.gradeName = gradeName;
+	}
+
+	public String getLogisticsCompanyId() {
+		return logisticsCompanyId;
+	}
+
+	public void setLogisticsCompanyId(String logisticsCompanyId) {
+		this.logisticsCompanyId = logisticsCompanyId;
+	}
+
+	public String getLogisticsCompanyName() {
+		return logisticsCompanyName;
+	}
+
+	public void setLogisticsCompanyName(String logisticsCompanyName) {
+		this.logisticsCompanyName = logisticsCompanyName;
 	}
 }

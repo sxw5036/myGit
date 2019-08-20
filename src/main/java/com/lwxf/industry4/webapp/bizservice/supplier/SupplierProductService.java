@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierDtoFowWx;
 import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierProductDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.bizservice.base.BaseService;
@@ -22,9 +23,15 @@ import com.lwxf.industry4.webapp.domain.entity.supplier.SupplierProduct;
  */
 public interface SupplierProductService extends BaseService <SupplierProduct, String> {
 
-	PaginatedList<SupplierProductDto> selectByFilter(PaginatedFilter paginatedFilter);
+	PaginatedList<SupplierProduct> selectByFilter(PaginatedFilter paginatedFilter);
 
 	SupplierProduct findOneBySupplierAndProductId(String id, String productId);
 
 	List<SupplierProductDto> findListBySupplierAndProductIds(String id, List productIds);
+
+	List<SupplierProduct> selectAllSupplierProduct(MapContext map);
+
+	int deleteBySupplierId(String supplierId);
+
+
 }

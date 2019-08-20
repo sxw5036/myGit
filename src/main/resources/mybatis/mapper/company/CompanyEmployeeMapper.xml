@@ -9,6 +9,7 @@
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="status" property="status" jdbcType="TINYINT" />
         <result column="no" property="no" jdbcType="CHAR" />
+        <result column="is_supervisor" property="supervisor" jdbcType="TINYINT" />
     </resultMap>
     <resultMap id="CompanyEmployeeDtoMap" type="com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto">
         <id column="id" property="id" jdbcType="CHAR" />
@@ -33,6 +34,8 @@
         <result column="nation" property="nation" jdbcType="VARCHAR" />
         <result column="key" property="key" jdbcType="VARCHAR" />
         <result column="loginName" property="loginName"/>
+        <result column="companyName" property="companyName"/>
+        <result column="userStatus" property="userStatus"/>
     </resultMap>
     <resultMap id="EmployeeDeptDtoMap" type="com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto">
         <id column="id" property="id" jdbcType="CHAR" />
@@ -61,16 +64,17 @@
     <resultMap id="CompanyEmploeeDtoMap" type="com.lwxf.industry4.webapp.domain.dto.company.companyEmployeeDto.CompanyEmploeeDto">
         <result column="roleName" property="roleName" jdbcType="VARCHAR" />
         <result column="employeeName" property="employeeName" jdbcType="VARCHAR" />
-        <result column="deptName" property="deptName" jdbcType="VARCHAR" />
         <result column="userId" property="userId" jdbcType="CHAR" />
+        <result column="employeeId" property="employeeId" jdbcType="CHAR" />
     </resultMap>
     <sql id="columns">
-id, company_id, user_id, role_id, created, status, no
+id, company_id, user_id, role_id, created, status, no,is_supervisor
 </sql>
 
     <sql id="EmployeeDeptDtoColumns">
  dp.id, dp.company_id, dp.user_id, dp.role_id, dp.created, dp.status, dp.no,u.name userName,u.mobile mobile,dp.roleName,u.sex,u.email,u.birthday,
  u.political_outlook politicalOutlook ,u.address address,u.work_unit workUnit,u.work work,u.income income,u.education education,u.nation nation,u.login_name loginName
+ ,u.state userStatus
     </sql>
     <sql id="EmployeeDtoColumns">
         ce.id,ce.company_id,ce.no,ce.created,ce.role_id,ce.status,ce.user_id,ro.name roleName,ro.key,u.name userName,u.mobile,u.id userId,u.sex,u.email,u.birthday,ub.address,
@@ -122,6 +126,9 @@ FROM   company_employee
 <if test="no != null">
     AND no = #{no}
 </if>
+    <if test="supervisor != null">
+        AND is_supervisor = #{supervisor}
+    </if>
 </trim></where>
 
 </select>
@@ -130,32 +137,35 @@ FROM   company_employee
         select ce.*, r.key from company_employee ce left join role r on ce.role_id=r.id where ce.company_id=#{companyId} and ce.user_id=#{userId}
     </select>
 
+
     <insert id="insert" useGeneratedKeys="false">
-INSERT INTO 
-company_employee(id, company_id, user_id, role_id, created, status, no)
-          VALUES(#{id}, #{companyId}, #{userId}, #{roleId}, #{created}, #{status}, #{no})
-</insert>
+        INSERT INTO
+            company_employee(id, company_id, user_id, role_id, created, status, no, is_supervisor)
+        VALUES(#{id}, #{companyId}, #{userId}, #{roleId}, #{created}, #{status}, #{no}, #{supervisor})
+    </insert>
 
 
     <update id="updateByMapContext">
-UPDATE company_employee
-<set><trim suffixOverrides=",">
-<if test="_parameter.containsKey('userId') and userId != null">
-    user_id = #{userId},
-</if>
-    <if test="_parameter.containsKey('roleId') and roleId != null">
-    role_id = #{roleId},
-</if>
-    <if test="_parameter.containsKey('status') and status != null">
-    status = #{status},
-</if>
-    <if test="_parameter.containsKey('no')">
-    no = #{no}
-
-</if>
-</trim></set>
-WHERE  id = #{id}
-</update>
+        UPDATE company_employee
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('userId') and userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="_parameter.containsKey('roleId') and roleId != null">
+                role_id = #{roleId},
+            </if>
+            <if test="_parameter.containsKey('status') and status != null">
+                status = #{status},
+            </if>
+            <if test="_parameter.containsKey('no')">
+                no = #{no},
+            </if>
+            <if test="_parameter.containsKey('supervisor')">
+                is_supervisor = #{supervisor}
+            </if>
+        </trim></set>
+        WHERE  id = #{id}
+    </update>
 
     <delete id="deleteById" parameterType="String">
 DELETE FROM   company_employee
@@ -164,8 +174,11 @@ WHERE  id = #{id}
     <select id="findOneByCompanyIdAndUserId" resultMap="CompanyEmployeeMap">
         SELECT <include refid="columns" />
         FROM   company_employee
-        WHERE  company_id = #{companyId}
-        AND user_id = #{userId} LIMIT 1
+        WHERE user_id = #{userId}
+        <if test="companyId!=null">
+            AND company_id = #{companyId}
+        </if>
+        LIMIT 1
     </select>
     <select id="selectByUserId" resultMap="CompanyEmployeeMap">
         select
@@ -182,9 +195,9 @@ WHERE  id = #{id}
 
     <select id="selectShopkeeperByCompanyIds" resultMap="CompanyEmployeeMap">
         select <include refid="columns"/> from company_employee where company_id in
-        <foreach collection="list" item="id" separator="," open="(" close=")">
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
             #{id}
-        </foreach> and role_id = '4gyhf60biadn'
+        </foreach> and role_id = (select id from role where `key` = #{key} and branch_id = #{branchId} )
     </select>
     <select id="findCompanyByUidAndStatus" resultMap="CompanyEmployeeMap">
         select
@@ -205,10 +218,10 @@ WHERE  id = #{id}
     </update>
 
     <select id="findListByFilter" resultMap="CompanyEmployeeDtoMap">
-        select distinct <include refid="EmployeeDeptDtoColumns"/> from
+        select distinct <include refid="EmployeeDeptDtoColumns"/>,dp.companyName,u.branch_id branchId from
         (select u.*,basis.political_outlook,basis.address,basis.work_unit,basis.work,basis.income,basis.education,basis.nation from user u left join user_basis basis on u.id = basis.user_id)
         u RIGHT join
-        (select ce.*,r.name roleName from role r RIGHT JOIN
+        (select ce.*,r.name roleName,c.name companyName from role r RIGHT JOIN
 
         <if test="deptIds!=null">
         (select ce.* from company_employee ce left join dept_member member on ce.id = member.employee_id where
@@ -222,6 +235,7 @@ WHERE  id = #{id}
             company_employee
         </if>
         ce on r.id = ce.role_id
+        left join company c on ce.company_id = c.id
         <where>
             <trim prefixOverrides="AND">
                 <if test="companyId != null">
@@ -235,6 +249,9 @@ WHERE  id = #{id}
                 </if>
                 <if test="roleId!=null">
                     AND ce.role_id = #{roleId}
+                </if>
+                <if test="cid!=null">
+                    AND ce.company_id = #{cid}
                 </if>
             </trim>
         </where>
@@ -292,7 +309,7 @@ WHERE  id = #{id}
     </select>
 
     <update id="updateShopkeeperByCompanyId">
-        update company_employee set status = 0 where company_id = #{cid} and role_id = (select id from role where `key` = #{roleKey})
+        update company_employee set status = 0 where company_id = #{cid} and role_id = (select id from role where `key` = #{roleKey} and branch_id = #{branchId})
     </update>
 
     <select id="findEmployeeListByCidAndStatus" resultMap="CompanyEmployeeMap">
@@ -400,6 +417,12 @@ WHERE  id = #{id}
     <select id="findAllDianzhuId"  resultType="string">
         select id from company_employee
         where role_id='4gyhf60biadn'
+    </select>
+
+    <select id="findsalemans"  resultType="com.lwxf.mybatis.utils.MapContext">
+        select ce.user_id salesmanId,u.name salemanName from company_employee ce
+        left join user u on ce.user_id = u.id
+        where company_id=#{branchId} and status=0
     </select>
 
 </mapper>

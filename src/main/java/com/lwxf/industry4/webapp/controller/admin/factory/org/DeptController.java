@@ -25,6 +25,7 @@ import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.FileMimeTypeUtil;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.dept.CompanyEmployeeInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeCertificateDto;
 import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto;
 import com.lwxf.industry4.webapp.domain.dto.dept.UpdateUserRoleDeptDto;
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
@@ -73,9 +74,11 @@ public class DeptController {
      * @return
      */
     @PostMapping
-    private String addDept(@RequestBody Dept dept) {
+    @ApiOperation(value = "添加部门")
+    private String addDept(@RequestBody@ApiParam(value = "部门信息") Dept dept) {
         JsonMapper jsonMapper = new JsonMapper();
         dept.setCompanyId(WebUtils.getCurrCompanyId());
+        dept.setBranchId(WebUtils.getCurrBranchId());
         RequestResult result = dept.validateFields();
         if (result != null) {
             return jsonMapper.toJson(result);
@@ -91,6 +94,7 @@ public class DeptController {
      * @return
      */
     @PutMapping("{id}")
+    @ApiOperation(value = "修改部门信息")
     private String updateDept(@RequestBody MapContext mapContext, @PathVariable String id) {
         JsonMapper jsonMapper = new JsonMapper();
         RequestResult result = Dept.validateFields(mapContext);
@@ -107,6 +111,7 @@ public class DeptController {
      * @return
      */
     @DeleteMapping("{id}")
+    @ApiOperation(value = "删除部门")
     private RequestResult deleteById(@PathVariable String id) {
         return this.deptFacade.deleteById(id);
     }
@@ -126,6 +131,7 @@ public class DeptController {
                                   @RequestParam(required = false) String mobile,
                                   @RequestParam(required = false) Integer status,
                                   @RequestParam(required = false) String roleId,
+                                  @RequestParam(required = false) String companyId,
                                   @RequestParam(required = false) String deptId) {
 
         if (null == pageSize) {
@@ -135,11 +141,11 @@ public class DeptController {
             pageNum = 1;
         }
         JsonMapper jsonMapper = new JsonMapper();
-        MapContext mapContext = this.createMapContent(name, no, mobile, status, roleId);
+        MapContext mapContext = this.createMapContent(name, no, mobile, status, roleId,companyId);
         return jsonMapper.toJson(this.deptFacade.findMemberList(pageNum, pageSize, mapContext, deptId));
     }
 
-    private MapContext createMapContent(String name, String no, String mobile, Integer status, String roleId) {
+    private MapContext createMapContent(String name, String no, String mobile, Integer status, String roleId,String companyId) {
         MapContext mapContext = MapContext.newOne();
         if (name != null && !name.trim().equals("")) {
             mapContext.put(WebConstant.KEY_ENTITY_NAME, name);
@@ -160,7 +166,9 @@ public class DeptController {
         } else {
             mapContext.put("roleId", roleId);
         }
-
+        if(companyId!=null){
+            mapContext.put(WebConstant.KEY_ENTITY_COMPANY_ID,companyId);
+        }
         return mapContext;
     }
 
@@ -174,7 +182,8 @@ public class DeptController {
     private String addDMember(@RequestBody MapContext mapContext) {
         JsonMapper jsonMapper = new JsonMapper();
         StringBuffer pwd = new StringBuffer();
-        RequestResult requestResult = this.deptMemberFacade.addDeptMember(mapContext, null, pwd);
+        String deptId=mapContext.getTypedValue("deptId",String.class);
+        RequestResult requestResult = this.deptMemberFacade.addDeptMember(mapContext, deptId, pwd);
 
         //注册成功后给用户发短信
         if (Integer.parseInt((String) requestResult.get("code")) == (200)) {
@@ -441,7 +450,7 @@ public class DeptController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "eid",value = "公司员工主键ID",required = true,dataType = "string",paramType = "path")
     })
-    private String addEmployeeCertificate(@PathVariable String eid,@RequestBody EmployeeCertificate employeeCertificate){
+    private String addEmployeeCertificate(@PathVariable String eid,@RequestBody EmployeeCertificateDto employeeCertificate){
         employeeCertificate.setCompanyEmployeeId(eid);
         RequestResult result = employeeCertificate.validateFields();
         JsonMapper jsonMapper = new JsonMapper();

@@ -27,4 +27,5 @@ public interface PaymentFilesDao extends BaseDao<PaymentFiles, String> {
 
 	List<PaymentFiles> findByPaymentId (String paymentId);
 
+	int deleteByPaymentId(String paymentId);
 }

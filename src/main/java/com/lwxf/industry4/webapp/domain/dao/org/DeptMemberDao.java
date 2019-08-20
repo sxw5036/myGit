@@ -42,4 +42,6 @@ public interface DeptMemberDao extends BaseDao<DeptMember, String> {
 	List<DeptMember> findDeptMemberListByEmployeeId(String employeeId);
 
 	List<String> findDeptNameByEmployeeId(String employeeId);
+
+	List selectUserIdByDeptId(String deptId);
 }

@@ -8,6 +8,7 @@
         <result column="status" property="status" jdbcType="TINYINT" />
         <result column="nature" property="nature" jdbcType="TINYINT" />
         <result column="balance" property="balance" jdbcType="DECIMAL" />
+        <result column="branch_id" property="branchId" jdbcType="CHAR" />
     </resultMap>
     <sql id="columns">
 id, company_id, type, status, nature, balance
@@ -41,14 +42,17 @@ id, company_id, type, status, nature, balance
             <if test="balance != null">
                 AND balance = #{balance}
             </if>
+            <if test="branchId != null">
+                AND branch_id = #{branchId}
+            </if>
         </trim></where>
 
     </select>
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO
-dealer_account(id, company_id, type, status, nature, balance)
-        VALUES(#{id}, #{companyId}, #{type}, #{status}, #{nature}, #{balance})
+dealer_account(id, company_id, type, status, nature, balance,branch_id)
+        VALUES(#{id}, #{companyId}, #{type}, #{status}, #{nature}, #{balance},#{branchId})
 </insert>
 
     <update id="updateByMapContext">
@@ -67,7 +71,10 @@ dealer_account(id, company_id, type, status, nature, balance)
                 nature = #{nature},
             </if>
             <if test="_parameter.containsKey('balance') and balance != null">
-                balance = #{balance}
+                balance = #{balance},
+            </if>
+            <if test="_parameter.containsKey('branchId') and branchId != null">
+                branch_id = #{branchId}
             </if>
         </trim></set>
         WHERE  id = #{id}
@@ -94,9 +101,5 @@ WHERE  id = #{id}
         and nature = #{nature}
         and type = #{type}
     </select>
-
-
-
-
 
 </mapper>

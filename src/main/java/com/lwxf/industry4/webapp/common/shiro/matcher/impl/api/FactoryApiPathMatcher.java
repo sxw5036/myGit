@@ -58,6 +58,7 @@ public class FactoryApiPathMatcher implements IApiPathPermissionMatcher {
 				.setNext(new DesignSchemePermissionValidator())
 				.setNext(new PaymentSimplePermissionValidator())
 				.setNext(new CompanyFinancePermissionValidator())
+				.setNext(new EmployeeDailyRecordPermissionValidator())
 		// .setNext(); // 链式设置，添加新的验证器就这样进行设置
 		;
 	}
@@ -237,7 +238,7 @@ public class FactoryApiPathMatcher implements IApiPathPermissionMatcher {
 
 		private String deptPermTpl = "0_orgmng:orgmng_dept:";
 		private String deptMemberPermTpl = "0_orgmng:orgmng_empl:";
-		private Pattern deptMemberPattern = Pattern.compile(LwxfStringUtils.format("/api/f/depts/members(/{0}(/(info|employeeInfo|experiences(/{0})?|assessment(/{0})?|certificate(/{0})?|education(/{0})?|files/{0})))?", WebConstant.REG_ID_MATCH));
+		private Pattern deptMemberPattern = Pattern.compile(LwxfStringUtils.format("/api/f/depts/(members(/{0}(/(info|employeeInfo|experiences(/{0})?|assessment(/{0})?|certificate(/{0})?|education(/{0})?|files/{0}))?)?|{0}/members)", WebConstant.REG_ID_MATCH));
 		private Pattern deptPattern = Pattern.compile(LwxfStringUtils.format("/api/f/depts(/{0})?", WebConstant.REG_ID_MATCH));
 
 		DeptPermissionValidator() {
@@ -446,9 +447,9 @@ public class FactoryApiPathMatcher implements IApiPathPermissionMatcher {
 		// /api/f/aftersales/v2/aftersaleApplies //售后单查询列表
 		// /api/f/aftersales/v2/aftersaleApplies/{aftersaleApplyId} //售后单详情
 		// /api/f/aftersales/v2/dealers //经销商列表
-		// /api/f/aftersales/v2/dealers/{dealerId}/customers //经销商列表
 		// /api/f/aftersales/v2/dealers/{dealerId}/customers //客户列表
-		// /api/f/aftersales/v2/add //添加售后申请单
+		// /api/f/aftersales/v2/aftersale/request //创建售后申请单
+		// /api/f/aftersales/v2/aftersale //创建售后单
 		// /api/f/aftersales/v2/aftersaleApplies/{aftersaleId}/status/{status} //更新售后单状态
 		// /api/f/aftersales/v2/handle //处理售后单
 		// /api/f/aftersales/v2/aftersaleApplies/addfiles //上传售后申请证据图片
@@ -459,7 +460,7 @@ public class FactoryApiPathMatcher implements IApiPathPermissionMatcher {
 
 		private String aftersalesPermTpl_V2 = "0_aftersalemng:aftersalemng_apply:"; //V2 售后单
 
-		private Pattern aftersalesPattern_V2 = Pattern.compile(LwxfStringUtils.format("/api/f/aftersales/v2/(add|handle|dealers(/{0}/customers)?|aftersaleApplies(/({0}(/status/{1})?|addfiles))?)",WebConstant.REG_ID_MATCH,"\\d{1}"));
+		private Pattern aftersalesPattern_V2 = Pattern.compile(LwxfStringUtils.format("/api/f/aftersales/v2/(aftersale|handle|dealers(/{0}/customers)?|aftersaleApplies(/({0}(/status/{1})?|addfiles))?)",WebConstant.REG_ID_MATCH,"\\d{1}"));
 
 		public AftersaleApplyPermissionValidator() {
 			this.apiPrefix = "/api/f/aftersales/v2";
@@ -483,10 +484,11 @@ public class FactoryApiPathMatcher implements IApiPathPermissionMatcher {
 
 		// /api/f/customers 查询所有的客户（可以根据公司id和顾客姓名，电话查询）
 		// /api/f/customers 添加顾客
+		// /api/f/customers/{cid} 修改客户信息
 
 		private String customersPermTpl = "0_customermng:customermng_customer:"; //客户
 
-		private Pattern customersPattern = Pattern.compile(LwxfStringUtils.format("/api/f/customers"));
+		private Pattern customersPattern = Pattern.compile(LwxfStringUtils.format("/api/f/customers(/{0})?",WebConstant.REG_ID_MATCH));
 
 		public CustomerPermissionValidator() {
 			this.apiPrefix = "/api/f/customers";
@@ -1195,6 +1197,34 @@ public class FactoryApiPathMatcher implements IApiPathPermissionMatcher {
 			Matcher matcher = companyPattern.matcher(servletPath);
 			if (matcher.matches()){
 				return this.validateOperate(servletPath,action,companyFinancePermTpl);
+			}
+			return null;
+		}
+	}
+
+	class EmployeeDailyRecordPermissionValidator extends BasePermissionValidator{
+
+		// /api/f/employees/dailyrecords  //新增日报
+		// /api/f/employees/dailyrecords  //查询日报列表
+		// /api/f/employees/dailyrecords/{id}  //修改日报列表
+		// /api/f/employees/dailyrecords/{id}  //删除日志
+		// /api/f/employees/dailyrecords/{id}/comment  //对日志评论
+		// /api/f/employees/dailyrecords/{id}/comment/{commentId}  //删除评论
+
+		private String dailyRecordPermTpl = "0_dailyrecordmng:dailyrecordsmng_dailyrecords:";//日志管理
+
+		private Pattern dailyRecordPattern = Pattern.compile(LwxfStringUtils.format("/api/f/employees/dailyrecords(/{0}(/comment(/{0})?)?)?",WebConstant.REG_ID_MATCH));
+
+		public EmployeeDailyRecordPermissionValidator(){
+			this.apiPrefix = "/api/f/employees/dailyrecords";
+		}
+
+		@Override
+		protected String doValidate(HttpServletRequest request, String action, String servletPath) {
+			//日志管理验证
+			Matcher matcher = dailyRecordPattern.matcher(servletPath);
+			if(matcher.matches()){
+				return this.validate(request,action,dailyRecordPermTpl);
 			}
 			return null;
 		}

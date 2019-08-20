@@ -8,9 +8,8 @@ import com.lwxf.industry4.webapp.bizservice.base.BaseService;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
-import com.lwxf.industry4.webapp.domain.dto.customer.CustomerCityCountDto;
-import com.lwxf.industry4.webapp.domain.dto.customer.CustomerDto;
-import com.lwxf.industry4.webapp.domain.dto.customer.FactoryCustomerDto;
+import com.lwxf.industry4.webapp.domain.dto.customer.*;
+import com.lwxf.industry4.webapp.domain.dto.user.UserAreaDto;
 import com.lwxf.industry4.webapp.domain.entity.customer.CompanyCustomer;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.mybatis.utils.MapContext;
@@ -64,4 +63,22 @@ public interface CompanyCustomerService extends BaseService <CompanyCustomer, St
 
 
 	List<Map> findCompanyCustomer(String companyId);
+
+	PaginatedList<WxCustomerDto> findWxCustomers(PaginatedFilter paginatedFilter);
+
+	WxCustomerInfoDto findWxCustomerInfo(MapContext params);
+
+	PaginatedList<WxCustomerDto> findBWxCustomers(PaginatedFilter paginatedFilter);
+
+	CompanyCustomer findByPhoneAndBranchId(String mobile, String companyId);
+
+	CustomerDtoV2 selectDtoById(String id);
+
+	CompanyCustomer findByMobile(String mobile);
+
+	PaginatedList<CustomerDtoV2> findByClient(PaginatedFilter filter);
+
+	CustomerDtoV2 findOneById(String id);
+
+	MapContext findCustomerCount(String branchId);
 }

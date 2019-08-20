@@ -15,6 +15,8 @@ public enum PaymentSimpleFunds {
     ZHICHU_XHLZC(25,"消耗类支出"),
     ZHICHU_CWF(26,"财务费（手续费/利息）"),
     ZHICHU_QT(27,"其他"),
+    //一级银行转账
+    YINHANG_ZHUANZHANG(30,"银行转账"),
 
 
     //二级款项
@@ -33,7 +35,7 @@ public enum PaymentSimpleFunds {
     ZHICHU_XHLZC_SCZZFY_WXF(25108,"维修费"),
     ZHICHU_XHLZC_SCZZFY_CHELIANGFEI(25109,"车辆费"),
     ZHICHU_XHLZC_SCZZFY_RYBXF(25110,"人员保险费"),
-    ZHICHU_XHLZC_SCZZFY_QT(25111,"人员保险费"),
+    ZHICHU_XHLZC_SCZZFY_FLF(25111,"福利费"),
     ZHICHU_XHLZC_SCZZFY_WLXH(25112,"物料消耗"),
 
     ZHICHU_XHLZC_XSFY_GZXC(25201,"职工薪酬"),
@@ -49,6 +51,7 @@ public enum PaymentSimpleFunds {
     ZHICHU_XHLZC_XSFY_HYF(25211,"会议费"),
     ZHICHU_XHLZC_XSFY_CXF(25212,"促销费"),
     ZHICHU_XHLZC_XSFY_QT(25213,"其他"),
+    ZHICHU_XHLZC_XSFY_FLF(25214,"福利费"),
 
     ZHICHU_XHLZC_GLFY_ZGXC(25301,"职工薪酬"),
     ZHICHU_XHLZC_GLFY_ZJF(25302,"折旧费"),
@@ -58,8 +61,11 @@ public enum PaymentSimpleFunds {
     ZHICHU_XHLZC_GLFY_HSF(25306,"伙食费"),
     ZHICHU_XHLZC_GLFY_SF(25307,"税费"),
     ZHICHU_XHLZC_GLFY_SBF(25308,"社保费"),
-    ZHICHU_XHLZC_GLFY_TXFY(25309,"推销费用");
-
+    ZHICHU_XHLZC_GLFY_TXFY(25309,"推销费用"),
+    ZHICHU_XHLZC_GLFY_FLF(25310,"福利费"),
+    ZHICHU_XHLZC_GLFY_CHELIANGFEI(25311,"车辆费"),
+    ZHICHU_XHLZC_GLFY_YGBX(25312,"员工保险"),
+    ZHICHU_XHLZC_GLFY_QT(25313,"其他");
 
     Integer value;
     String name;

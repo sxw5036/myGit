@@ -17,6 +17,7 @@ import com.lwxf.industry4.webapp.common.enums.MQEventEnum;
 import com.lwxf.industry4.webapp.common.mobile.WeixinUtils;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dao.user.UserThirdInfoDao;
 import com.lwxf.industry4.webapp.domain.entity.user.User;
@@ -227,5 +228,10 @@ public class UserThirdInfoServiceImpl extends BaseNoIdServiceImpl<UserThirdInfo,
 	@Override
 	public UserThirdInfo findByAppToken(String appToken) {
 		return this.dao.findByAppToken(appToken);
+	}
+
+	@Override
+	public Object userlogout(MapContext mapContext) {
+		return this.dao.userlogout(mapContext);
 	}
 }

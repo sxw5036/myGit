@@ -26,7 +26,7 @@ public class UserUtil {
 	 * @return
 	 */
 	public static boolean hasRoleByKey(String userId,String key){
-		Role role = AppBeanInjector.roleService.selectByKey(key);
+		Role role = AppBeanInjector.roleService.selectByKey(key,WebUtils.getCurrBranchId());
 		if(role==null){
 			return false;
 		}

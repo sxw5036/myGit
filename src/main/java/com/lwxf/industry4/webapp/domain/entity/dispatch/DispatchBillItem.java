@@ -135,4 +135,5 @@ public class DispatchBillItem extends IdEntity  {
 	public Integer getStatus(){
 		return status;
 	}
+
 }

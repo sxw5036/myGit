@@ -60,4 +60,29 @@ public class AftersaleApplyFilesServiceImpl extends BaseServiceImpl<AftersaleApp
 		return this.dao.updateFilesList(id,imgIds);
 	}
 
+	@Override
+	public List<AftersaleApplyFiles> findListByOrderId(String orderId) {
+		return this.dao.findListByOrderId(orderId);
+	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		return this.dao.deleteByOrderId(orderId);
+	}
+
+	@Override
+	public List<AftersaleApplyFiles> findListByResultOrderId(String orderId) {
+		return this.dao.findListByResultOrderId(orderId);
+	}
+
+	@Override
+	public int deleteByResultOrderId(String orderId) {
+		return this.dao.deleteByResultOrderId(orderId);
+	}
+
+	@Override
+	public int updateByIds(MapContext mapContext) {
+		return this.dao.updateByIds(mapContext);
+	}
+
 }

@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.common.utils.excel.ExcelParam;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.DispatchBillPlanDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBillPlanItem;
@@ -31,15 +33,23 @@ public interface FinishedStockFacade extends BaseFacade {
 
 	RequestResult deleteFinishedStockById(String id,String storageId);
 
-	RequestResult updateItemById(String id, String itemId,MapContext mapContext,String storageId);
+	RequestResult updateItemById(String itemId,MapContext mapContext);
 
 	RequestResult deleteByItemId(String id, String itemId,String storageId);
 
-	RequestResult itemWarehousing(String id, String itemId,String storageId,MapContext mapContext);
+	RequestResult itemWarehousing(String itemId,MapContext mapContext);
 
 	RequestResult addDispatchPlan(DispatchBillPlanDto dispatchBillPlanDto);
 
 	RequestResult uploadPackageFiles(String id, String itemId, List<MultipartFile> multipartFileList);
 
 	RequestResult deletePackageFiles(String id, String itemId, String fileId);
+
+	RequestResult writeExcel(PaginatedFilter paginatedFilter, ExcelParam excelParam);
+
+	RequestResult findFinishedStockNos(String order,MapContext mapContext);
+
+	RequestResult findFinishedStockCount(String branchId);
+
+	RequestResult addDispatchPlanByOrder(DispatchBillPlanDto dispatchBillPlanDto);
 }

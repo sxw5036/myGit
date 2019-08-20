@@ -39,11 +39,7 @@ public interface CustomOrderDesignService extends BaseService <CustomOrderDesign
 
 	Map findByOrderIdAndStatus(String orderId, int status);
 
-	PaginatedList<Map> findUnDesign(PaginatedFilter paginatedFilter);
-
-	PaginatedList<Map> findDesigned(PaginatedFilter paginatedFilter);
-
-    Map findByOrderIdAndDesignId(MapContext params);
-
 	PaginatedList<CustomOrderDesignDto> findListByFilter(PaginatedFilter paginatedFilter);
+
+	CustomOrderDesignDto findOneByProductId(String orderProductId);
 }

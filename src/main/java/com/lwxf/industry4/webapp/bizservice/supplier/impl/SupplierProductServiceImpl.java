@@ -2,12 +2,7 @@ package com.lwxf.industry4.webapp.bizservice.supplier.impl;
 
 
 import java.util.List;
-import java.util.Map;
-
-
-import org.springframework.stereotype.Component;
-
-
+import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierDtoFowWx;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierProductDto;
@@ -33,15 +28,13 @@ public class SupplierProductServiceImpl extends BaseServiceImpl<SupplierProduct,
 
 
 	@Resource
-
 	@Override	public void setDao( SupplierProductDao supplierProductDao) {
 		this.dao = supplierProductDao;
 	}
 
-
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public PaginatedList<SupplierProductDto> selectByFilter(PaginatedFilter paginatedFilter) {
+	public PaginatedList<SupplierProduct> selectByFilter(PaginatedFilter paginatedFilter) {
 		//
 		return this.dao.selectByFilter(paginatedFilter) ;
 	}
@@ -56,4 +49,13 @@ public class SupplierProductServiceImpl extends BaseServiceImpl<SupplierProduct,
 		return this.dao.findListBySupplierAndProductIds(id,productIds);
 	}
 
+	@Override
+	public List<SupplierProduct> selectAllSupplierProduct(MapContext map) {
+		return this.dao.selectAllSupplierProduct(map) ;
+	}
+
+	@Override
+	public int deleteBySupplierId(String supplierId) {
+		return this.dao.deleteBySupplierId(supplierId) ;
+	}
 }

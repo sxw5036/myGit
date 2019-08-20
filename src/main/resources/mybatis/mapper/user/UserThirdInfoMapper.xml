@@ -12,9 +12,11 @@
 		<result column="mobile_is_bind" property="mobileIsBind" jdbcType="BIT" />
         <result column="rongcloud_token" property="rongcloudToken" jdbcType="VARCHAR" />
 		<result column="app_token" property="appToken" jdbcType="VARCHAR" />
+		<result column="branch_id" property="branchId" jdbcType="CHAR" />
+		<result column="company_id" property="companyId" jdbcType="CHAR" />
 	</resultMap>
 	<sql id="columns">
-		user_id, wx_open_id, wx_nickname, wx_union_id, wx_is_subscribe, wx_is_bind, email_is_bind, mobile_is_bind,rongcloud_token,app_token
+		user_id, wx_open_id, wx_nickname, wx_union_id, wx_is_subscribe, wx_is_bind, email_is_bind, mobile_is_bind,rongcloud_token,app_token,branch_id,company_id
 	</sql>
 
 	<select id="selectById" resultMap="UserThirdInfoMap" parameterType="String">
@@ -79,14 +81,20 @@
 		<if test="appToken != null">
 			AND app_token = #{appToken}
 		</if>
+			<if test="branchId != null">
+				AND branch_id = #{branchId}
+			</if>
+			<if test="companyId != null">
+				AND company_id = #{companyId}
+			</if>
 		</trim>
 		</where>
 	</select>
 
 	<insert id="insert" useGeneratedKeys="false">
 		INSERT INTO
-			user_third_info(user_id, wx_open_id, wx_nickname, wx_union_id, wx_is_subscribe, wx_is_bind, email_is_bind, mobile_is_bind,rongcloud_token,app_token)
-		VALUES(#{userId}, #{wxOpenId}, #{wxNickname}, #{wxUnionId}, #{wxIsSubscribe}, #{wxIsBind}, #{emailIsBind}, #{mobileIsBind},#{rongcloudToken},#{appToken})
+			user_third_info(user_id, wx_open_id, wx_nickname, wx_union_id, wx_is_subscribe, wx_is_bind, email_is_bind, mobile_is_bind,rongcloud_token,app_token,branch_id,company_id)
+		VALUES(#{userId}, #{wxOpenId}, #{wxNickname}, #{wxUnionId}, #{wxIsSubscribe}, #{wxIsBind}, #{emailIsBind}, #{mobileIsBind},#{rongcloudToken},#{appToken},#{branchId},#{companyId})
 	</insert>
 
 	<update id="updateByMapContext">
@@ -121,6 +129,12 @@
 				<if test="_parameter.containsKey('appToken')">
 					app_token = #{appToken}
                 </if>
+				<if test="_parameter.containsKey('branchId')">
+					branch_id = #{branchId}
+				</if>
+				<if test="_parameter.containsKey('companyId')">
+					company_id = #{companyId}
+				</if>
 			</trim>
 		</set>
 		WHERE user_id = #{userId}
@@ -214,4 +228,12 @@
 	<select id="findByAppToken" resultMap="UserThirdInfoMap">
 		select <include refid="columns"/> from user_third_info where app_token=#{appToken}
 	</select>
+
+	<update id="userlogout">
+		UPDATE user_third_info
+		<set>
+			wx_open_id=#{wxOpenId}
+		</set>
+		WHERE user_id = #{userId}
+	</update>
 </mapper>

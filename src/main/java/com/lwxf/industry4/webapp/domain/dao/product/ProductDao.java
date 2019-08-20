@@ -39,5 +39,9 @@ public interface ProductDao extends BaseDao<Product, String> {
 
 	List<Product> selectBySpecId(String id);
 
+	List<Product> findProductsBySupplierId(String supplierId);
+
+	List<Product> findProductsRecommend(String companyId);
+
 	List findResourcesList(MapContext mapContent);
 }

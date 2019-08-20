@@ -45,7 +45,7 @@ public class ProductFiles extends IdEntity  {
 	private String creator;
 	@Column(type = TypesExtend.DATETIME,nullable = false,updatable = false,name = "created",displayName = "创建时间")
 	private Date created;
-	@Column(type = Types.TINYINT,nullable = false,updatable = false,name = "type",displayName = "文件类型:0-PC封面,1-PC主图,2-APP封面,3-APP主图")
+	@Column(type = Types.TINYINT,nullable = false,updatable = false,name = "type",displayName = "文件类型:0-PC封面,1-PC主图,2-APP封面,3-APP主图,4-wx封面,5-wx详情,6-wx报价图")
 	private Integer type;
 	@Column(type = Types.CHAR,length = 13,updatable = false,name = "belong_id",displayName = "所属资源的id")
 	private String belongId;

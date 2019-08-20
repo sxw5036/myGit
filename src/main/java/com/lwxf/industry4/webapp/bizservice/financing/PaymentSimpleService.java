@@ -25,12 +25,14 @@ public interface PaymentSimpleService extends BaseService<PaymentSimple, String>
 
 	PaginatedList<PaymentSimpleDto> selectDtoByFilter(PaginatedFilter paginatedFilter);
 
-	List<PaymentSimpleListDtoForApp> selectCurrentDayListByFilterForApp();
-
 	PaymentSimpleDto findDtoById(String id);
+
+	List<Map<String,String>> getUserForPaymentSimple(String roleId);
 
 	Map<String,String> countPaymentSimpleForApp();
 
-	List<Map<String,String>> getUserForPaymentSimple(String roleId);
+	MapContext countPaymentForPageIndex(String branchId);
+
+	List<PaymentSimpleListDtoForApp> selectCurrentDayListByFilterForApp();
 
 }

@@ -28,4 +28,6 @@ public interface OrderAccountLogService extends BaseService <OrderAccountLog, St
 	List<OrderAccountLogDto> findByOrderId(String orderId);
 
     String findTimeByOrderId(String orderId);
+
+	int deleteByOrderId(String orderId);
 }

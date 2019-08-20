@@ -8,7 +8,9 @@ import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDemandDto;
 import com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.OrderProduct;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
+import com.lwxf.mybatis.utils.MapContext;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -31,4 +33,18 @@ public interface OrderProductDao extends BaseDao<OrderProduct, String> {
 	OrderProductDto findOneById(String id);
 
 	List<OrderProductDto> findListByOrderId(String id);
+
+    Integer findCountNumByCreatedAndType(MapContext params);
+
+
+	BigDecimal findCountPriceByOrderId(String id);
+	BigDecimal findCountPriceByCreatedAndStatus(MapContext params);
+
+	Integer findCountNumByCreatedAndStatus(MapContext params);
+
+	int deleteByOrderId(String orderId);
+
+	List<OrderProductDto> findProductsByOrderId(String id);
+
+	List<OrderProductDto> findListByAftersaleId(String id);
 }

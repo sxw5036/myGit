@@ -46,8 +46,8 @@ public class ProductCategoryServiceImpl extends BaseServiceImpl<ProductCategory,
 	}
 
 	@Override
-	public List<ProductCategory> findAll() {
-		return this.dao.findAll();
+	public List<ProductCategory> findAllByBranchId(String branchId) {
+		return this.dao.findAllByBranchId(branchId);
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class ProductCategoryServiceImpl extends BaseServiceImpl<ProductCategory,
 	}
 
 	@Override
-	public ProductCategory selectProductCategoryByName(String name) {
-		return this.dao.selectProductCategoryByName(name);
+	public ProductCategory selectProductCategoryByName(String name,String branchId) {
+		return this.dao.selectProductCategoryByName(name,branchId);
 	}
 
 }

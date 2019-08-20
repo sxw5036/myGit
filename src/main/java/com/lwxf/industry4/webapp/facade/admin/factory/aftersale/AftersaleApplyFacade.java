@@ -29,4 +29,6 @@ public interface AftersaleApplyFacade extends BaseFacade {
 	RequestResult updateAftersaleApply(String id, MapContext mapContext);
 
 	RequestResult deleteAftersaleApply(String id);
+
+	RequestResult findAftersalesPrintInfo(String id);
 }

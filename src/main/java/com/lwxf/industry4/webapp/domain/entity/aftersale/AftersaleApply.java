@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
 import com.lwxf.mybatis.utils.TypesExtend;
 import com.lwxf.commons.exception.ErrorCodes;
@@ -60,6 +61,7 @@ public class AftersaleApply extends IdEntity  {
 	@ApiModelProperty(value="创建人（申请人）",name="creator",example = "")
 	@Column(type = Types.CHAR,length = 13,nullable = false,updatable = false,name = "creator",displayName = "创建人（申请人）")
 	private String creator;
+	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
 	@Column(type = TypesExtend.DATETIME,nullable = false,updatable = false,name = "created",displayName = "创建时间（申请时间）")
 	private Date created;
 	@ApiModelProperty(value="售后单编号",name="no",example = "")
@@ -80,9 +82,58 @@ public class AftersaleApply extends IdEntity  {
 	@ApiModelProperty(value="收费金额,默认为0",name="chargeAmount",example = "")
 	@Column(type = Types.DECIMAL, precision = 10, scale = 2, nullable = false, name = "charge_amount", displayName = "收费金额,默认为0")
 	private BigDecimal chargeAmount;
+	@ApiModelProperty(value="实收金额,默认为0",name="chargeAmount",example = "")
+	@Column(type = Types.DECIMAL, precision = 10, scale = 2, nullable = false, name = "pay_amount", displayName = "实收金额,默认为0")
+	private BigDecimal payAmount;
+	@Column(type = Types.CHAR,length = 13,name = "branch_id",displayName = "企业id")
+	private String branchId;
+	@Column(type = Types.CHAR,length = 13,name = "payment_id",displayName = "支付信息id")
+	private String paymentId;
+	@ApiModelProperty(value="客户名称",name="customerName",example = "")
+	@Column(type = Types.CHAR,length = 13,name = "customer_name",displayName = "客户名称")
+	private String customerName;
+	@ApiModelProperty(value="收货人名称",name="consigneeName",example = "")
+	@Column(type = Types.CHAR,length = 50,name = "consignee_name",displayName = "收货人名称")
+	private String consigneeName;
+	@ApiModelProperty(value="收货人电话",name="consigneeTel",example = "")
+	@Column(type = Types.CHAR,length = 20,name = "consignee_tel",displayName = "收货人电话")
+	private String consigneeTel;
+	@ApiModelProperty(value="收货地址",name="consigneeAddress",example = "")
+	@Column(type = Types.CHAR,length = 100,name = "consignee_address",displayName = "收货地址")
+	private String consigneeAddress;
+	@ApiModelProperty(value="收货地区",name="consigneeCityId",example = "")
+	@Column(type = Types.CHAR,length = 13,name = "consignee_city_id",displayName = "收货地区")
+	private String consigneeCityId;
+	@Column(type = Types.BIT, name = "is_coordination", displayName = "是否需要外协: 0 - 不需要 ; 1 - 需要")
+	@ApiModelProperty(value = "是否需要外协: 0 - 不需要 ; 1 - 需要")
+	private Boolean coordination;
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
 	@ApiModelProperty(value="图片附件，多个用逗号间隔)",name="fileIds")
 	private String fileIds;
+
+	public String getPaymentId() {
+		return paymentId;
+	}
+
+	public void setPaymentId(String paymentId) {
+		this.paymentId = paymentId;
+	}
+
+	public BigDecimal getPayAmount() {
+		return payAmount;
+	}
+
+	public void setPayAmount(BigDecimal payAmount) {
+		this.payAmount = payAmount;
+	}
 
 	public String getFileIds() {
 		return fileIds;
@@ -102,6 +153,13 @@ public class AftersaleApply extends IdEntity  {
 		}else{
 			if (LwxfStringUtils.getStringLength(this.customOrderId) > 13) {
 				validResult.put("customOrderId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if (this.branchId == null) {
+			validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}else{
+			if (LwxfStringUtils.getStringLength(this.branchId) > 13) {
+				validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if (this.notes == null) {
@@ -246,6 +304,9 @@ public class AftersaleApply extends IdEntity  {
 		}
 	}
 
+	public String getBranchId() {return branchId;}
+
+	public void setBranchId(String branchId) {this.branchId = branchId;}
 
 	public void setCustomOrderId(String customOrderId){
 		this.customOrderId=customOrderId;
@@ -373,5 +434,45 @@ public class AftersaleApply extends IdEntity  {
 
 	public void setChargeAmount(BigDecimal chargeAmount) {
 		this.chargeAmount = chargeAmount;
+	}
+
+	public String getConsigneeName() {
+		return consigneeName;
+	}
+
+	public void setConsigneeName(String consigneeName) {
+		this.consigneeName = consigneeName;
+	}
+
+	public String getConsigneeTel() {
+		return consigneeTel;
+	}
+
+	public void setConsigneeTel(String consigneeTel) {
+		this.consigneeTel = consigneeTel;
+	}
+
+	public String getConsigneeAddress() {
+		return consigneeAddress;
+	}
+
+	public void setConsigneeAddress(String consigneeAddress) {
+		this.consigneeAddress = consigneeAddress;
+	}
+
+	public String getConsigneeCityId() {
+		return consigneeCityId;
+	}
+
+	public void setConsigneeCityId(String consigneeCityId) {
+		this.consigneeCityId = consigneeCityId;
+	}
+
+	public Boolean getCoordination() {
+		return coordination;
+	}
+
+	public void setCoordination(Boolean coordination) {
+		this.coordination = coordination;
 	}
 }

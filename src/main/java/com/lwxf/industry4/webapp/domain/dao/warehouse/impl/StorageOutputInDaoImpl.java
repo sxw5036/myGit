@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.StorageOutputInDto;
@@ -53,9 +54,12 @@ public class StorageOutputInDaoImpl extends BaseDaoImpl<StorageOutputIn, String>
 	}
 
 	@Override
-	public StorageOutputIn findOneByNo(String no) {
+	public StorageOutputIn findOneByNo(String no,String branchId) {
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("no",no);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		String sql = this.getNamedSqlId("findOneByNo");
-		return this.getSqlSession().selectOne(sql,no);
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 }

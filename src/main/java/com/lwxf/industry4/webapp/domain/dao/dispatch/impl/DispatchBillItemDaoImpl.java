@@ -11,8 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillItemDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.dispatch.DispatchBillItemDao;
@@ -72,6 +74,21 @@ public class DispatchBillItemDaoImpl extends BaseDaoImpl<DispatchBillItem, Strin
 	public List<MapContext> findByDispatchBillId(String dispatchBillId) {
 		String sqlId=this.getNamedSqlId("findByDispatchBillId");
 		return this.getSqlSession().selectList(sqlId,dispatchBillId);
+	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public List<DispatchBillItemDto> findListByDIdAndTypes(String id, List<Integer> types) {
+		String sqlId = this.getNamedSqlId("findListByDIdAndTypes");
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_ENTITY_ID,id);
+		mapContext.put("types",types);
+		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
 }

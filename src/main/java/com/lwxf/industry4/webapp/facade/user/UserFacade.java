@@ -133,8 +133,6 @@ public interface UserFacade extends BaseFacade {
 
 	RequestResult  userRegister(String userPass,String mobile);
 
-	RequestResult findUserListByLikeName(Integer pageNum,Integer pageSize,String name);
-
 	RequestResult updateUserPassword(MapContext mapContext);
 
 	RequestResult findUserMessageById(String userId);

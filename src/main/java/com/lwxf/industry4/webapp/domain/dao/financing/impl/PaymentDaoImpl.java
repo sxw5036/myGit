@@ -1,11 +1,8 @@
 package com.lwxf.industry4.webapp.domain.dao.financing.impl;
 
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-
-
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
@@ -13,14 +10,12 @@ import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.financing.PaymentDto;
-import com.lwxf.industry4.webapp.domain.dto.financing.PaymentDtoForApp;
-import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.*;
-import org.springframework.stereotype.Component;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
 import org.springframework.stereotype.Repository;
-
-
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.printTable.PaymentPrintTableDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.financing.PaymentDao;
@@ -42,7 +37,6 @@ public class PaymentDaoImpl extends BaseDaoImpl<Payment, String> implements Paym
 	@Override
 	public PaginatedList<PaymentDto> selectByFilter(PaginatedFilter paginatedFilter) {
 		String sqlId = this.getNamedSqlId("selectByFilter");
-		//
 		//  过滤查询参数
 		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
 		PageList<PaymentDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
@@ -59,32 +53,6 @@ public class PaymentDaoImpl extends BaseDaoImpl<Payment, String> implements Paym
 	public PaymentDto findByPaymentId(String paymentId) {
 		String sqlId = this.getNamedSqlId("findByPaymentId");
 		return this.getSqlSession().selectOne(sqlId,paymentId);
-	}
-	@Override
-	public PaymentDto findByPId(String paymentId) {
-		String sqlId = this.getNamedSqlId("findByPId");
-		return this.getSqlSession().selectOne(sqlId,paymentId);
-	}
-
-	@Override
-	public List<Payment> findByCompanyIdAndStatusAndType(MapContext params) {
-		String sqlId = this.getNamedSqlId("findByCompanyIdAndStatusAndType");
-		return this.getSqlSession().selectList(sqlId,params);
-	}
-
-	@Override
-	public PaginatedList<Payment> findByCompanyIdAndStatusAndType(PaginatedFilter paginatedFilter){
-		String sqlId = this.getNamedSqlId("findByCompanyIdAndStatusAndType");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<Payment> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-	}
-
-
-	@Override
-	public List<Payment> findByOrderIdAndStatus(MapContext params) {
-		String sqlId = this.getNamedSqlId("findByOrderIdAndStatus");
-		return this.getSqlSession().selectList(sqlId,params);
 	}
 
 	@Override
@@ -108,63 +76,17 @@ public class PaymentDaoImpl extends BaseDaoImpl<Payment, String> implements Paym
 		return this.toPaginatedList(pageList);
 	}
 
+
 	@Override
-	public PaymentDto findByOrderIdAndTypeAndFundsAndStatus(MapContext orderIdAndType) {
-		String sqlId = this.getNamedSqlId("findByOrderIdAndTypeAndFundsAndStatus");
-		return this.getSqlSession().selectOne(sqlId,orderIdAndType);
+	public List<Map> findByOrderIdAndType(MapContext orderIdAndType) {
+		String sqlId = this.getNamedSqlId("findByOrderIdAndType");
+		return this.getSqlSession().selectList(sqlId,orderIdAndType);
 	}
 
 	@Override
-	public PaginatedList<PaymentDtoForApp> selectByFilterForApp(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("selectByFilterForApp");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<PaymentDtoForApp> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-	}
-
-	@Override
-	public PaginatedList<PaymentDtoForApp> selectPaymentByCompanyIdForApp(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("selectPaymentByCompanyIdForApp");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<PaymentDtoForApp> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-	}
-
-	@Override
-	public FinanceCountDto selectFinanceCountForApp() {
-		String sqlId = this.getNamedSqlId("selectFinanceCountForApp");
-		return this.getSqlSession().selectOne(sqlId);
-	}
-
-	@Override
-	public List<VerifyPaymentDto> selectVerifyPaymentList() {
-		String sqlId = this.getNamedSqlId("selectVerifyPaymentList");
-		return this.getSqlSession().selectList(sqlId);
-	}
-
-	@Override
-	public VerifyOrderPriceDto selectVerifyOrderPriceInfo(String paymentId) {
-		String sqlId = this.getNamedSqlId("selectVerifyOrderPriceInfo");
-		return this.getSqlSession().selectOne(sqlId,paymentId);
-	}
-
-
-	@Override
-	public VerifyDesignPriceDto selectVerifyDesignPriceInfo(String paymentId) {
-		String sqlId = this.getNamedSqlId("selectVerifyDesignPriceInfo");
-		return this.getSqlSession().selectOne(sqlId,paymentId);
-	}
-
-	@Override
-	public int verifyOrderPrice(MapContext map) {
-		String sqlId = this.getNamedSqlId("verifyOrderPrice");
-		return this.getSqlSession().update(sqlId,map);
-	}
-
-	@Override
-	public int verifyDesignPrice(MapContext map) {
-		String sqlId = this.getNamedSqlId("verifyDesignPrice");
-		return this.getSqlSession().update(sqlId,map);
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
 	}
 
 	@Override
@@ -184,19 +106,37 @@ public class PaymentDaoImpl extends BaseDaoImpl<Payment, String> implements Paym
 
 	@Override
 	public CompanyFinanceInfoDto getCompanyFinanceInfoByPaymentId(String paymentId) {
-		String sqlId = this.getNamedSqlId("selectCompanyFinanceInfoByPaymentId");
+		String sqlId = this.getNamedSqlId("getCompanyFinanceInfoByPaymentId");
 		return this.getSqlSession().selectOne(sqlId,paymentId);
 	}
 
 	@Override
-	public List<Map> findByOrderIdAndType(MapContext orderIdAndType) {
-		String sqlId = this.getNamedSqlId("findByOrderIdAndType");
-		return this.getSqlSession().selectList(sqlId,orderIdAndType);
+	public PaymentDto findByOrderIdAndFunds(MapContext params) {
+		String sqlId = this.getNamedSqlId("findByOrderIdAndFunds");
+		return this.getSqlSession().selectOne(sqlId,params);
 	}
 
 	@Override
-	public BigDecimal findByTypeAndCreated(MapContext params) {
-		String sqlId = this.getNamedSqlId("findByTypeAndCreated");
-		return this.getSqlSession().selectOne(sqlId,params);
+	public PaymentDto findOrderFinanceInfo(String paymentId) {
+		String sqlId = this.getNamedSqlId("findOrderFinanceInfo");
+		return this.getSqlSession().selectOne(sqlId,paymentId);
+	}
+
+	@Override
+	public MapContext countPaymentForPageIndex(String branchId) {
+		String sqlId = this.getNamedSqlId("countPaymentForPageIndex");
+		return this.getSqlSession().selectOne(sqlId,branchId);
+	}
+
+	@Override
+	public PaymentPrintTableDto findPrintTableById(String id) {
+		String sqlId = this.getNamedSqlId("findPrintTableById");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
+
+	@Override
+	public BigDecimal findTodayAmountByType(Integer type) {
+		String sqlId = this.getNamedSqlId("findTodayAmountByType");
+		return this.getSqlSession().selectOne(sqlId,type);
 	}
 }

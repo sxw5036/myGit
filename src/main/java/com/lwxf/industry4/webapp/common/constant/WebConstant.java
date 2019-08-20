@@ -11,6 +11,7 @@ import com.lwxf.commons.constant.CommonConstant;
  * @company：老屋新房 Created with IntelliJ IDEA
  */
 public final class WebConstant extends CommonConstant {
+	public static final String FACTORY_NAME_CODE = "HT";
 	public static final String REQUEST_HEADER_KEY_X_APP_TOKEN = "X-A-TOKEN";
 	public static final String REQUEST_HEADER_X_P ="X-P";
 	public static final String REQUEST_PARAMETER_KEY_APP_TOKEN = "atoken";
@@ -82,6 +83,7 @@ public final class WebConstant extends CommonConstant {
 	public static final String KEY_ENTITY_NAME="name";
 	public static final String KEY_ENTITY_COLOR="color";
 	public static final String KEY_ENTITY_DISABLED="disabled";
+	public static final String KEY_ENTITY_BRANCH_ID="branchId";
 	/**
 	 * 预约单key定义
 	 */
@@ -241,6 +243,19 @@ public final class WebConstant extends CommonConstant {
 	public static final String KEY_REDIS_CACHE_SAVE_REQUEST_QRY="saveRequestQRY";
 	public static final String KEY_REDIS_PLATFORM_FLAG_APP="app";
 	public static final String KEY_REDIS_PLATFORM_FLAG_NEWSTORE="newstore";
+
+//	/**
+//	 * 老屋新房微信小程序的appId和 secret
+//	 */
+//	public static final String WX_APPID="wx2f409a951129d9f7";
+//	public static final String WX_APP_SECRET="b4e3d9a80ceb7dcf5acf2479ab9613d6";
+
+	/**
+	 * 紅田微信小程序的appId和 secret
+	 */
+	public static final String WX_APPID="wxb21f4c2f7f82fb0e";
+	public static final String WX_APP_SECRET="615b7399f6d65471608db9386674e840";
+
 
 	private WebConstant(){
 

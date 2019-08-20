@@ -1,4 +1,5 @@
 package com.lwxf.industry4.webapp.domain.entity.company;
+import java.math.BigDecimal;
 import java.util.*;
 import java.sql.*;
 import java.util.Date;
@@ -92,7 +93,7 @@ public class Company extends IdEntity  {
 	@ApiModelProperty(value="级别",name="grade",required=true,example = "0")
 	@Column(type = Types.TINYINT,nullable = false,name = "grade",displayName = "级别，0 - 初级；1 - 一级；级别定义暂时这样，后期根据需求再调整，默认0")
 	protected Integer grade;
-	@ApiModelProperty(value="联系方式(支持固话和手机)",name="grade",required=true,example = "092-33333333")
+	@ApiModelProperty(value="联系方式(支持固话和手机)",name="grade",example = "092-33333333")
 	@Column(type = Types.VARCHAR,length = 13,name = "service_tel",displayName = "支持固话和手机），固话格式：029-33333333")
 	protected String serviceTel;
 	@Column(type = Types.CHAR,length = 13,name = "service_staff",displayName = "客服人员")
@@ -115,8 +116,20 @@ public class Company extends IdEntity  {
 	protected String note;
 	@ApiModelProperty(value="合同有效期",name="contractTime",example = "2019-01-01")
 	@JsonFormat(locale="zh", timezone="GMT+8", pattern="yyyy-MM-dd")
-	@Column(type = Types.DATE,name = "contract_expired_date",displayName = "合同有效期")
-	protected Date contractExpiredDate;
+	@Column(type = Types.VARCHAR,name = "contract_expired_date",displayName = "合同有效期")
+	protected String contractExpiredDate;
+	@Column(type = Types.CHAR,length = 13,name = "branch_id",displayName = "企业id")
+	protected String branchId;
+	@Column(type = Types.VARCHAR,length = 200,name = "account_balances_remarks",displayName = "账户余额备注信息")
+	private String accountBalancesRemarks;
+	@Column(type = Types.VARCHAR,length = 200,name = "other_fund_remarks",displayName = "其他资金备注信息")
+    private String otherFundRemarks;
+	@Column(type = Types.DATE,name = "retire_net_time",displayName = "退网时间")
+	private String retireNetTime;
+	@Column(type = Types.VARCHAR,length = 200,name = "scope_business",displayName = "经营范围")
+	private String scopeBusiness;
+	@Column(type = Types.VARCHAR,length = 200,name = "standby_links",displayName = "备用联系方式")
+	private String standbyLinks;
 
 
 	public Company() {
@@ -130,6 +143,9 @@ public class Company extends IdEntity  {
 			if (LwxfStringUtils.getStringLength(this.name) > 50) {
 				validResult.put("name", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
+		}
+			if (LwxfStringUtils.getStringLength(this.branchId) > 13) {
+				validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
 		if (this.type == null) {
 			validResult.put("type", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
@@ -202,6 +218,18 @@ public class Company extends IdEntity  {
 		if (LwxfStringUtils.getStringLength(this.companyInfo) > 1000) {
 			validResult.put("companyInfo", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
+		if (LwxfStringUtils.getStringLength(this.accountBalancesRemarks) > 200) {
+			validResult.put("accountBalancesRemarks", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+		}
+		if (LwxfStringUtils.getStringLength(this.otherFundRemarks) > 200) {
+			validResult.put("otherFundRemarks", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+		}
+		if (LwxfStringUtils.getStringLength(this.scopeBusiness) > 200) {
+			validResult.put("scopeBusiness", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+		}
+		if (LwxfStringUtils.getStringLength(this.standbyLinks) > 200) {
+			validResult.put("standbyLinks", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
 		}else {
@@ -209,7 +237,7 @@ public class Company extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("name","type","cityAreaId","address","lng","lat","status","followers","leader","leaderTel","businessManager","depositBank","bankAccount","bankAccountHolder","shopArea","logo","grade","serviceTel","serviceStaff","no","leaderName","founderName","companyInfo","contractTime","contractExpiredDate");
+	private final static List<String> propertiesList = Arrays.asList("name","type","cityAreaId","address","lng","lat","status","followers","leader","leaderTel","businessManager","depositBank","bankAccount","bankAccountHolder","shopArea","logo","grade","serviceTel","serviceStaff","no","leaderName","founderName","companyInfo","contractTime","contractExpiredDate","otherFundRemarks","accountBalancesRemarks","scopeBusiness","standbyLinks");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -364,16 +392,26 @@ public class Company extends IdEntity  {
 				validResult.put("note", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
+		if(map.containsKey("scopeBusiness")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("scopeBusiness",String.class)) > 200) {
+				validResult.put("scopeBusiness", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if(map.containsKey("standbyLinks")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("standbyLinks",String.class)) > 200) {
+				validResult.put("standbyLinks", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
 		if(map.containsKey("contractTime")) {
 			if (!DataValidatorUtils.isDate(map.getTypedValue("contractTime",String.class))) {
 				validResult.put("contractTime", AppBeanInjector.i18nUtil.getMessage("VALIDATE_INCORRECT_DATA_FORMAT"));
 			}
 		}
-		if(map.containsKey("contractExpiredDate")) {
-			if (!DataValidatorUtils.isDate(map.getTypedValue("contractExpiredDate",String.class))) {
-				validResult.put("contractExpiredDate", AppBeanInjector.i18nUtil.getMessage("VALIDATE_INCORRECT_DATA_FORMAT"));
-			}
-		}
+//		if(map.containsKey("contractExpiredDate")) {
+//			if (!DataValidatorUtils.isDate(map.getTypedValue("contractExpiredDate",String.class))) {
+//				validResult.put("contractExpiredDate", AppBeanInjector.i18nUtil.getMessage("VALIDATE_INCORRECT_DATA_FORMAT"));
+//			}
+//		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
 		}else {
@@ -381,6 +419,9 @@ public class Company extends IdEntity  {
 		}
 	}
 
+	public String getBranchId() {return branchId;}
+
+	public void setBranchId(String branchId) {this.branchId = branchId;}
 
 	public void setName(String name){
 		this.name=name;
@@ -588,11 +629,51 @@ public class Company extends IdEntity  {
 	public void setNote(String note) {this.note = note;}
 
 
-	public Date getContractExpiredDate() {
+	public String getContractExpiredDate() {
 		return contractExpiredDate;
 	}
 
-	public void setContractExpiredDate(Date contractExpiredDate) {
+	public void setContractExpiredDate(String contractExpiredDate) {
 		this.contractExpiredDate = contractExpiredDate;
+	}
+
+	public String getAccountBalancesRemarks() {
+		return accountBalancesRemarks;
+	}
+
+	public void setAccountBalancesRemarks(String accountBalancesRemarks) {
+		this.accountBalancesRemarks = accountBalancesRemarks;
+	}
+
+	public String getOtherFundRemarks() {
+		return otherFundRemarks;
+	}
+
+	public void setOtherFundRemarks(String otherFundRemarks) {
+		this.otherFundRemarks = otherFundRemarks;
+	}
+
+	public String getRetireNetTime() {
+		return retireNetTime;
+	}
+
+	public void setRetireNetTime(String retireNetTime) {
+		this.retireNetTime = retireNetTime;
+	}
+
+	public String getScopeBusiness() {
+		return scopeBusiness;
+	}
+
+	public void setScopeBusiness(String scopeBusiness) {
+		this.scopeBusiness = scopeBusiness;
+	}
+
+	public String getStandbyLinks() {
+		return standbyLinks;
+	}
+
+	public void setStandbyLinks(String standbyLinks) {
+		this.standbyLinks = standbyLinks;
 	}
 }

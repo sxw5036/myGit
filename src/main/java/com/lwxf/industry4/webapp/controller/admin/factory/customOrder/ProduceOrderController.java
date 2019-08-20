@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.facade.admin.factory.order.ProduceOrderFacade;
 
 /**
@@ -30,21 +31,38 @@ public class ProduceOrderController {
 	@Resource(name = "produceOrderFacade")
 	private ProduceOrderFacade productOrderFacade;
 
+//	/**
+//	 * 查询生产订单列表
+//	 * @param pageNum
+//	 * @param pageSize
+//	 * @param orderNo
+//	 * @param no
+//	 * @param state
+//	 * @return
+//	 */
+//	@ApiOperation(value = "查询生产订单列表",notes = "查询生产订单列表")
+//	@GetMapping
+//	private RequestResult findProduceOrderList(@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize
+//	,@RequestParam(required = false) String orderNo,@RequestParam(required = false)String no,@RequestParam(required = false)Integer state
+//	){
+//		return null;
+//	}
 	/**
-	 * 查询生产订单列表
-	 * @param pageNum
-	 * @param pageSize
-	 * @param orderNo
-	 * @param no
-	 * @param state
+	 * 外协信息统计
+	 *
+	 * @param
 	 * @return
 	 */
-	@ApiOperation(value = "查询生产订单列表",notes = "查询生产订单列表")
-	@GetMapping
-	private RequestResult findProduceOrderList(@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize
-	,@RequestParam(required = false) String orderNo,@RequestParam(required = false)String no,@RequestParam(required = false)Integer state
-	){
-		return null;
+	@GetMapping("/count")
+	@ApiOperation(value = "外协信息统计",notes = "外协信息统计")
+	private RequestResult findCoordinationCount() {
+		String branchId= WebUtils.getCurrBranchId();
+		return this.productOrderFacade.findCoordinationCount(branchId);
 	}
 
+	@GetMapping("/overview")
+	@ApiOperation(value = "生产管理信息统计",notes = "生产管理信息统计")
+	private RequestResult findProduceOrderOverview(){
+		return this.productOrderFacade.findProduceOrderOverview();
+	}
 }

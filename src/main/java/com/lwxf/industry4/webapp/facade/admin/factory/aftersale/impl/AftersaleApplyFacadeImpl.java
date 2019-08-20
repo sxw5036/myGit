@@ -27,6 +27,7 @@ import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.AftersaleDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.AftersalesPrintTableDto;
 import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApply;
 import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApplyFiles;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
@@ -150,5 +151,11 @@ public class AftersaleApplyFacadeImpl extends BaseFacadeImpl implements Aftersal
 		//删除本地资源
 		AppBeanInjector.baseFileUploadComponent.deleteFileByDir(AppBeanInjector.configuration.getUploadAvatarRootDir().concat(UploadResourceType.AFTERSALE_APPLY.getModule()).concat(File.separator).concat(aftersaleDto.getId()));
 		return ResultFactory.generateSuccessResult();
+	}
+
+	@Override
+	public RequestResult findAftersalesPrintInfo(String id) {
+		AftersalesPrintTableDto aftersalesPrintTableDto = this.aftersaleApplyService.findAftersalesPrintInfo(id);
+		return ResultFactory.generateRequestResult(aftersalesPrintTableDto);
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseNoIdDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.user.UserThirdInfoDao;
 import com.lwxf.industry4.webapp.domain.entity.user.UserThirdInfo;
@@ -105,5 +106,11 @@ public class UserThirdInfoDaoImpl extends BaseNoIdDaoImpl<UserThirdInfo> impleme
 		MapContext map = MapContext.newOne();
 		map.put("appToken",appToken);
 		return this.getSqlSession().selectOne(sqlId,map);
+	}
+
+	@Override
+	public Object userlogout(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("userlogout");
+		return this.getSqlSession().update(sqlId,mapContext);
 	}
 }

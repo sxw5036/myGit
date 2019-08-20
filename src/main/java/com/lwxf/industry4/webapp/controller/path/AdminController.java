@@ -40,7 +40,8 @@ public class AdminController extends LoadBaseCfgAndSysCfgController {
 
     // 工厂管理页面
     @GetMapping("/fadmin")
-    public String goToAdmin() {
+    public String goToAdmin()
+    {
         return WebUtils.getAdminsPagePath(PAGE_FADMIN);
     }
 }

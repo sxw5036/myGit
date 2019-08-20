@@ -1,26 +1,33 @@
 package com.lwxf.industry4.webapp.facade.admin.factory.finance.impl;
 
 import com.lwxf.commons.utils.DateUtil;
-import com.lwxf.industry4.webapp.bizservice.company.CompanyService;
+import com.lwxf.industry4.webapp.bizservice.financing.BankAccountService;
 import com.lwxf.industry4.webapp.bizservice.financing.PaymentSimpleFilesService;
+import com.lwxf.industry4.webapp.bizservice.financing.PaymentSimpleFundsService;
 import com.lwxf.industry4.webapp.bizservice.financing.PaymentSimpleService;
+import com.lwxf.industry4.webapp.common.aop.syslog.OperationMoudule;
+import com.lwxf.industry4.webapp.common.aop.syslog.OperationType;
+import com.lwxf.industry4.webapp.common.aop.syslog.SysOperationLog;
 import com.lwxf.industry4.webapp.common.component.UploadInfo;
 import com.lwxf.industry4.webapp.common.component.UploadType;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.enums.UploadResourceType;
-import com.lwxf.industry4.webapp.common.enums.company.DealerAccountType;
-import com.lwxf.industry4.webapp.common.enums.financing.PaymentSimpleFunds;
+import com.lwxf.industry4.webapp.common.exceptions.BankBalanceLowException;
+import com.lwxf.industry4.webapp.common.exceptions.BankNotFoundException;
 import com.lwxf.industry4.webapp.common.exceptions.ErrorCodes;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
+import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.UniqueKeyUtil;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.financing.PaymentSimpleDto;
-import com.lwxf.industry4.webapp.domain.dto.financing.PaymentSimpleListDtoForApp;
+import com.lwxf.industry4.webapp.domain.dto.financing.PaymentSimpleFundsDto;
+import com.lwxf.industry4.webapp.domain.entity.financing.BankAccount;
 import com.lwxf.industry4.webapp.domain.entity.financing.PaymentSimple;
 import com.lwxf.industry4.webapp.domain.entity.financing.PaymentSimpleFiles;
+import com.lwxf.industry4.webapp.domain.entity.financing.PaymentSimpleFunds;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
 import com.lwxf.industry4.webapp.facade.admin.factory.finance.PaymentSimpleFacade;
 import com.lwxf.industry4.webapp.facade.base.BaseFacadeImpl;
@@ -28,10 +35,10 @@ import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,10 +50,14 @@ public class PaymentSimpleFacadeImpl extends BaseFacadeImpl implements PaymentSi
     @Resource(name = "paymentSimpleFilesService")
     private PaymentSimpleFilesService paymentSimpleFilesService;
 
-    @Resource(name = "companyService")
-    private CompanyService companyService;
+    @Resource(name = "bankAccountService")
+    private BankAccountService bankAccountService;
+
+    @Resource(name = "paymentSimpleFundsService")
+    private PaymentSimpleFundsService paymentSimpleFundsService;
 
     @Override
+    @Transactional(value = "transactionManager")
     public RequestResult findPaymentSimpleList(MapContext mapContext, Integer pageNum, Integer pageSize) {
         PaginatedFilter paginatedFilter = new PaginatedFilter();
         Pagination pagination = new Pagination();
@@ -54,6 +65,16 @@ public class PaymentSimpleFacadeImpl extends BaseFacadeImpl implements PaymentSi
         pagination.setPageSize(pageSize);
         paginatedFilter.setPagination(pagination);
         mapContext.put(WebConstant.KEY_ENTITY_STATUS, 0);
+        mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
+        Map<String,String> created = new HashMap<String, String>();
+        if(mapContext.get("order")!=null && mapContext.get("sort")!=null) {
+            created.put(mapContext.get("order").toString(), mapContext.get("sort").toString());
+        }else{
+            created.put(WebConstant.KEY_ENTITY_CREATED,"desc");
+        }
+        List sort = new ArrayList();
+        sort.add(created);
+        paginatedFilter.setSorts(sort);
         paginatedFilter.setFilters(mapContext);
         return ResultFactory.generateRequestResult(this.paymentSimpleService.selectDtoByFilter(paginatedFilter));
     }
@@ -63,30 +84,6 @@ public class PaymentSimpleFacadeImpl extends BaseFacadeImpl implements PaymentSi
         return null;
     }
 
-    @Override
-    public RequestResult viewIndex() {
-        //返回结果Map
-        MapContext resMap= MapContext.newOne();
-        //获取统计
-        Map<String,String> reportMap = paymentSimpleService.countPaymentSimpleForApp();
-        resMap.put("report",reportMap);
-        //今日流水
-        List<PaymentSimpleListDtoForApp> paymentSimplelist = paymentSimpleService.selectCurrentDayListByFilterForApp();
-        resMap.put("dataList",paymentSimplelist);
-        //类型科目
-        List<MapContext> list = new ArrayList<>();
-        for (PaymentSimpleFunds s : PaymentSimpleFunds.values()) {
-            if(s.getValue().intValue()<100) {
-                MapContext mapCompanyStatus = MapContext.newOne();
-                mapCompanyStatus.put("name", s.getName());
-                mapCompanyStatus.put("pid",s.getValue().toString().substring(0,1));
-                mapCompanyStatus.put("id", s.getValue());
-                list.add(mapCompanyStatus);
-            }
-        }
-        resMap.put("funds1",list);
-        return ResultFactory.generateRequestResult(resMap);
-    }
 
     @Override
     public RequestResult getPaymentSimpleById(String paymentId) {
@@ -101,11 +98,13 @@ public class PaymentSimpleFacadeImpl extends BaseFacadeImpl implements PaymentSi
             }
             paymentSimple.setImgPathList(pathList);
         }
+
         return ResultFactory.generateRequestResult(paymentSimple);
     }
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "更新日常账信息",operationType = OperationType.UPDATE,operationMoudule = OperationMoudule.PAYMENT_SIMPLE)
     public RequestResult updatePaymentSimple(String paymentSimpleId, MapContext map) {
         map.put("id",paymentSimpleId);
         return ResultFactory.generateRequestResult(this.paymentSimpleService.updateByMapContext(map));
@@ -113,29 +112,125 @@ public class PaymentSimpleFacadeImpl extends BaseFacadeImpl implements PaymentSi
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "删除日常账信息",operationType = OperationType.DELETE,operationMoudule = OperationMoudule.PAYMENT_SIMPLE)
     public RequestResult deleteById(String paymentSimpleId) {
         PaymentSimple payment = paymentSimpleService.findById(paymentSimpleId);
-        BigDecimal amount = payment.getAmount();
         this.paymentSimpleService.deleteById(paymentSimpleId);
-        //從日常總賬減去
-        companyService.balanceMinusForFactory(Double.parseDouble(amount.toString()),DealerAccountType.PAYMENTSIMPLE_ACCOUNT.getValue());
+        // 删除科目列表
+        this.paymentSimpleFundsService.deleteByPid(paymentSimpleId);
+
+        //更新银行费用
+        BankAccount b = bankAccountService.findById(payment.getBank());
+        if(b==null){
+            throw new BankNotFoundException();
+        }else{
+            if(payment.getType()==1) {
+                MapContext map = MapContext.newOne();
+                map.put("id",payment.getBank());
+                map.put("amount",b.getAmount().subtract(payment.getAmount()));
+                bankAccountService.updateByMapContext(map);
+            }else if(payment.getType()==2){
+                MapContext map = MapContext.newOne();
+                map.put("id",payment.getBank());
+                map.put("amount",b.getAmount().add(payment.getAmount()));
+                bankAccountService.updateByMapContext(map);
+            }
+        }
         return ResultFactory.generateSuccessResult();
     }
 
     @Override
     @Transactional(value = "transactionManager")
+    @SysOperationLog(detail = "新增日常账信息",operationType = OperationType.INSERT,operationMoudule = OperationMoudule.PAYMENT_SIMPLE)
     public RequestResult addPaymentSimple(PaymentSimpleDto paymentSimple) {
         String id = UniqueKeyUtil.getStringId();
         paymentSimple.setCreated(DateUtil.getSystemDate());
-        paymentSimple.setId(id);
-        if(this.paymentSimpleService.add(paymentSimple)==1){
-            if(paymentSimple.getType()==1) {
-                //将收入加入总账
-                companyService.balancePlusForFactory(Double.parseDouble(paymentSimple.getAmount().toString()), DealerAccountType.PAYMENTSIMPLE_ACCOUNT.getValue());
-            }else if (paymentSimple.getType()==2){
-                //将收入支出记录总账
-                companyService.balanceMinusForFactory(Double.parseDouble(paymentSimple.getAmount().toString()),DealerAccountType.PAYMENTSIMPLE_ACCOUNT.getValue());
+        // paymentSimple.setId(id);
+        paymentSimple.setBranchId(WebUtils.getCurrBranchId());
+        paymentSimple.setCreator(WebUtils.getCurrUserId());
+        paymentSimple.setBank(paymentSimple.getBank());
+        if(paymentSimple.getWays()==null){
+            paymentSimple.setWays(0);
+        }
+        // 计算科目总金额
+        List<PaymentSimpleFundsDto> fundsList = paymentSimple.getPaymentSimpleFundsList();
+        if (fundsList != null && fundsList.size() > 0) {
+            BigDecimal amount = new BigDecimal("0.00");
+            for (PaymentSimpleFunds funds : fundsList) {
+                if (funds != null) {
+                    // 科目金额累加
+                    amount = amount.add(funds.getAmount());
+                }
             }
+            // 修改账目金额
+            paymentSimple.setAmount(amount);
+        }
+
+        if(paymentSimple.getType()==3){
+            //银行调拨
+            String outcomeBankId = paymentSimple.getOutcomeBank();
+            String incomeBankId = paymentSimple.getIncomeBank();
+            //转出
+            BankAccount outcomeB = bankAccountService.findById(outcomeBankId);
+            if(outcomeB.getAmount().doubleValue()<paymentSimple.getAmount().doubleValue()){
+                throw new BankBalanceLowException();
+            }
+            MapContext map = MapContext.newOne();
+            map.put("id",outcomeB.getId());
+            map.put("amount",outcomeB.getAmount().subtract(paymentSimple.getAmount()));
+            bankAccountService.updateByMapContext(map);
+            //转入
+            BankAccount incomeB = bankAccountService.findById(incomeBankId);
+            MapContext mapIncome = MapContext.newOne();
+            mapIncome.put("id",incomeB.getId());
+            mapIncome.put("amount",paymentSimple.getAmount().add(incomeB.getAmount()));
+            bankAccountService.updateByMapContext(mapIncome);
+        }else{
+            //更新银行费用
+            BankAccount b = bankAccountService.findById(paymentSimple.getBank());
+            if(b==null){
+                throw new BankNotFoundException();
+            }else{
+                if(paymentSimple.getType()==1) {
+                    MapContext map = MapContext.newOne();
+                    map.put("id",paymentSimple.getBank());
+                    map.put("amount",paymentSimple.getAmount().add(b.getAmount()));
+                    bankAccountService.updateByMapContext(map);
+                }else if (paymentSimple.getType()==2){
+                    BigDecimal res = b.getAmount().subtract(paymentSimple.getAmount());
+                    if(res.doubleValue()<0){
+                        throw new  BankBalanceLowException();
+                    }else{
+                        MapContext map = MapContext.newOne();
+                        map.put("id",paymentSimple.getBank());
+                        map.put("amount",b.getAmount().subtract(paymentSimple.getAmount()));
+                        bankAccountService.updateByMapContext(map);
+                    }
+
+                }
+            }
+        }
+
+
+        if(this.paymentSimpleService.add(paymentSimple)==1){
+
+            // 将科目数据添加到PaymentSimpleFunds科目表中
+            if (fundsList != null && fundsList.size() > 0) {
+                for (PaymentSimpleFunds funds : fundsList) {
+                    if (funds != null) {
+                        funds.setId(UniqueKeyUtil.getStringId());
+                        funds.setPaymentSimpleId(paymentSimple.getId());
+                        funds.setCreated(DateUtil.getSystemDate());
+                        funds.setCreator(paymentSimple.getCreator());
+                        funds.setOperator(paymentSimple.getOperator());
+                        // 循环单条添加
+                        // this.paymentSimpleFundsService.add(funds);
+                    }
+                }
+                // 批量添加
+                this.paymentSimpleFundsService.addBatch(fundsList);
+            }
+
             //更新图片信息为正常
             if(paymentSimple.getFileIds()!=null && !paymentSimple.getFileIds().equals("")){
                 String[] ids = paymentSimple.getFileIds().split(",");
@@ -153,6 +248,7 @@ public class PaymentSimpleFacadeImpl extends BaseFacadeImpl implements PaymentSi
             return ResultFactory.generateErrorResult(ErrorCodes.SYS_EXECUTE_FAIL_00001,"数据保存失败");
         }
     }
+
 
     @Override
     public RequestResult getUserForPaymentSimple() {
@@ -189,4 +285,8 @@ public class PaymentSimpleFacadeImpl extends BaseFacadeImpl implements PaymentSi
         return ResultFactory.generateRequestResult(listUrls);
     }
 
+    @Override
+    public RequestResult countPaymentForPageIndex() {
+        return ResultFactory.generateRequestResult(paymentSimpleService.countPaymentForPageIndex(WebUtils.getCurrBranchId()));
+    }
 }

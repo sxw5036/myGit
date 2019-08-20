@@ -74,4 +74,9 @@ public class CustomOrderDemandServiceImpl extends BaseServiceImpl<CustomOrderDem
 		}
 		return customOrderDemandDtos;
 	}
+
+	@Override
+	public CustomOrderDemand findByProductId(String id) {
+		return this.dao.findByProductId(id);
+	}
 }

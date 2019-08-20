@@ -222,61 +222,6 @@ public class MicroblogFacadeImpl extends BaseFacadeImpl implements MicroblogFaca
 
 
 
-	@Override
-	public RequestResult findByLimit(Integer pageNum, Integer pageSize,MapContext mapContext) {
-		PaginatedFilter filter = PaginatedFilter.newOne();
-		String name = (String) mapContext.get(WebConstant.KEY_ENTITY_NAME);
-		List<String> userIds = new ArrayList<>();
-		if(null != name){
-			userIds = this.userService.findIdByName(name);
-			mapContext.remove(WebConstant.KEY_ENTITY_NAME);
-		}else if(null != mapContext.get(WebConstant.KEY_ENTITY_CREATOR)){
-			userIds.add(WebUtils.getCurrUserId());
-		}else {
-			userIds = null;
-		}
-		mapContext.put(WebConstant.KEY_ENTITY_CREATOR, userIds);
-		filter.setFilters(mapContext);
-		Pagination pagination = Pagination.newOne();
-		pagination.setPageNum(pageNum);
-		pagination.setPageSize(pageSize);
-		filter.setPagination(pagination);
-		Map<String,Object> result = new HashMap<>();
-		PaginatedList<Microblog> list = this.microblogService.findByType(filter);
-
-		result.put("microblogs", list.getRows());
-		Set<String> blogIds = new HashSet<>();
-		for(Microblog m : list.getRows()){
-			blogIds.add(m.getId());
-		}
-		// 查询评论列表
-		List<MicroblogComment> comments;
-		List<UploadFiles> files;
-		List<MicroblogPraise> praises;
-		if(blogIds.size() == 0){
-			comments = new ArrayList<>();
-			files = new ArrayList<>();
-			praises = new ArrayList<>();
-		}else{
-			comments = this.microblogCommentService.selectMicroblogCommentByBlogIds(blogIds);
-			files = this.uploadFilesService.findByBlogIds(blogIds);
-			praises = this.microblogPraiseService.findByBlogIds(blogIds);
-		}
-		result.put("comments", comments);
-		// 查询快享帖子图片
-		result.put("files", files);
-		// 查询帖子点赞信息
-		result.put("praises", praises);
-		// 处理当前用户点过赞的帖子ID
-		List<MicroblogPraise> userPraises = new ArrayList<>();
-		praises.stream().forEach(up ->{
-			if(up.getMemberId().equals(WebUtils.getCurrUserId())){
-				userPraises.add(up);
-			}
-		});
-		result.put("userPraises", userPraises);
-		return ResultFactory.generateRequestResult(result, list.getPagination());
-	}
 
 	@Override
 	public RequestResult findById(String id) {
@@ -323,11 +268,5 @@ public class MicroblogFacadeImpl extends BaseFacadeImpl implements MicroblogFaca
 		mapContext.put(WebConstant.KEY_ENTITY_ID, id);
 		this.microblogService.updateByMapContext(mapContext);
 		return ResultFactory.generateSuccessResult() ;
-	}
-
-	@Override
-	public RequestResult findNameByCreator(String name) {
-		List<String> ids = this.userService.findIdByName(name);
-		return null;
 	}
 }

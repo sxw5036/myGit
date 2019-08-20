@@ -7,9 +7,12 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.customorder.CustomOrderDao;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
-import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderCountDto;
-import com.lwxf.industry4.webapp.domain.dto.customorder.OrderQuoteDto;
+import com.lwxf.industry4.webapp.domain.dto.customorder.*;
+import com.lwxf.industry4.webapp.domain.dto.dealer.DealerOrderRankDto;
+import com.lwxf.industry4.webapp.domain.dto.dealer.WxDealerInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OfferPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.statement.WxFactoryStatementDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Service;
@@ -106,13 +109,6 @@ public class CustomOrderServiceImpl extends BaseServiceImpl<CustomOrder, String,
 	public List<DateNum> findOrderNumByCreatedAndCid(MapContext mapContext) {
 		return this.dao.findOrderNumByCreatedAndCid(mapContext);
 	}
-
-	@Override
-	public List<CustomOrder> findOrderNumByCustomIdAndCid(MapContext mapContext) {
-		return this.dao.findOrderNumByCustomIdAndCid(mapContext);
-	}
-
-
 	@Override
 	public List<CustomOrderDto> findByCompanyIdAndStatus(MapContext params) {
 		return this.dao.findByCompanyIdAndStatus(params);
@@ -124,76 +120,13 @@ public class CustomOrderServiceImpl extends BaseServiceImpl<CustomOrder, String,
 	}
 
 
-	@Override
-	public PaginatedList<Map> findByCreated(PaginatedFilter filter) {
-		return this.dao.findByCreated(filter);
-	}
 
-	@Override
-	public int findOrderNumByCreated(String created) {
-		return this.dao.findOrderNumByCreated(created);
-	}
-
-	@Override
-	public Map findOrderInfoByOrderId(String orderId) {
-		return this.dao.findOrderInfoByOrderId(orderId);
-	}
-
-	@Override
-	public int findPaidOrderNumByCreated(String created) {
-		return this.dao.findPaidOrderNumByCreated(created);
-	}
-
-	@Override
-	public int findPaidOrderNumByTime(String beginTime,String endTime,String created) {
-		return this.dao.findPaidOrderNumByTime(beginTime,endTime,created);
-	}
-
-	@Override
-	public int findUnpaidOrderNumByTime(String beginTime,String endTime,String created) {
-		return this.dao.findUnpaidOrderNumByTime(beginTime,endTime,created);
-	}
-
-	@Override
-	public int findDesignNumByCreated(String created) {
-		return this.dao.findDesignNumByCreated(created);
-	}
-
-	@Override
-	public PaginatedList<Map> findByConditions(PaginatedFilter paginatedFilter) {
-		return this.dao.findByConditions(paginatedFilter);
-	}
-
-	@Override
-	public Map findFactoryOrderInfoById(String orderId) {
-		return this.dao.findFactoryOrderInfoById(orderId);
-	}
-
-	@Override
-	public int findIsDesignNumByTime(MapContext params) {
-		return this.dao.findIsDesignNumByTime(params);
-	}
-
-
-	@Override
-	public List<CustomOrder> findOrderListByStatusList(List<Integer> statusList) {
-		return this.dao.findOrderListByStatusList(statusList);
-	}
-
-	@Override
-	public List<MapContext> findCustomerOrderInfo(String userId, String companyId) {
-		return this.dao.findCustomerOrderInfo(userId,companyId);
-	}
 
 	@Override
 	public List<MapContext> findOrderListByCidAndUid(String dealerId, String userId) {
 		return this.dao.findOrderListByCidAndUid(userId,dealerId);
 	}
 
-	@Override
-	public PaginatedList<Map> findFProcessOrderList(PaginatedFilter paginatedFilter) {
-		return this.dao.findFProcessOrderList(paginatedFilter);
-	}
 
 	@Override
 	public Map findFAppBaseInfoByOrderId(MapContext params) {
@@ -216,45 +149,74 @@ public class CustomOrderServiceImpl extends BaseServiceImpl<CustomOrder, String,
 	}
 
 	@Override
-	public Map findShipmentsInfoByOrderId(String orderId) {
-		return this.dao.findShipmentsInfoByOrderId(orderId);
-	}
-
-
-
-
-	@Override
-	public PaginatedList<Map> findPaidOrderListByTime(PaginatedFilter filter) {
-		return this.dao.findPaidOrderListByTime(filter);
+	public List<CustomOrder> findByCustomerIdAndCid(String uId, String branchId) {
+		return this.dao.findByCustomerIdAndCid(uId,branchId);
 	}
 
 	@Override
-	public PaginatedList<Map> findUnpaidOrderListByTime(PaginatedFilter filter) {
-		return this.dao.findUnpaidOrderListByTime(filter);
+	public List<CustomOrder> findByCustomerIdAndCidAndStatus(String uId, String branchId, Integer status) {
+		return this.dao.findByCustomerIdAndCidAndStatus(uId,branchId,status);
 	}
 
 	@Override
-	public PaginatedList<Map> findIsDesignListByTime(PaginatedFilter filter) {
-		return this.dao.findIsDesignListByTime(filter);
+	public CustomOrder findByUidAndBranchId(MapContext mapContext) {
+		return this.dao.findByUidAndBranchId(mapContext);
 	}
 
 	@Override
-	public List<MapContext> findByCid(String dealerId) {
-		return this.dao.findByCid(dealerId);
+	public CustomOrder findByCidAndBranchId(String dealerId, String branchId) {
+		return this.dao.findByCidAndBranchId(dealerId,branchId);
 	}
 
 	@Override
-	public Integer getAllByCreated(String beginTime, String endTime, String todayDate) {
-		return this.dao.getAllByCreated(beginTime,endTime,todayDate);
+	public Integer findTodayOrderCount(MapContext param1) {
+		return this.dao.findTodayOrderCount(param1);
 	}
 
 	@Override
-	public List<CustomOrder> getAllOrderByCreated(String beginTime, String endTime, String todayDate) {
-		return this.dao.getAllOrderByCreated(beginTime,endTime,todayDate);
+	public Integer findTodayInvalidOrder(MapContext param2) {
+		return this.dao.findTodayInvalidOrder(param2);
 	}
 
 	@Override
-	public BigDecimal findPaidOrderAmountByTime(String beginTime, String endTime, String day) {
-		return this.dao.findPaidOrderAmountByTime(beginTime,endTime,day);
+	public Integer findTodayEffectiveOrder(MapContext param2) {
+		return this.dao.findTodayEffectiveOrder(param2);
 	}
+
+	@Override
+	public PaginatedList<WxCustomOrderDto> findWxOrderList(PaginatedFilter paginatedFilter) {
+		return this.dao.findWxOrderList(paginatedFilter);
+	}
+
+	@Override
+	public WxCustomerOrderInfoDto findWxOrderByorderId(String orderId) {
+		return this.dao.findWxOrderByorderId(orderId);
+	}
+
+	@Override
+	public WxFactoryStatementDto statementWxFactory(String branchId) {
+		return this.dao.statementWxFactory(branchId);
+	}
+
+	@Override
+	public WxDealerInfoDto selectDealerInfo(String companyId) {
+		return this.dao.selectDealerInfo(companyId);
+	}
+
+	@Override
+	public OrderPrintTableDto findOrderPrintTable(MapContext mapContext) {
+		return this.dao.findOrderPrintTable(mapContext);
+	}
+
+	@Override
+	public OfferPrintTableDto findOfferPrintTableInfo(String id) {
+		return this.dao.findOfferPrintTableInfo(id);
+	}
+
+	@Override
+	public Integer findOverdueOrderCount(String currBranchId) {
+		return this.dao.findOverdueOrderCount(currBranchId);
+	}
+
+
 }

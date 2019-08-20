@@ -25,9 +25,9 @@ public interface ProductCategoryDao extends BaseDao<ProductCategory, String> {
 
 	PaginatedList<ProductCategory> selectByFilter(PaginatedFilter paginatedFilter);
 
-	List<ProductCategory> findAll();
+	List<ProductCategory> findAllByBranchId(String branchId);
 
 	List<ProductCategory> selectProductCategoryByFilter(MapContext map);
 
-	ProductCategory selectProductCategoryByName(String name);
+	ProductCategory selectProductCategoryByName(String name,String branchId);
 }

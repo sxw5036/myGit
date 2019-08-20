@@ -19,6 +19,12 @@ public class DispatchBillItemDto extends DispatchBillItem {
 	private String barcode;
 	@ApiModelProperty(value = "类型：0 - 柜体；1 - 门板；2 - 五金（含五金配件、厨具、烟机灶具、礼品等）")
 	private String type;
+	@ApiModelProperty(value = "经销商名称")
+	private String dealerName;
+	@ApiModelProperty(value = "客户名称")
+	private String customerName;
+	@ApiModelProperty(value = "资源ID(可能售后单ID 可能订单ID)")
+	private String customOrderNo;
 
 	public String getBarcode() {
 		return barcode;
@@ -34,5 +40,29 @@ public class DispatchBillItemDto extends DispatchBillItem {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getDealerName() {
+		return dealerName;
+	}
+
+	public void setDealerName(String dealerName) {
+		this.dealerName = dealerName;
+	}
+
+	public String getCustomerName() {
+		return customerName;
+	}
+
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
+
+	public String getCustomOrderNo() {
+		return customOrderNo;
+	}
+
+	public void setCustomOrderNo(String customOrderNo) {
+		this.customOrderNo = customOrderNo;
 	}
 }

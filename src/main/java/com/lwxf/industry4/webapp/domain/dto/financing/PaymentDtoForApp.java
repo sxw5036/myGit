@@ -77,7 +77,7 @@ public class PaymentDtoForApp {
     }
 
     public Double getAmount() {
-        return amount;
+        return amount==null?0d:amount;
     }
 
     public void setAmount(Double amount) {

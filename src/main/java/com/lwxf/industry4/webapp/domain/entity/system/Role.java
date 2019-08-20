@@ -31,11 +31,13 @@ public class Role extends IdEntity  {
 	@Column(type = Types.VARCHAR,length = 20,nullable = false,name = "name",displayName = "角色名称")
 	private String name;
 	@Column(type = Types.TINYINT,nullable = false,updatable = false,name = "type",displayName = "角色类型：0 - 表示厂家的角色；1 - 表示经销商的角色；2 - 表示供应商角色;3 - 系统角色")
-	private Byte type;
+	private Integer type;
 	@Column(type = Types.VARCHAR,length = 20,nullable = false,updatable = false,name = "key",displayName = "角色唯一标识")
 	private String key;
 	@Column(type = Types.BIT,nullable = false,name = "is_admin",displayName = "是否是管理员权限 0 不是管理员 1 是管理员")
 	private Boolean admin;
+	private String branchId;
+
 
 	public Role() {
 	}
@@ -117,11 +119,11 @@ public class Role extends IdEntity  {
 		return name;
 	}
 
-	public void setType(Byte type){
+	public void setType(Integer type){
 		this.type=type;
 	}
 
-	public Byte getType(){
+	public Integer getType(){
 		return type;
 	}
 
@@ -139,5 +141,13 @@ public class Role extends IdEntity  {
 
 	public Boolean getAdmin(){
 		return admin;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

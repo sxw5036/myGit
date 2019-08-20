@@ -1,16 +1,14 @@
 package com.lwxf.industry4.webapp.bizservice.financing;
 
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-
-
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.financing.PaymentDto;
-import com.lwxf.industry4.webapp.domain.dto.financing.PaymentDtoForApp;
-import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.*;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceInfoDto;
+import com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp.CompanyFinanceListDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.PaymentPrintTableDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.bizservice.base.BaseService;
 import com.lwxf.industry4.webapp.domain.entity.financing.Payment;
@@ -28,56 +26,17 @@ public interface PaymentService extends BaseService <Payment, String> {
 
 	PaginatedList<PaymentDto> selectByFilter(PaginatedFilter paginatedFilter);
 
-	PaginatedList<PaymentDtoForApp> selectByFilterForApp(PaginatedFilter paginatedFilter);
-
 	List<PaymentDto> findByOrderId (String orderId);
 
-	List<Payment> findByOrderIdAndStatus(String orderId,Integer status);
-
 	PaymentDto findByPaymentId (String paymentId);
-	PaymentDto findByPId (String paymentId);
-
-	List<Payment> findByCompanyIdAndStatusAndType(MapContext params);
-
-	PaginatedList<Payment> findByCompanyIdAndStatusAndType(PaginatedFilter paginatedFilter);
 
 	int updateStatusByOrderIdAndFund(String orderId, Integer funds, Integer status);
 
 	PaginatedList<PaymentDto> findListByPaginateFilter(PaginatedFilter paginatedFilter);
 
-	PaymentDto findByOrderIdAndTypeAndFundsAndStatus(MapContext orderIdAndType);
+	List<Map> findByOrderIdAndType(MapContext orderIdAndType);
 
-	PaginatedList<PaymentDtoForApp> selectPaymentByCompanyIdForApp(PaginatedFilter paginatedFilter);
-
-	/*
-  F端app财务审核首页上方统计
-   */
-	FinanceCountDto selectFinanceCountForApp();
-	/*
-    F端app财务审核首页下测列表
-     */
-	List<VerifyPaymentDto> selectVerifyPaymentList();
-	/*
-	货款审核页面显示数据
-	 */
-	VerifyOrderPriceDto selectVerifyOrderPriceInfo(String paymentId);
-	/*
-	设计费审核页面显示数据
-	 */
-	VerifyDesignPriceDto selectVerifyDesignPriceInfo(String paymentId);
-	/*
-	 F端app审核货款
-	 */
-	int verifyOrderPrice(MapContext map);
-	/*
-	 F端app审核货款
-	 */
-	int verifyDesignPrice(MapContext map);
-
-	/**
-	 * 财务-F端app经销商财务上测统计
-	 */
-	Map<String,String> countCompanyFinance();
+	int deleteByOrderId(String orderId);
 	/**
 	 * 财务-F端app经销商财务收支列表查询
 	 */
@@ -88,7 +47,13 @@ public interface PaymentService extends BaseService <Payment, String> {
 	 */
 	CompanyFinanceInfoDto getCompanyFinanceInfoByPaymentId(String paymentId);
 
-	List<Map> findByOrderIdAndType(MapContext orderIdAndType);
+	PaymentDto findByOrderIdAndFunds(MapContext params);
 
-    BigDecimal findByTypeAndCreated(Integer type, String beginTime, String endTime, String day);
+	PaymentDto findOrderFinanceInfo(String paymentId);
+
+	MapContext countPaymentForPageIndex(String branchId);
+
+	PaymentPrintTableDto findPrintTableById(String id);
+
+	BigDecimal findTodayAmountByType(Integer type);
 }

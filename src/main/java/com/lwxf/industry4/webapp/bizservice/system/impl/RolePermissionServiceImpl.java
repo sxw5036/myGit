@@ -104,5 +104,10 @@ public class RolePermissionServiceImpl extends BaseServiceImpl<RolePermission, S
 		return this.dao.findAllDianzhuRolePer();
 	}
 
+	@Override
+	public int addList(List<RolePermission> rolePermissionList) {
+		return this.dao.addList(rolePermissionList);
+	}
+
 
 }

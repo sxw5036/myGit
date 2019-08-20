@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.bizservice.common.UploadFilesService;
+import com.lwxf.industry4.webapp.bizservice.customorder.CustomOrderService;
 import com.lwxf.industry4.webapp.bizservice.product.*;
 import com.lwxf.industry4.webapp.common.component.UploadInfo;
 import com.lwxf.industry4.webapp.common.component.UploadType;
@@ -25,6 +26,8 @@ import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto;
 import com.lwxf.industry4.webapp.domain.dto.product.ProductDto;
 import com.lwxf.industry4.webapp.domain.entity.product.Product;
 import com.lwxf.industry4.webapp.domain.entity.product.ProductFiles;
@@ -58,6 +61,8 @@ public class ProductFacadeImpl extends BaseFacadeImpl implements ProductFacade {
 	private UploadFilesService uploadFilesService;
 	@Resource(name = "productFilesService")
 	private ProductFilesService productFilesService;
+	@Resource(name = "customOrderService")
+	private CustomOrderService customOrderService;
 
 	@Override
 	public RequestResult findProductList(MapContext mapContext,Integer pageNum,Integer pageSize) {
@@ -66,6 +71,7 @@ public class ProductFacadeImpl extends BaseFacadeImpl implements ProductFacade {
 		pagination.setPageNum(pageNum);
 		pagination.setPageSize(pageSize);
 		paginatedFilter.setPagination(pagination);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		paginatedFilter.setFilters(mapContext);
 		Map<String,String> created = new HashMap<String, String>();
 		created.put(WebConstant.KEY_ENTITY_CREATED,"desc");
@@ -156,7 +162,7 @@ public class ProductFacadeImpl extends BaseFacadeImpl implements ProductFacade {
 		for(MultipartFile multipartFile:multipartFileList){
 			//赋值给uploadinfo,数据进行处理
 			UploadInfo uploadInfo = AppBeanInjector.baseFileUploadComponent.doUploadByModule(UploadType.TEMP, multipartFile, UploadResourceType.PRODUCT, id);
-			productFiles.setFullPath(uploadInfo.getRealPath());
+			productFiles.setFullPath(WebUtils.getDomainUrl() + uploadInfo.getRelativePath());
 			productFiles.setMime(uploadInfo.getFileMimeType().getRealType());
 			productFiles.setOriginalMime(uploadInfo.getFileMimeType().getOriginalType());
 			productFiles.setName(uploadInfo.getFileName());
@@ -201,4 +207,6 @@ public class ProductFacadeImpl extends BaseFacadeImpl implements ProductFacade {
 		this.productFilesService.deleteById(fileId);
 		return ResultFactory.generateSuccessResult();
 	}
+
+
 }

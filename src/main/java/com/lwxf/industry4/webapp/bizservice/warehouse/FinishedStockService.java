@@ -42,9 +42,13 @@ public interface FinishedStockService extends BaseService <FinishedStock, String
 
     Map findMapByOrderId(String produceOrderId);
 
-    Map findGoStockByPOId(String produceOrderId);
-
 	List<FinishedStock> findListByOrderId(String orderId);
 
 	PaginatedList<MapContext> findDispathcBillList(PaginatedFilter paginatedFilter);
+
+	int deleteByOrderId(String orderId);
+
+	List<FinishedStockDto> findWxFinishedList(String orderId);
+
+	MapContext findCountByBranchId(String branchId);
 }

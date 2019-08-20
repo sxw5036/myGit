@@ -33,4 +33,6 @@ public interface CustomOrderDemandDao extends BaseDao<CustomOrderDemand, String>
 	CustomOrderDemandDto selectByDemandId(String id);
 
 	List<CustomOrderDemandDto> findListByOrderId(String id);
+
+	CustomOrderDemand findByProductId(String id);
 }

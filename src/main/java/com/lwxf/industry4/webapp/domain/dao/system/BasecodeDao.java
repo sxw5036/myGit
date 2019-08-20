@@ -27,4 +27,10 @@ public interface BasecodeDao extends BaseDao<Basecode, String> {
 	List<Basecode> selectByFilter(MapContext mapContext);
 
 	List<Basecode> findAll();
+
+	Basecode findByTypeAndValue(String type, String value);
+
+	List<Basecode> findByType(String type);
+
+	Basecode findByTypeAndCode(String typeString, String code);
 }

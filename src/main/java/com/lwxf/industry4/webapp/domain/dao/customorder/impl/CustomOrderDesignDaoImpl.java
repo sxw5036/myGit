@@ -81,32 +81,7 @@ public class CustomOrderDesignDaoImpl extends BaseDaoImpl<CustomOrderDesign, Str
         return this.getSqlSession().selectOne(sqlId, map);
     }
 
-    @Override
-    public PaginatedList<Map> findUnDesign(PaginatedFilter paginatedFilter) {
-        String sqlId = this.getNamedSqlId("findUnDesign");
-        //
-        //  过滤查询参数
-        PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-        PageList<Map> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-        return this.toPaginatedList(pageList);
 
-    }
-
-    @Override
-    public PaginatedList<Map> findDesigned(PaginatedFilter paginatedFilter) {
-        String sqlId = this.getNamedSqlId("findDesigned");
-        //
-        //  过滤查询参数
-        PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-        PageList<Map> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-        return this.toPaginatedList(pageList);
-    }
-
-    @Override
-    public Map findByOrderIdAndDesignId(MapContext params) {
-        String sqlId = this.getNamedSqlId("findByOrderIdAndDesignId");
-        return this.getSqlSession().selectOne(sqlId, params);
-    }
 
     @Override
     public PaginatedList<CustomOrderDesignDto> findListByFilter(PaginatedFilter paginatedFilter) {
@@ -116,5 +91,11 @@ public class CustomOrderDesignDaoImpl extends BaseDaoImpl<CustomOrderDesign, Str
         PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
         PageList<CustomOrderDesignDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
         return this.toPaginatedList(pageList);
+    }
+
+    @Override
+    public CustomOrderDesignDto findOneByProductId(String orderProductId) {
+        String sqlId = this.getNamedSqlId("findOneByProductId");
+        return this.getSqlSession().selectOne(sqlId, orderProductId);
     }
 }

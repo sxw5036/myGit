@@ -50,4 +50,20 @@ public class CustomOrderLogDaoImpl extends BaseDaoImpl<CustomOrderLog, String> i
 		String sqlId = this.getNamedSqlId("findByOrderIdAndState");
 		return this.getSqlSession().selectList(sqlId,params);
 	}
+
+	@Override
+	public List<CustomOrderLog> findByOrderId(String orderId) {
+		MapContext params = MapContext.newOne();
+		params.put("orderId",orderId);
+		String sqlId = this.getNamedSqlId("findByOrderId");
+		return this.getSqlSession().selectList(sqlId,params);
+	}
+
+	@Override
+	public PaginatedList<Map> findMessageOrderInfo(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findMessageOrderInfo");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<Map> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
 }

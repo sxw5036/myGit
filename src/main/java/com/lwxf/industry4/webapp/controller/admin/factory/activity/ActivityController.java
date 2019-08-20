@@ -8,6 +8,7 @@ import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.FileMimeTypeUtil;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.activity.ActivityDto;
 import com.lwxf.industry4.webapp.domain.dto.activity.ActivityJoinDto;
 import com.lwxf.industry4.webapp.domain.entity.activity.ActivityInfo;
@@ -63,6 +64,7 @@ public class ActivityController {
         pagination.setPageSize(pageSize);
         pagination.setPageNum(pageNum);
         MapContext mapContent = this.createMapContent(name, type, classify,target,status);
+        mapContent.put(WebConstant.KEY_ENTITY_BRANCH_ID, WebUtils.getCurrBranchId());
         return this.activityFacade.findListActivities(mapContent,pageNum,pageSize);
     }
 
@@ -329,7 +331,6 @@ public class ActivityController {
         if (isFree!=null) {
             mapContext.put("free", isFree);
         }
-
         return mapContext;
     }
 }

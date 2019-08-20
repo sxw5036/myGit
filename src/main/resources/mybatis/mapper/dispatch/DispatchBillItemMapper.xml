@@ -7,6 +7,19 @@
         <result column="finished_stock_item_id" property="finishedStockItemId" jdbcType="CHAR" />
         <result column="status" property="status" jdbcType="TINYINT" />
     </resultMap>
+
+    <resultMap id="DispatchBillItemDto" type="com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillItemDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="dispatch_bill_id" property="dispatchBillId" jdbcType="CHAR" />
+        <result column="finished_stock_item_id" property="finishedStockItemId" jdbcType="CHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="barcode" property="barcode"/>
+        <result column="type" property="type"/>
+        <result column="dealerName" property="dealerName"/>
+        <result column="customerName" property="customerName"/>
+    </resultMap>
+
+
     <sql id="columns">
 id, dispatch_bill_id, finished_stock_item_id, status
 </sql>
@@ -65,10 +78,15 @@ WHERE  id = #{id}
 </delete>
 
     <select id="findListByOrderId" resultMap="DispatchBillItemMap">
-        select dis.* from dispatch_bill_item dis right join (select db.* from dispatch_bill db left join custom_order o on db.order_id = o.id
-        where o.id = #{orderId} and db.status != 0
-        )db
-        on db.id = dis.dispatch_bill_id
+        select
+            item.*
+        from dispatch_bill db
+        left join logistics_company lc on lc.id = db.logistics_company_id
+        left join user u on db.deliverer=u.id
+        left join dispatch_bill_item item on db.id = item.dispatch_bill_id
+        left join finished_stock_item fsItem on item.finished_stock_item_id = fsItem.id
+        left join finished_stock f on fsItem.finished_stock_id = f.id
+        where f.order_id = #{orderId}
     </select>
 
     <select id="findDispatchItemCountByOrderId" resultType="integer">
@@ -95,6 +113,29 @@ WHERE  id = #{id}
         left join finished_stock_item fsi on dbi.finished_stock_item_id=fsi.id
         where db.id = #{dispatchBillId}
 group by type
+    </select>
+
+    <delete id="deleteByOrderId">
+        delete from dispatch_bill_item where id in (SELECT a.id from (select
+            item.id
+        from dispatch_bill db
+        left join logistics_company lc on lc.id = db.logistics_company_id
+        left join user u on db.deliverer=u.id
+        left join dispatch_bill_item item on db.id = item.dispatch_bill_id
+        left join finished_stock_item fsItem on item.finished_stock_item_id = fsItem.id
+        left join finished_stock f on fsItem.finished_stock_id = f.id
+        where f.order_id = #{orderId}) a)
+    </delete>
+
+    <select id="findListByDIdAndTypes" resultMap="DispatchBillItemDto">
+        select item.*,f.barcode
+        from dispatch_bill_item item
+        left join finished_stock_item f on item.finished_stock_item_id = f.id
+        where item.dispatch_bill_id = #{id}
+        and f.type in
+        <foreach collection="types" open="(" close=")" item="type" separator=",">
+            #{type}
+        </foreach>
     </select>
 
 </mapper>

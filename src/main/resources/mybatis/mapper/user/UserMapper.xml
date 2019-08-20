@@ -20,6 +20,7 @@
 		<result column="login_name" property="loginName" jdbcType="VARCHAR" />
 		<result column="type" property="type" jdbcType="TINYINT" />
 		<result column="is_changed_login_name" property="changedLoginName" jdbcType="BIT" />
+		<result column="branch_id" property="branchId"/>
 	</resultMap>
 	<resultMap id="UserAreaDtoMap" type="com.lwxf.industry4.webapp.domain.dto.user.UserAreaDto">
 		<id column="id" property="id" jdbcType="CHAR" />
@@ -55,6 +56,7 @@
 		<result column="education" property="education" jdbcType="TINYINT" />
 		<result column="identitys" property="identitys"/>
 		<result column="score" property="score"/>
+		<result column="branch_id" property="branchId"/>
 	</resultMap>
 	<resultMap id="UserMapCG" type="com.lwxf.industry4.webapp.domain.entity.user.User">
 		<id column="id" property="id" jdbcType="CHAR"/>
@@ -73,19 +75,20 @@
 		<result column="sex" property="sex"  jdbcType="TINYINT" />
 		<result column="city_area_id" property="cityAreaId" jdbcType="CHAR" />
 		<result column="is_changed_login_name" property="changedLoginName" jdbcType="BIT" />
+		<result column="branch_id" property="branchId"/>
 	</resultMap>
 	<sql id="columns">
-id, name, sex, email, avatar, birthday, mobile, state, background, created, last_login, time_zone, language, city_area_id, followers, login_name, type, is_changed_login_name
+id, name, sex, email, avatar, birthday, mobile, state, background, created, last_login, time_zone, language, city_area_id, followers, login_name, type, is_changed_login_name,branch_id
 </sql>
 	<sql id="columnsMap">
-        id, name, sex, email, avatar, birthday, mobile, state, background, created, last_login, time_zone, language, city_area_id, followers, login_name, type, is_changed_login_name
+        id, name, sex, email, avatar, birthday, mobile, state, background, created, last_login, time_zone, language, city_area_id, followers, login_name, type, is_changed_login_name,branch_id
     </sql>
 	<sql id="columnsSet">
         id,name,email,avatar,birthday,mobile,state,sex,is_changed_login_name
     </sql>
 
 	<sql id="col">
-		u.id, u.name, u.sex, u.email, u.avatar, u.birthday, u.mobile, u.state, u.background, u.created, u.last_login, u.time_zone, u.language, u.city_area_id, u.followers, u.login_name, u.type, u.is_changed_login_name
+		u.id, u.name, u.sex, u.email, u.avatar, u.birthday, u.mobile, u.state, u.background, u.created, u.last_login, u.time_zone, u.language, u.city_area_id, u.followers, u.login_name, u.type, u.is_changed_login_name,u.branch_id
 	</sql>
 
 	<select id="selectAllUserId" resultType="java.lang.String">
@@ -176,14 +179,17 @@ id, name, sex, email, avatar, birthday, mobile, state, background, created, last
 			<if test="changedLoginName != null">
 				AND is_changed_login_name = #{changedLoginName}
 			</if>
+			<if test="branchId != null">
+				AND branch_id = #{branchId}
+			</if>
 		</trim></where>
 
 	</select>
 
 	<insert id="insert" useGeneratedKeys="false">
 INSERT INTO
-  user(id, name, sex, email, avatar, birthday, mobile, state, background, created, last_login, time_zone, language, city_area_id, followers, login_name, type, is_changed_login_name)
-VALUES(#{id}, #{name}, #{sex}, #{email}, #{avatar}, #{birthday}, #{mobile}, #{state}, #{background}, #{created}, #{lastLogin}, #{timeZone}, #{language}, #{cityAreaId}, #{followers}, #{loginName}, #{type}, #{changedLoginName})
+  user(id, name, sex, email, avatar, birthday, mobile, state, background, created, last_login, time_zone, language, city_area_id, followers, login_name, type, is_changed_login_name,branch_id)
+VALUES(#{id}, #{name}, #{sex}, #{email}, #{avatar}, #{birthday}, #{mobile}, #{state}, #{background}, #{created}, #{lastLogin}, #{timeZone}, #{language}, #{cityAreaId}, #{followers}, #{loginName}, #{type}, #{changedLoginName},#{branchId})
 </insert>
 
 	<update id="updateByMapContext">
@@ -281,19 +287,6 @@ WHERE  id = #{id}
 
 
 
-
-
-	<select id="findClerkListByStateAndRole" resultMap="UserMap">
-		SELECT <include refid="columns" />
-		FROM   user
-		<where>
-			<trim prefixOverrides="AND">
-				<if test="state != null">
-					 state = #{state}
-				</if>
-			</trim>
-		</where>
-	</select>
 	<select id="findUserInfoByUserIds"  resultMap="UserMap">
 		SELECT <include refid="columns" />
 		FROM   user where id in
@@ -314,13 +307,6 @@ WHERE  id = #{id}
 		select <include refid="columnsSet"/> from user where id = #{id}
 	</select>
 
-	<select id="findIdByName" resultType="java.lang.String">
-        select id from user where name like '%${_parameter}%'
-    </select>
-	<select id="findUserListByLikeName" resultMap="UserMap">
-		select <include refid="columns"/> from user where name like CONCAT('%',#{name},'%')
-	</select>
-
 
 	<select id="findByLoginName" resultMap="UserAreaDtoMap">
 		SELECT
@@ -330,7 +316,7 @@ WHERE  id = #{id}
 	</select>
 
 	<select id="selectCompanyShopkeeperByCompanyIds" resultMap="UserMap">
-		select <include refid="col"/> from user u RIGHT JOIN (SELECT c.*,e.user_id uid FROM company c LEFT JOIN (SELECT * FROM company_employee WHERE role_id = (select id from role where `key` = #{key})) e on c.id = e.company_id where c.id in
+		select <include refid="col"/> from user u RIGHT JOIN (SELECT c.*,e.user_id uid FROM company c LEFT JOIN (SELECT * FROM company_employee WHERE role_id = (select id from role where `key` = #{key} and branch_id = #{branchId} )) e on c.id = e.company_id where c.id in
 		<foreach collection="ids" open="(" close=")" separator="," item="id">
 			#{id}
 		</foreach>
@@ -339,42 +325,6 @@ WHERE  id = #{id}
 			#{id}
 		</foreach>
 		)
-	</select>
-
-	<select id="findEmpIdAndEmpNameByCid" resultType="java.util.Map">
-		select
-		u.id,u.name
-		from user u
-		where u.id in
-		(select user_id from company_employee c
-		<where><trim prefixOverrides="AND">
-		 c.company_id = #{companyId}
-		<if test="status != null">
-		and c.status = #{status}
-		</if>
-		</trim></where>
-		)
-
-	</select>
-
-	<select id="findCustomerByCompanyIdAndCustomer" resultMap="UserAreaDtoMap">
-		select
-		u.id,u.name,u.mobile,u.city_area_id,ca.merger_name as cityAreaName,ub.address as address
-		from user u
-		left join city_area ca on ca.id = u.city_area_id
-		left join user_basis ub on ub.user_id = u.id
-		where  u.name like '%${name}%'
-		and u.id in
-		(select c.user_id
-		from company_customer c
-		<where><trim prefixOverrides="and">
-			<if test="companyId!=null">
-			c.company_id = #{companyId}
-			</if>
-			<if test="creator!=null">
-				and c.creator = #{creator}
-			</if>
-		</trim></where>)
 	</select>
 
 <select id="findByUserIds" resultMap="UserMap">
@@ -412,6 +362,9 @@ WHERE  id = #{id}
 				and (u.name like '%${condition}%'
 				or u.mobile like '%${condition}%')
 			</if>
+			<if test="branchId!=null">
+				and c.branch_id = #{branchId}
+			</if>
 		</trim></where>
 		order by u.created desc
 	</select>
@@ -427,73 +380,6 @@ WHERE  id = #{id}
 		left join user_basis ub on ub.user_id = u.id
 		left join city_area ca on ca.id = u.city_area_id
 		where u.id = #{userId} limit 1
-	</select>
-
-<select id="findEmpInfoByCompanyIdAndStatus" resultMap="UserMap">
-	select
-	u.id,u.name,u.mobile,u.avatar
-	from  company_employee ce
-	left join user u on ce.user_id = u.id
-      <where><trim prefixOverrides="and">
-		  <if test="companyId!=null">
-			  ce.company_id = #{companyId}
-		  </if>
-		  <if test="status!=null">
-			  and ce.status = #{status}
-		  </if>
-		  <if test="condition!=null">
-			  and (u.name like '%${condition}%'
-			  or u.mobile like '%${condition}%')
-		  </if>
-	  </trim></where>
-	order by ce.created desc
-</select>
-
-
-	<select id="findCustInfoByCompanyIdAndStatus" resultMap="UserAreaDtoMap">
-		select
-		u.id,u.name,u.mobile,us.name as customerManager
-		from company_customer cc
-		left join user u on u.id = cc.user_id
-		left join user us on us.id = cc.customer_manager
-		<where><trim prefixOverrides="and">
-			<if test="companyId!=null">
-				cc.company_id = #{companyId}
-			</if>
-			<if test="status!=null">
-				and cc.status = #{status}
-			</if>
-			<if test="grade!=null">
-				and cc.grade = #{grade}
-			</if>
-			<if test="customerManager!=null">
-				and cc.customer_manager = #{customerManager}
-			</if>
-		</trim></where>
-	</select>
-
-
-	<select id="findShareMemberByPidAndStatusAndIdentity" resultMap = "UserAreaDtoMap">
-		select u.id,u.name,u.mobile,u.avatar,
-		csm.identity as identitys,csm.score as score
-		from company_share_member csm
-		left join user u on u.id = csm.user_id
-		<where><trim prefixOverrides="and">
-			<if test="companyId!=null">
-				csm.company_id = #{companyId}
-			</if>
-			<if test="status!=null">
-				and csm.status = #{status}
-			</if>
-			<if test="identity!=null">
-				and csm.identity = #{identity}
-			</if>
-			<if test="condition!=null">
-			and (u.name like '%${condition}%'
-			or u.mobile like '%${condition}%')
-			</if>
-		</trim></where>
-		order by csm.created desc
 	</select>
 
 
@@ -531,6 +417,16 @@ WHERE  id = #{id}
 		left join role r on r.id in (select role_id from company_employee where user_id = #{userId})
 		left join company_employee ce on ce.user_id = u.id
 		where u.id =#{userId} limit 1
+	</select>
+	<select id="findAllUserIdByBranchId" resultType="string">
+		SELECT u.id from user u
+where u.branch_id=#{branchId}
+
+	</select>
+	<select id="findByMobileAndBranchId" resultMap="UserMap">
+		SELECT u.id from user u
+		where u.branch_id=#{branchId} and u.mobile=#{mobile}
+
 	</select>
 	
 	

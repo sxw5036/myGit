@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.statements.factory.produce.ProduceStatementDao">
+    <select id="findProduceStatementByWeek"  resultType="com.lwxf.industry4.webapp.domain.dto.statement.CountByWeekDto">
+        <if test="countType != null and countType != ''and countType =='0'.toString()">
+            <![CDATA[
+            select
+            (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(created,'%Y-%m-%d')  =  (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-1))) as mon,
+            (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(created,'%Y-%m-%d')  =  (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-2))) as tues,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(created,'%Y-%m-%d')  =  (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-3))) as wed,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(created,'%Y-%m-%d')  = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-4))) as thur,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(created,'%Y-%m-%d')  =  (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-5))) as fri,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(created,'%Y-%m-%d')  =  (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-6))) as sat,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(created,'%Y-%m-%d')  =  (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-7))) as sun
+            ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='1'.toString()">
+            <![CDATA[
+            select
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-1))) as mon,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-2))) as tues,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-3))) as wed,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-4))) as thur,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-5))) as fri,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-6))) as sat,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-7))) as sun
+            ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='2'.toString()">
+            <![CDATA[
+            select
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-1))) as mon,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-2))) as tues,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-3))) as wed,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-4))) as thur,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-5))) as fri,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-6))) as sat,
+            (select count(*) from produce_order where branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') = (select subdate(curdate(),if(date_format(curdate(),'%w')=0,7,date_format(curdate(),'%w'))-7))) as sun
+            ]]>
+        </if>
+    </select>
+
+    <select id="findProduceStatementByMonth"  resultType="com.lwxf.industry4.webapp.domain.dto.statement.CountByMonthDto">
+        <if test="countType != null and countType != ''and countType =='0'.toString()">
+            <![CDATA[
+      select
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(created,'%Y-%m-%d') >= date_format(#{oneTime},'%Y-%m-%d') and date_format(created,'%Y-%m-%d')   < date_format(#{twoTime},'%Y-%m-%d'))  as point1,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(created,'%Y-%m-%d') >= date_format(#{twoTime},'%Y-%m-%d') and date_format(created,'%Y-%m-%d')   < date_format(#{threeTime},'%Y-%m-%d')) as point2,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(created,'%Y-%m-%d') >= date_format(#{threeTime},'%Y-%m-%d') and date_format(created,'%Y-%m-%d') < date_format(#{fourTime},'%Y-%m-%d')) as point3,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(created,'%Y-%m-%d') >= date_format(#{fourTime},'%Y-%m-%d') and date_format(created,'%Y-%m-%d') <= date_format(#{fiveTime},'%Y-%m-%d')) as point4
+       ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='1'.toString()">
+            <![CDATA[
+      select
+       (select count(*) from produce_order where  branch_id=#{branchId} and date_format(planned_time,'%Y-%m-%d') >= date_format(#{oneTime},'%Y-%m-%d') and date_format(planned_time,'%Y-%m-%d')   < date_format(#{twoTime},'%Y-%m-%d'))  as point1,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(planned_time,'%Y-%m-%d') >= date_format(#{twoTime},'%Y-%m-%d') and date_format(planned_time,'%Y-%m-%d')   < date_format(#{threeTime},'%Y-%m-%d')) as point2,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(planned_time,'%Y-%m-%d') >= date_format(#{threeTime},'%Y-%m-%d') and date_format(planned_time,'%Y-%m-%d') < date_format(#{fourTime},'%Y-%m-%d')) as point3,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(planned_time,'%Y-%m-%d') >= date_format(#{fourTime},'%Y-%m-%d') and date_format(planned_time,'%Y-%m-%d') <= date_format(#{fiveTime},'%Y-%m-%d')) as point4
+       ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='2'.toString()">
+            <![CDATA[
+     select
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(completion_time,'%Y-%m-%d') >= date_format(#{oneTime},'%Y-%m-%d') and date_format(completion_time,'%Y-%m-%d')   < date_format(#{twoTime},'%Y-%m-%d'))  as point1,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(completion_time,'%Y-%m-%d') >= date_format(#{twoTime},'%Y-%m-%d') and date_format(completion_time,'%Y-%m-%d')   < date_format(#{threeTime},'%Y-%m-%d')) as point2,
+       (select count(*) from produce_order where  branch_id=#{branchId}  and date_format(completion_time,'%Y-%m-%d') >= date_format(#{threeTime},'%Y-%m-%d') and date_format(completion_time,'%Y-%m-%d') < date_format(#{fourTime},'%Y-%m-%d')) as point3,
+       (select count(*) from produce_order where  branch_id=#{branchId} and date_format(completion_time,'%Y-%m-%d') >= date_format(#{fourTime},'%Y-%m-%d') and date_format(completion_time,'%Y-%m-%d') <= date_format(#{fiveTime},'%Y-%m-%d')) as point4
+       ]]>
+        </if>
+    </select>
+    <select id="findProduceStatementByQuarter"  resultType="com.lwxf.industry4.webapp.domain.dto.statement.CountByQuarterDto">
+        <if test="countType != null and countType != ''and countType =='0'.toString()">
+            <![CDATA[
+            select
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and date_format(created,'%m')  =  #{firstMonth}) as month1,
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and date_format(created,'%m')  =  #{secondMonth}) as month2,
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and date_format(created,'%m')  =  #{thirdMonth}) as month3
+            ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='1'.toString()">
+            <![CDATA[
+            select
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and  month(planned_time)=#{firstMonth}) as month1,
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and  month(planned_time)=#{secondMonth}) as month2,
+            (select count(*) from produce_order where  branch_id=#{branchId}  and  YEAR(planned_time)=YEAR(NOW()) and  month(planned_time)=#{thirdMonth}) as month3
+            ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='2'.toString()">
+            <![CDATA[
+            select
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and  month(completion_time)=#{firstMonth}) as month1,
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and  month(completion_time)=#{secondMonth}) as month2,
+            (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and  month(completion_time)=#{thirdMonth}) as month3
+            ]]>
+        </if>
+
+    </select>
+    <select id="findProduceStatementByYear"  resultType="com.lwxf.industry4.webapp.domain.dto.statement.CountByYearDto">
+        <if test="countType != null and countType != ''and countType =='0'.toString()">
+            <![CDATA[
+        select
+         (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=1) as jan,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=2) as feb,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=3) as mar,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=4) as apr,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=5) as may,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=6) as jun,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=7) as jul,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=8) as aug,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=9) as sept,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=10) as oct,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=11) as nov,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(created)=YEAR(NOW()) and month(created)=12) as dece
+        ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='1'.toString()">
+            <![CDATA[
+        select
+         (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=1) as jan,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=2) as feb,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=3) as mar,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=4) as apr,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=5) as may,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=6) as jun,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=7) as jul,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=8) as aug,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=9) as sept,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=10) as oct,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=11) as nov,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(planned_time)=YEAR(NOW()) and month(planned_time)=12) as dece
+        ]]>
+        </if>
+        <if test="countType != null and countType != ''and countType =='2'.toString()">
+            <![CDATA[
+        select
+         (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=1) as jan,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=2) as feb,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=3) as mar,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=4) as apr,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=5) as may,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=6) as jun,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=7) as jul,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=8) as aug,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=9) as sept,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=10) as oct,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=11) as nov,
+        (select count(*) from produce_order where  branch_id=#{branchId}  and YEAR(completion_time)=YEAR(NOW()) and month(completion_time)=12) as dece
+        ]]>
+        </if>
+
+    </select>
+    <select id="findProduceStatements" resultType="com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum">
+        <if test="countType != null and countType != ''and countType =='0'.toString()">
+            select
+            (select count(*)  from produce_order
+            <where><trim prefixOverrides="AND">
+                 branch_id=#{branchId}
+                <if test="dateType != null and dateType != ''and dateType =='0'.toString()">
+                    and date_format(created,'%Y-%m-%d') = date_format(#{date},'%Y-%m-%d')
+                </if>
+                <if test="dateType != null and dateType != ''and dateType =='1'.toString()">
+                    and date_format(created,'%Y-%m') = date_format(#{date},'%Y-%m')
+                </if>
+                <if test="dateType != null and dateType != ''and dateType =='2'.toString()">
+                    and date_format(created,'%Y') = date_format(#{date},'%Y')
+                </if>
+            </trim></where>) as count
+
+        </if>
+        <if test="countType != null and countType != ''and countType =='1'.toString()">
+            select
+            (select count(*)  from produce_order
+            <where><trim prefixOverrides="AND">
+                branch_id=#{branchId}
+                <if test="dateType != null and dateType != ''and dateType =='0'.toString()">
+                    and date_format(created,'%Y-%m-%d') = date_format(#{date},'%Y-%m-%d')
+                </if>
+                <if test="dateType != null and dateType != ''and dateType =='1'.toString()">
+                    and date_format(created,'%Y-%m') = date_format(#{date},'%Y-%m')
+                </if>
+                <if test="dateType != null and dateType != ''and dateType =='2'.toString()">
+                    and date_format(created,'%Y') = date_format(#{date},'%Y')
+                </if>
+            </trim></where>) as count
+
+        </if>
+        <if test="countType != null and countType != ''and countType =='2'.toString()">
+            select
+            (select count(*)  from produce_order
+            <where><trim prefixOverrides="AND">
+                branch_id=#{branchId}
+                <if test="dateType != null and dateType != ''and dateType =='0'.toString()">
+                    and date_format(created,'%Y-%m-%d') = date_format(#{date},'%Y-%m-%d')
+                </if>
+                <if test="dateType != null and dateType != ''and dateType =='1'.toString()">
+                    and date_format(created,'%Y-%m') = date_format(#{date},'%Y-%m')
+                </if>
+                <if test="dateType != null and dateType != ''and dateType =='2'.toString()">
+                    and date_format(created,'%Y') = date_format(#{date},'%Y')
+                </if>
+            </trim></where>) as count
+        </if>
+    </select>
+
+</mapper>

@@ -47,6 +47,7 @@ public class Dept extends IdEntity  {
 	@Column(type = Types.CHAR,length = 13,nullable = false,updatable = false,name = "company_Id",displayName = "关联公司主键ID")
 	@ApiModelProperty(value = "关联公司主键ID")
 	private String companyId;
+	private String branchId;
 
 	public Dept() {
 	}
@@ -173,5 +174,13 @@ public class Dept extends IdEntity  {
 
 	public String getCompanyId(){
 		return companyId;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

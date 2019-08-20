@@ -167,13 +167,23 @@ WHERE  id = #{id}
         AND employee_id = #{employeeId}
     </select>
     <select id="findDeptMemberListByEmployeeId" resultMap="DeptMemberMap">
-        select dept_id from dept_member
-        where  employee_id = #{employeeId}
+        select d.id dept_id from dept d
+        where d.id in
+        (select dept_id from dept_member dm left join dept d on dm.dept_id = d.id where dm.employee_id = #{employeeId})
+        or
+        d.parent_id in
+        (select dept_id from dept_member dm left join dept d on dm.dept_id = d.id where dm.employee_id = #{employeeId})
     </select>
     <select id="findDeptNameByEmployeeId" resultType="string">
         select d.name deptName
         from dept_member dm
         left join dept d on dm.dept_id = d.id
         where  dm.employee_id = #{employeeId}
+    </select>
+    <select id="selectUserIdByDeptId" resultType="list">
+        select ce.user_id userId
+        from dept_member dm
+        right join company_employee ce on dm.employee_id = ce.id
+        where  dm.dept_id = #{deptId}
     </select>
 </mapper>

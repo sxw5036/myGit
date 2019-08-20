@@ -14,6 +14,7 @@ import com.lwxf.industry4.webapp.domain.dao.activity.ActivityFilesDao;
 import com.lwxf.industry4.webapp.domain.dao.activity.ActivityInfoDao;
 import com.lwxf.industry4.webapp.domain.dao.activity.ActivityParamsDao;
 import com.lwxf.industry4.webapp.domain.dto.activity.ActivityDto;
+import com.lwxf.industry4.webapp.domain.dto.activity.ActivityInfoDto;
 import com.lwxf.industry4.webapp.domain.entity.activity.ActivityInfo;
 import com.lwxf.industry4.webapp.domain.entity.activity.ActivityParams;
 import org.springframework.beans.BeanUtils;
@@ -125,6 +126,11 @@ public class ActivityInfoServiceImpl extends BaseServiceImpl<ActivityInfo, Strin
 	@Override
 	public PaginatedList<Map> findByFCompanyId(PaginatedFilter paginatedFilter) {
 		return this.dao.findByFCompanyId(paginatedFilter);
+	}
+
+	@Override
+	public ActivityInfoDto findOneById(String id) {
+		return this.dao.findOneById(id);
 	}
 
 	@Override

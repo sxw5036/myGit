@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.user.UserAreaDto;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
@@ -91,11 +92,6 @@ public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
 		String sqlId = this.getNamedSqlId("findByLoginName");
 		return this.getSqlSession().selectOne(sqlId,loginName);
 	}
-    @Override
-    public List<User> findClerkListByStateAndRole(MapContext mapContext) {
-        String sqlId = this.getNamedSqlId("findClerkListByStateAndRole");
-        return this.getSqlSession().selectList(sqlId,mapContext);
-    }
 
 	@Override
 	public List<User> findUserInfoByUserIds(Collection<String> id) {
@@ -115,11 +111,6 @@ public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
 		return this.getSqlSession().selectOne(sqlId,id);
 	}
 
-	@Override
-	public List<String> findIdByName(String name) {
-		String sqlId = this.getNamedSqlId("findIdByName");
-		return this.getSqlSession().selectList(sqlId, name);
-	}
 
 
 	@Override
@@ -129,14 +120,6 @@ public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
 	}
 
 
-	@Override
-	public PaginatedList<User> findUserListByLikeName(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("findUserListByLikeName");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<User> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-	}
-
 
 	@Override
 	public List<User> selectCompanyShopkeeperByCompanyIds(List ids,String roleKey) {
@@ -144,6 +127,7 @@ public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
 		MapContext mapContext = new MapContext();
 		mapContext.put("ids",ids);
 		mapContext.put("key",roleKey);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
@@ -160,20 +144,6 @@ public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
 		return this.getSqlSession().selectOne(sqlId,userId);
 	}
 
-	@Override
-	public List<Map<String, String>> findEmpIdAndEmpNameByCid(MapContext params) {
-		String sqlId = this.getNamedSqlId("findEmpIdAndEmpNameByCid");
-		return this.getSqlSession().selectList(sqlId,params);
-
-
-	}
-
-
-	@Override
-	public List<UserAreaDto> findCustomerByCompanyIdAndCustomer(MapContext mapContext) {
-		String sqlId = this.getNamedSqlId("findCustomerByCompanyIdAndCustomer");
-		return this.getSqlSession().selectList(sqlId,mapContext);
-	}
 
 	@Override
 	public List<User> findByUserIds(List<String> values) {
@@ -193,31 +163,6 @@ public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
 	public UserAreaDto findByUid(String userId) {
 		String sqlId = this.getNamedSqlId("findByUid");
 		return this.getSqlSession().selectOne(sqlId,userId);
-	}
-
-
-	@Override
-	public List<UserAreaDto> findCustInfoByCompanyIdAndStatus(MapContext mapContext) {
-		String sqlId = this.getNamedSqlId("findCustInfoByCompanyIdAndStatus");
-		return this.getSqlSession().selectList(sqlId,mapContext);
-	}
-
-	@Override
-	public PaginatedList<User> findEmpInfoByCompanyIdAndStatus(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("findEmpInfoByCompanyIdAndStatus");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<User> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-
-
-	}
-	@Override
-	public PaginatedList<UserAreaDto> findShareMemberByPidAndStatusAndIdentity(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("findShareMemberByPidAndStatusAndIdentity");
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<UserAreaDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
-
 	}
 
 	@Override
@@ -241,5 +186,20 @@ public class UserDaoImpl extends BaseDaoImpl<User, String> implements UserDao {
 	public Map findFactoryUserAccountInfo(String companyId, String userId) {
 		String sqlId = this.getNamedSqlId("findFactoryUserAccountInfo");
 		return this.getSqlSession().selectOne(sqlId, userId);
+	}
+
+	@Override
+	public List<String> findAllUserIdByBranchId(String branchId) {
+		String sqlId = this.getNamedSqlId("findAllUserIdByBranchId");
+		return this.getSqlSession().selectList(sqlId, branchId);
+	}
+
+	@Override
+	public User findByMobileAndBranchId(String mobile, String branchId) {
+		MapContext map = MapContext.newOne();
+		map.put("mobile", mobile);
+		map.put("branchId", branchId);
+		String sqlId = this.getNamedSqlId("findByMobileAndBranchId");
+		return this.getSqlSession().selectOne(sqlId, map);
 	}
 }

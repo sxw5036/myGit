@@ -22,6 +22,8 @@ import com.lwxf.industry4.webapp.domain.dao.warehouse.FinishedStockItemDao;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillDto;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillItemDto;
 import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillPlanItemDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.DispatchPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
 import com.lwxf.industry4.webapp.domain.entity.dispatch.DispatchBill;
 import com.lwxf.mybatis.utils.MapContext;
@@ -57,6 +59,7 @@ public class DispatchBillServiceImpl extends BaseServiceImpl<DispatchBill, Strin
 		PaginatedList<DispatchBillDto> paginatedList = this.dao.selectByFilter(paginatedFilter);
 		for (DispatchBillDto dispatchBill:paginatedList.getRows()){
 			dispatchBill.setDispatchBillItemDtoList(this.dao.findListByDispatchId(dispatchBill.getId()));
+			dispatchBill.setUploadFiles(this.uploadFilesDao.findByResourceId(dispatchBill.getId()));
 		}
 		return  paginatedList;
 	}
@@ -64,11 +67,6 @@ public class DispatchBillServiceImpl extends BaseServiceImpl<DispatchBill, Strin
 	@Override
 	public List<DispatchBillDto> findDispatchsByOrderId(String orderId) {
 		return this.dao.findDispatchsByOrderId(orderId);
-	}
-
-	@Override
-	public DispatchBill findOneByNo(String no) {
-		return this.dao.findOneByNo(no);
 	}
 
 	@Override
@@ -93,6 +91,11 @@ public class DispatchBillServiceImpl extends BaseServiceImpl<DispatchBill, Strin
 	}
 
 	@Override
+	public List<DispatchBillDto> findDispatchInfoForOrder(String orderId) {
+		return this.dao.findDispatchInfoForOrder(orderId);
+	}
+
+	@Override
 	public int findYSHItemCount(String orderId) {
 		return this.dao.findYSHItemCount(orderId);
 	}
@@ -103,25 +106,8 @@ public class DispatchBillServiceImpl extends BaseServiceImpl<DispatchBill, Strin
 	}
 
 	@Override
-	public Integer findTodayCount() {
-		return this.dao.findTodayCount();
-	}
-
-
-
-	@Override
-	public Integer findThisMonthCount() {
-		return this.dao.findThisMonthCount();
-	}
-
-	@Override
 	public PaginatedList<DispatchBillPlanItemDto> findDispathcBillList(PaginatedFilter paginatedFilter) {
 		return this.dao.findDispathcBillList(paginatedFilter);
-	}
-
-	@Override
-	public Integer findTobeShipped() {
-		return this.dao.findTobeShipped();
 	}
 
 	@Override
@@ -150,17 +136,22 @@ public class DispatchBillServiceImpl extends BaseServiceImpl<DispatchBill, Strin
 	}
 
 	@Override
-	public List<Map> findFactoryDispatchsByOrderId(String orderId) {
-		return this.dao.findFactoryDispatchsByOrderId(orderId);
+	public List<Map> findDispatchListByFinishedItemId(List itemids) {
+		return this.dao.findDispatchListByFinishedItemId(itemids);
 	}
 
 	@Override
-	public Integer findNumByCreated(String beginTime, String endTime, String day) {
-		MapContext params = MapContext.newOne();
-		params.put("beginTime", beginTime);
-		params.put("endTime",endTime );
-		params.put("created", day);
-		//params.put("status", );
-		return this.dao.findNumByCreated(params);
+	public List<FinishedStockDto> findFinishedItemTypeByDispatchId(String dispatchBillId, List itemids) {
+		return this.dao.findFinishedItemTypeByDispatchId(dispatchBillId,itemids);
+	}
+
+	@Override
+	public DispatchPrintTableDto findDispatchPrintInfo(String id) {
+		return this.dao.findDispatchPrintInfo(id);
+	}
+
+	@Override
+	public List<Map> findFactoryDispatchsByOrderId(String orderId) {
+		return this.dao.findFactoryDispatchsByOrderId(orderId);
 	}
 }

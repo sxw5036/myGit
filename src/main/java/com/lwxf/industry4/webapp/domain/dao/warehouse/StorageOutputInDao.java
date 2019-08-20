@@ -28,5 +28,5 @@ public interface StorageOutputInDao extends BaseDao<StorageOutputIn, String> {
 
 	PaginatedList<StorageOutputInDto> findListByPaginateFilter(PaginatedFilter paginatedFilter);
 
-	StorageOutputIn findOneByNo(String no);
+	StorageOutputIn findOneByNo(String no,String branchId);
 }

@@ -26,6 +26,6 @@ public interface StorageOutputInService extends BaseService <StorageOutputIn, St
 
 	PaginatedList<StorageOutputInDto> findListByPaginateFilter(PaginatedFilter paginatedFilter);
 
-	StorageOutputIn findOneByNo(String no);
+	StorageOutputIn findOneByNo(String no,String branchId);
 
 }

@@ -82,4 +82,13 @@ public class ProductServiceImpl extends BaseServiceImpl<Product, String, Product
 		return this.dao.findResourcesList(mapContent);
 	}
 
+	@Override
+	public List<Product> findProductsBySupplierId(String supplierId) {
+		return this.dao.findProductsBySupplierId(supplierId);
+	}
+
+	@Override
+	public List<Product> findProductsRecommend(String companyId) {
+		return this.dao.findProductsRecommend(companyId);
+	}
 }

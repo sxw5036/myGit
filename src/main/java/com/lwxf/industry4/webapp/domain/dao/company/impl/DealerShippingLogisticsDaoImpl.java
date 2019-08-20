@@ -59,4 +59,10 @@ public class DealerShippingLogisticsDaoImpl extends BaseNoIdDaoImpl<DealerShippi
 		return this.getSqlSession().selectOne(sqlId,companyId);
 	}
 
+	@Override
+	public int updateByCompanyId(MapContext updateDealerShipping) {
+		String sqlId = this.getNamedSqlId("updateByCompanyId");
+		return this.getSqlSession().update(sqlId,updateDealerShipping);
+	}
+
 }

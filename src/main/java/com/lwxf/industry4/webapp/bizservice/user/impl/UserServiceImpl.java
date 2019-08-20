@@ -76,10 +76,6 @@ public class UserServiceImpl extends BaseServiceImpl<User, String, UserDao> impl
 	public User findByLoginName(String loginName) {
 		return this.dao.findByLoginName(loginName);
 	}
-	@Override
-	public List<User> findClerkListByStateAndRole(MapContext mapContext){
-		return this.dao.findClerkListByStateAndRole(mapContext);
-	}
 
 	@Override
 	public List<User> findUserInfoByUserIds(Collection<String> id) {
@@ -99,15 +95,6 @@ public class UserServiceImpl extends BaseServiceImpl<User, String, UserDao> impl
 		return this.dao.findUserById(id);
 	}
 
-	@Override
-	public List<String> findIdByName(String name) {
-		return this.dao.findIdByName(name);
-	}
-
-	@Override
-	public PaginatedList<User> findUserListByLikeName(PaginatedFilter paginatedFilter) {
-		return this.dao.findUserListByLikeName(paginatedFilter);
-	}
 
 	@Override
 	public int addFollowers(String userId) {
@@ -146,7 +133,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, String, UserDao> impl
 	@Override
 	public int add(User entity) {
 		if(LwxfStringUtils.isBlank(entity.getName())){
-			entity.setName("我是谁？");
+			entity.setName("暂无");
 		}
 		return super.add(entity);
 	}
@@ -156,23 +143,12 @@ public class UserServiceImpl extends BaseServiceImpl<User, String, UserDao> impl
 		return this.dao.selectUserAreaDtoById(id);
 	}
 
-	@Override
-	public List<Map<String, String>> findEmpIdAndEmpNameByCid(MapContext params) {
-		return this.dao.findEmpIdAndEmpNameByCid(params);
-	}
-
 
 	@Override
 	public UserAreaDto findCityNameByUID(String userId) {
 		return this.dao.findCityNameByUID(userId);
 	}
 
-
-
-	@Override
-	public List<UserAreaDto> findCustomerByCompanyIdAndCustomer(MapContext mapContext) {
-		return this.dao.findCustomerByCompanyIdAndCustomer(mapContext);
-	}
 
 	@Override
 	public List<User> findByUserIds(List<String> values) {
@@ -189,22 +165,6 @@ public class UserServiceImpl extends BaseServiceImpl<User, String, UserDao> impl
 	}
 
 	@Override
-	public List<UserAreaDto> findCustInfoByCompanyIdAndStatus(MapContext mapContext) {
-		return this.dao.findCustInfoByCompanyIdAndStatus(mapContext);
-	}
-
-	@Override
-	public PaginatedList<User> findEmpInfoByCompanyIdAndStatus(PaginatedFilter paginatedFilter) {
-		return this.dao.findEmpInfoByCompanyIdAndStatus(paginatedFilter);
-	}
-
-
-	@Override
-	public PaginatedList<UserAreaDto> findShareMemberByPidAndStatusAndIdentity(PaginatedFilter paginatedFilter) {
-		return this.dao.findShareMemberByPidAndStatusAndIdentity(paginatedFilter);
-	}
-
-	@Override
 	public Map factoryUserPersonalInfo(MapContext params) {
 		return this.dao.factoryUserPersonalInfo(params);
 	}
@@ -217,5 +177,15 @@ public class UserServiceImpl extends BaseServiceImpl<User, String, UserDao> impl
 	@Override
 	public Map findFactoryUserAccountInfo(String companyId, String userId) {
 		return this.dao.findFactoryUserAccountInfo(companyId,userId);
+	}
+
+	@Override
+	public List<String> findAllUserIdByBranchId(String branchId) {
+		return this.dao.findAllUserIdByBranchId(branchId);
+	}
+
+	@Override
+	public User findByMobileAndBranchId(String mobile, String branchId) {
+		return this.dao.findByMobileAndBranchId(mobile,branchId);
 	}
 }

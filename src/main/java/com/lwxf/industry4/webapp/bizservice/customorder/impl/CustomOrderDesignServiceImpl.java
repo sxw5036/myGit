@@ -6,6 +6,7 @@ import com.lwxf.industry4.webapp.bizservice.customorder.CustomOrderDesignService
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.customorder.CustomOrderDesignDao;
+import com.lwxf.industry4.webapp.domain.dao.customorder.CustomOrderFilesDao;
 import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDesignDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderDesign;
 import com.lwxf.mybatis.utils.MapContext;
@@ -35,6 +36,8 @@ public class CustomOrderDesignServiceImpl extends BaseServiceImpl<CustomOrderDes
         this.dao = customOrderDesignDao;
     }
 
+    @Resource(name = "customOrderFilesDao")
+    private CustomOrderFilesDao customOrderFilesDao;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
@@ -60,7 +63,11 @@ public class CustomOrderDesignServiceImpl extends BaseServiceImpl<CustomOrderDes
 
     @Override
     public List<CustomOrderDesignDto> findListByOrderId(String id) {
-        return this.dao.findListByOrderId(id);
+        List<CustomOrderDesignDto> listByOrderId = this.dao.findListByOrderId(id);
+        for(CustomOrderDesignDto customOrderDesignDto:listByOrderId){
+            customOrderDesignDto.setFileList(this.customOrderFilesDao.selectByOrderIdAndType(id, null, customOrderDesignDto.getId()));
+        }
+        return listByOrderId;
     }
 
     @Override
@@ -81,23 +88,14 @@ public class CustomOrderDesignServiceImpl extends BaseServiceImpl<CustomOrderDes
         return this.dao.findByOrderIdAndStatus(map);
     }
 
-    @Override
-    public PaginatedList<Map> findUnDesign(PaginatedFilter paginatedFilter) {
-        return this.dao.findUnDesign(paginatedFilter);
-    }
-
-    @Override
-    public PaginatedList<Map> findDesigned(PaginatedFilter paginatedFilter) {
-        return this.dao.findDesigned(paginatedFilter);
-    }
-
-    @Override
-    public Map findByOrderIdAndDesignId(MapContext params) {
-        return this.dao.findByOrderIdAndDesignId(params);
-    }
 
     @Override
     public PaginatedList<CustomOrderDesignDto> findListByFilter(PaginatedFilter paginatedFilter) {
         return this.dao.findListByFilter(paginatedFilter);
+    }
+
+    @Override
+    public CustomOrderDesignDto findOneByProductId(String orderProductId) {
+        return this.dao.findOneByProductId(orderProductId);
     }
 }

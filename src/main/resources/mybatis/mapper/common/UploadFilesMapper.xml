@@ -16,6 +16,9 @@
         <result column="belong_id" property="belongId" jdbcType="CHAR" />
         <result column="full_path" property="fullPath" jdbcType="VARCHAR" />
     </resultMap>
+    <resultMap id="UploadFileDtoMap" type="com.lwxf.industry4.webapp.domain.dto.uploadFiles.UploadFileDto">
+        <result column="path" property="realPath"  />
+    </resultMap>
     <sql id="columns">
 id, company_id, resource_id, resource_type, path, name, mime, original_mime, status, creator, created, belong_id, full_path
 </sql>
@@ -224,7 +227,7 @@ WHERE  id = #{id}
         delete from upload_files where belong_id=#{id}
     </delete>
     <select id="findByResourceIdAndStatusAndTypeId" resultMap="UploadFilesMap">
-        select <include refid="columns"/> from upload_files where resource_id = #{ResourceId} and status = #{status} and resource_type = #{typeId}
+        select <include refid="columns"/> from upload_files where resource_id = #{ResourceId} and status = #{status}
     </select>
     <select id="findByResourceIdsAndStatusAndTypeId" resultMap="UploadFilesMap">
         select
@@ -259,6 +262,27 @@ WHERE  id = #{id}
 
     </select>
 
+    <select id="findByCidAndStatusAndType" resultMap="UploadFileDtoMap">
+        select
+        full_path as path
+        from upload_files
+        <where><trim prefixOverrides="AND">
+            <if test="resourceId != null">
+                resource_id = #{resourceId}
+            </if>
+            <if test="cardType != null">
+                AND resource_type = #{cardType}
+            </if>
+            <if test="contractType != null">
+                AND resource_type = #{contractType}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+        </trim></where>
+
+    </select>
+
     <update id="updateFormalByPath" parameterType="map">
         update upload_files
         set belong_id = #{schemeId},resource_id = #{schemeId},status=1
@@ -267,5 +291,52 @@ WHERE  id = #{id}
             #{uploadFilesList}
         </foreach>
     </update>
-
+    <update id="updateByIds">
+        update upload_files
+        <set><trim suffixOverrides=",">
+            <if test="_parameter.containsKey('path') and path != null">
+                path = #{path},
+            </if>
+            <if test="_parameter.containsKey('fullPath') and fullPath != null">
+                full_path = #{fullPath},
+            </if>
+            <if test="_parameter.containsKey('mime') and mime != null">
+                mime = #{mime},
+            </if>
+            <if test="_parameter.containsKey('name') and name != null">
+                name = #{name},
+            </if>
+            <if test="_parameter.containsKey('customOrderId') and customOrderId != null">
+                custom_order_id = #{customOrderId},
+            </if>
+            <if test="_parameter.containsKey('originalMime') and originalMime != null">
+                original_mime = #{originalMime},
+            </if>
+            <if test="_parameter.containsKey('status') and status != null">
+                status = #{status},
+            </if>
+            <if test="_parameter.containsKey('creator') and creator != null">
+                creator = #{creator},
+            </if>
+            <if test="_parameter.containsKey('created') and created != null">
+                created = #{created},
+            </if>
+            <if test="_parameter.containsKey('type') and type != null">
+                type = #{type},
+            </if>
+            <if test="_parameter.containsKey('category') and category != null">
+                category = #{category},
+            </if>
+            <if test="_parameter.containsKey('belongId') and belongId != null">
+                belong_id = #{belongId},
+            </if>
+            <if test="_parameter.containsKey('resourceId') and resourceId != null">
+                resource_id = #{resourceId}
+            </if>
+        </trim></set>
+        where id in
+        <foreach collection="id" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </update>
 </mapper>

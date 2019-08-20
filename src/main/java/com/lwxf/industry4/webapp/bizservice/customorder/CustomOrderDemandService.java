@@ -32,4 +32,6 @@ public interface CustomOrderDemandService extends BaseService <CustomOrderDemand
 
 
 	List<CustomOrderDemandDto> findListByOrderId(String id);
+
+	CustomOrderDemand findByProductId(String id);
 }

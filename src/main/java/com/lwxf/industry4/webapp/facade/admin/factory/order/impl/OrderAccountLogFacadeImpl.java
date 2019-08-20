@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.bizservice.customorder.CustomOrderService;
 import com.lwxf.industry4.webapp.bizservice.customorder.OrderAccountLogService;
+import com.lwxf.industry4.webapp.bizservice.customorder.OrderProductService;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.enums.customorder.AccountLogClassIfcation;
 import com.lwxf.industry4.webapp.common.enums.order.OrderAccountLogType;
@@ -24,6 +25,7 @@ import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.industry4.webapp.domain.entity.customorder.OrderAccountLog;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
@@ -46,10 +48,13 @@ public class OrderAccountLogFacadeImpl extends BaseFacadeImpl implements OrderAc
 	private OrderAccountLogService orderAccountLogService;
 	@Resource(name = "customOrderService")
 	private CustomOrderService customOrderService;
+	@Resource(name = "orderProductService")
+	private OrderProductService orderProductService;
 
 	@Override
 	public RequestResult findOrderList(MapContext mapContext, Integer pageNum, Integer pageSize) {
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		paginatedFilter.setFilters(mapContext);
 		Pagination pagination = new Pagination();
 		pagination.setPageSize(pageSize);
@@ -76,15 +81,8 @@ public class OrderAccountLogFacadeImpl extends BaseFacadeImpl implements OrderAc
 		MapContext updateOrder = new MapContext();
 		//如果是修改设计费 则判断订单状态是否是 设计费待评估 或者 设计费待确认
 		if(type==OrderAccountLogType.DESIGN.getValue()){
-			if(!status.equals(OrderStatus.TO_ADD_DESIGNFEE.getValue())&&!status.equals(OrderStatus.TO_BE_CONFIRMED_DESIGNFEE.getValue())){
-				return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-			}
 			updateOrder.put("designFee",orderAccountLog.getPresentPrice());
 		}else{
-			//如果是修改最终货款 则判断订单状态是否是 出厂价待确认 或者 经销商待确认出厂价
-			if(!status.equals(OrderStatus.FACTORY_CONFIRMED_FPROCE.getValue())&&!status.equals(OrderStatus.DEALER_CONFIRMED_FPRICE.getValue())){
-				return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-			}
 			updateOrder.put("factoryFinalPrice",orderAccountLog.getPresentPrice());
 		}
 		updateOrder.put(WebConstant.KEY_ENTITY_ID,id);

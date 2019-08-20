@@ -4,6 +4,8 @@ package com.lwxf.industry4.webapp.domain.dao.dispatch.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.lwxf.industry4.webapp.domain.dto.printTable.DispatchPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Repository;
 
@@ -55,12 +57,6 @@ public class DispatchBillDaoImpl extends BaseDaoImpl<DispatchBill, String> imple
 	}
 
 	@Override
-	public DispatchBill findOneByNo(String no) {
-		String sqlId = this.getNamedSqlId("findOneByNo");
-		return this.getSqlSession().selectOne(sqlId,no);
-	}
-
-	@Override
 	public List<DispatchBillItemDto> findItemListById(String id) {
 		String sqlId = this.getNamedSqlId("findItemListById");
 		return this.getSqlSession().selectList(sqlId,id);
@@ -70,6 +66,12 @@ public class DispatchBillDaoImpl extends BaseDaoImpl<DispatchBill, String> imple
 	public DispatchBillDto findDispatchsBillById(String dispatchId) {
 		String sqlId = this.getNamedSqlId("findDispatchsBillById");
 		return this.getSqlSession().selectOne(sqlId,dispatchId);
+	}
+
+	@Override
+	public List<DispatchBillDto> findDispatchInfoForOrder(String orderId) {
+		String sqlId = this.getNamedSqlId("findDispatchInfoForOrder");
+		return this.getSqlSession().selectList(sqlId,orderId);
 	}
 
 	@Override
@@ -85,30 +87,11 @@ public class DispatchBillDaoImpl extends BaseDaoImpl<DispatchBill, String> imple
 	}
 
 	@Override
-	public Integer findTodayCount() {
-		String sqlId = this.getNamedSqlId("findTodayCount");
-		return this.getSqlSession().selectOne(sqlId);
-	}
-
-
-	@Override
-	public Integer findThisMonthCount() {
-		String sqlId = this.getNamedSqlId("findThisMonthCount");
-		return this.getSqlSession().selectOne(sqlId);
-	}
-
-	@Override
 	public PaginatedList<DispatchBillPlanItemDto> findDispathcBillList(PaginatedFilter paginatedFilter) {
 		String sqlId = this.getNamedSqlId("findDispathcBillList");
 		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
 		PageList<DispatchBillPlanItemDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
 		return this.toPaginatedList(pageList);
-	}
-
-	@Override
-	public Integer findTobeShipped() {
-		String sqlId = this.getNamedSqlId("findTobeShipped");
-		return this.getSqlSession().selectOne(sqlId);
 	}
 
 	@Override
@@ -130,8 +113,23 @@ public class DispatchBillDaoImpl extends BaseDaoImpl<DispatchBill, String> imple
 	}
 
 	@Override
-	public Integer findNumByCreated(MapContext params) {
-		String sqlId = this.getNamedSqlId("findNumByCreated");
-		return this.getSqlSession().selectOne(sqlId,params);
+	public List<Map> findDispatchListByFinishedItemId(List itemids) {
+		String sqlId = this.getNamedSqlId("findDispatchListByFinishedItemId");
+		return this.getSqlSession().selectList(sqlId,itemids);
+	}
+
+	@Override
+	public List<FinishedStockDto> findFinishedItemTypeByDispatchId(String dispatchBillId, List itemids) {
+		String sqlId = this.getNamedSqlId("findFinishedItemTypeByDispatchId");
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("dispatchBillId",dispatchBillId);
+		mapContext.put("itemids",itemids);
+		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public DispatchPrintTableDto findDispatchPrintInfo(String id) {
+		String sqlId = this.getNamedSqlId("findDispatchPrintInfo");
+		return this.getSqlSession().selectOne(sqlId,id);
 	}
 }

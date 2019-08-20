@@ -18,6 +18,7 @@ public interface PaymentSimpleFacade {
     保存收支信息
      */
     RequestResult addPaymentSimple(PaymentSimpleDto paymentSimple);
+
     /*
        导出excel
      */
@@ -33,7 +34,10 @@ public interface PaymentSimpleFacade {
 
     RequestResult getUserForPaymentSimple();
 
+    RequestResult countPaymentForPageIndex();
+
     RequestResult uploadImage(String userId, List<MultipartFile> multipartFile);
 
-    RequestResult viewIndex();
+
+
 }

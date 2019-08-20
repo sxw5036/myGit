@@ -217,6 +217,9 @@ WHERE  id = #{id}
             <if test="free!=null">
                 and aj.is_free = #{free}
             </if>
+            <if test="branchId!=null">
+                and aj.branch_id = #{branchId}
+            </if>
         </trim>
         </where>
 

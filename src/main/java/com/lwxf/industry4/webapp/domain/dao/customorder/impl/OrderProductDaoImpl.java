@@ -4,6 +4,7 @@ package com.lwxf.industry4.webapp.domain.dao.customorder.impl;
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
 
+import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Repository;
 
 
@@ -15,6 +16,7 @@ import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.customorder.OrderProductDao;
 import com.lwxf.industry4.webapp.domain.entity.customorder.OrderProduct;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -58,5 +60,51 @@ public class OrderProductDaoImpl extends BaseDaoImpl<OrderProduct, String> imple
 		String sqlId = this.getNamedSqlId("findListByOrderId");
 		return this.getSqlSession().selectList(sqlId,id);
 	}
+
+	@Override
+	public BigDecimal findCountPriceByOrderId(String id) {
+		String sqlId = this.getNamedSqlId("findCountPriceByOrderId");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
+
+	@Override
+	public BigDecimal findCountPriceByCreatedAndStatus(MapContext params) {
+		String sqlId = this.getNamedSqlId("findCountPriceByCreatedAndStatus");
+		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+	@Override
+	public Integer findCountNumByCreatedAndStatus(MapContext params) {
+		String sqlId = this.getNamedSqlId("findCountNumByCreatedAndStatus");
+		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public List<OrderProductDto> findProductsByOrderId(String id) {
+		String sqlId = this.getNamedSqlId("findProductsByOrderId");
+		return this.getSqlSession().selectList(sqlId,id);
+	}
+
+	@Override
+	public List<OrderProductDto> findListByAftersaleId(String id) {
+		String sqlId = this.getNamedSqlId("findListByAftersaleId");
+		return this.getSqlSession().selectList(sqlId,id);
+	}
+
+
+	@Override
+	public Integer findCountNumByCreatedAndType(MapContext params) {
+		String sqlId = this.getNamedSqlId("findCountNumByCreatedAndType");
+		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+
+
 
 }

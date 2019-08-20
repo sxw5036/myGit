@@ -51,7 +51,11 @@ public class ContentsServiceImpl extends BaseServiceImpl<Contents, String, Conte
 		contents.setId(id);
 		ContentsContent c = new ContentsContent();
 		c.setContentsId(id);
-		c.setContent(contents.getContent());
+		if(contents.getContent()!=null){
+			c.setContent(contents.getContent());
+		}else {
+			c.setContent("");
+		}
 		Contents content = contents;
 		int res =this.dao.insert(content);
 		contentsContentDao.insert(c);
@@ -90,8 +94,8 @@ public class ContentsServiceImpl extends BaseServiceImpl<Contents, String, Conte
 		return this.dao.findListByCodeAndStatus(paginatedFilter);
 	}
 	@Override
-	public List<ContentsDto> findContentsList(String typeId) {
-		return this.dao.findContentsList(typeId);
+	public List<ContentsDto> findTopContentsList(String typeId,String branchId) {
+		return this.dao.findTopContentsList(typeId,branchId);
 	}
 
 

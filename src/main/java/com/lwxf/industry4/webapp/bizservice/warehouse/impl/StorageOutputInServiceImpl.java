@@ -59,8 +59,8 @@ public class StorageOutputInServiceImpl extends BaseServiceImpl<StorageOutputIn,
 	}
 
 	@Override
-	public StorageOutputIn findOneByNo(String no) {
-		return this.dao.findOneByNo(no);
+	public StorageOutputIn findOneByNo(String no,String branchId) {
+		return this.dao.findOneByNo(no,branchId);
 	}
 
 }

@@ -14,6 +14,7 @@ import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.design.DesignSchemeDto;
 import com.lwxf.industry4.webapp.domain.entity.design.DoorState;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
@@ -43,6 +44,8 @@ public class DoorStateFacadeImpl extends BaseFacadeImpl implements DoorStateFaca
 		if(name!=null){
 			mapContext.put(WebConstant.KEY_ENTITY_NAME,name);
 		}
+		String branchId= WebUtils.getCurrBranchId();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
 		paginatedFilter.setFilters(mapContext);
 		Pagination pagination = new Pagination();
@@ -55,13 +58,19 @@ public class DoorStateFacadeImpl extends BaseFacadeImpl implements DoorStateFaca
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult addDoorState(DoorState doorState) {
+		//企业id
+		String branchId= WebUtils.getCurrBranchId();
 		//判断名称是否重复
-		DoorState byName= this.doorStateService.findByName(doorState.getName());
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		mapContext.put("name",doorState.getName());
+		DoorState byName= this.doorStateService.findByName(mapContext);
 		if(byName!=null){
 			MapContext error = new MapContext();
 			error.put(WebConstant.KEY_ENTITY_NAME,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,error);
 		}
+		doorState.setBranchId(branchId);
 		this.doorStateService.add(doorState);
 		return ResultFactory.generateRequestResult(doorState);
 	}
@@ -69,6 +78,8 @@ public class DoorStateFacadeImpl extends BaseFacadeImpl implements DoorStateFaca
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult updateDoorState(String id, MapContext mapContext) {
+		//企业id
+		String branchId= WebUtils.getCurrBranchId();
 		//判断户型是否存在
 		DoorState doorState = this.doorStateService.findById(id);
 		if(doorState==null){
@@ -77,7 +88,10 @@ public class DoorStateFacadeImpl extends BaseFacadeImpl implements DoorStateFaca
 		String name = mapContext.getTypedValue(WebConstant.KEY_ENTITY_NAME, String.class);
 		if(name!=null){
 			//判断名称是否重复
-			DoorState byName= this.doorStateService.findByName(name);
+			MapContext params=MapContext.newOne();
+			params.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+			params.put("name",doorState.getName());
+			DoorState byName= this.doorStateService.findByName(params);
 			if(byName!=null&&!byName.getId().equals(id)){
 				MapContext error = new MapContext();
 				error.put(WebConstant.KEY_ENTITY_NAME,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
@@ -92,8 +106,11 @@ public class DoorStateFacadeImpl extends BaseFacadeImpl implements DoorStateFaca
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult deleteDoorState(String id) {
+		//企业id
+		String branchId= WebUtils.getCurrBranchId();
 		MapContext mapContext = new MapContext();
 		mapContext.put("doorState",id);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
 		paginatedFilter.setFilters(mapContext);
 		PaginatedList<DesignSchemeDto> schemeDtoPaginatedList = this.designSchemeService.findListByFilter(paginatedFilter);

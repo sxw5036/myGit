@@ -91,4 +91,10 @@ employee_permission(id, employee_id, module_key, menu_key, operations,is_show)
     <select id="findAllDianzhuRolePer" resultMap="RolePermissionMap">
         select <include refid="columns"/> from role_permission  where role_id='4gyhf60biadn'
     </select>
+    <insert id="addList">
+        insert into role_permission (id, role_id, module_key, menu_key, operations,is_show) values
+        <foreach collection="list"  separator="," item="rolePermission" >
+            (#{rolePermission.id},#{rolePermission.roleId},#{rolePermission.moduleKey},#{rolePermission.menuKey},#{rolePermission.operations},#{rolePermission.show})
+        </foreach>
+    </insert>
 </mapper>

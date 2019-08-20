@@ -7,9 +7,10 @@
         <result column="type" property="type" jdbcType="TINYINT" />
         <result column="key" property="key" jdbcType="VARCHAR" />
         <result column="is_admin" property="admin" jdbcType="BIT" />
+        <result column="branch_id" property="branchId"/>
     </resultMap>
     <sql id="columns">
-id, name, type, `key`, is_admin
+id, name, type, `key`, is_admin,branch_id
 </sql>
 
     <select id="selectById" resultMap="RoleMap" parameterType="String">
@@ -37,6 +38,9 @@ WHERE  id = #{id}
             <if test="admin != null">
                 AND is_admin = #{admin}
             </if>
+            <if test="branchId != null">
+                AND branch_id = #{branchId}
+            </if>
         </trim></where>
 
     </select>
@@ -44,8 +48,8 @@ WHERE  id = #{id}
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO
-  role(id, name, type, `key`, is_admin)
-VALUES(#{id}, #{name}, #{type}, #{key}, #{admin})
+  role(id, name, type, `key`, is_admin,branch_id)
+VALUES(#{id}, #{name}, #{type}, #{key}, #{admin},#{branchId})
 </insert>
     <update id="updateByMapContext">
         UPDATE role
@@ -66,7 +70,7 @@ WHERE  id = #{id}
 </delete>
 
     <select id="selectByKey" resultMap="RoleMap">
-        select <include refid="columns"/> from role where `key` = #{key}
+        select <include refid="columns"/> from role where `key` = #{key} and branch_id = #{branchId}
     </select>
 
     <select id="findListByType" resultMap="RoleMap">
@@ -79,6 +83,9 @@ WHERE  id = #{id}
             </if>
             <if test="key != null">
                 AND `key` != #{key}
+            </if>
+            <if test="branchId != null">
+                AND branch_id = #{branchId}
             </if>
         </trim></where>
     </select>
@@ -93,17 +100,6 @@ WHERE  id = #{id}
         from company_employee
         where company_id = #{companyId}
         and user_id = #{userId})
-    </select>
-
-    <select id="findRoleByKey" resultMap="RoleMap">
-        select <include refid="columns"/> from role
-        where  `key` = #{key}
-    </select>
-
-
-    <select id="findAllFactoryRole" resultMap="RoleMap">
-        select <include refid="columns"/> from role
-        where type = 0
     </select>
 
 </mapper>

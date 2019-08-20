@@ -97,9 +97,14 @@ public class BaseExportExcelUtil {
 
 		this.createHeader(sheet, headerStyle, excelParam);//创建excel头部
 		excelParam.createBody(workbook, sheet, bodyStyle, mapList);//创建excel内容
+		this.setFileName(excelParam);
 		return workbook;
 	}
 
+	private void setFileName(ExcelParam excelParam) {
+		HttpServletResponse response = WebUtils.getHttpServletResponse();
+		response.setHeader("Content-Disposition", "attachment;filename=" + excelParam.getFileName());
+	}
 
 
 	/**

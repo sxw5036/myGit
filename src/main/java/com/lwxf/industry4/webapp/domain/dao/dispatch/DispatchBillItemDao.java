@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillItemDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
@@ -34,4 +35,8 @@ public interface DispatchBillItemDao extends BaseDao<DispatchBillItem, String> {
 	MapContext findLogisticsByDispatchId(String dispatchBillId);
 
 	List<MapContext> findByDispatchBillId(String dispatchBillId);
+
+	int deleteByOrderId(String orderId);
+
+	List<DispatchBillItemDto> findListByDIdAndTypes(String id, List<Integer> types);
 }

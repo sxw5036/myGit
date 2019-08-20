@@ -71,7 +71,8 @@ public class ActivityInfo extends IdEntity  {
 	private Integer status;
 	@Column(type = Types.VARCHAR,nullable = false,name = "company_id",displayName = "公司id")
 	private String companyId;
-
+	@Column(type = Types.VARCHAR,nullable = false,name = "branch_id",displayName = "企业id")
+	private String branchId;
 	private String isJoins;
 
 
@@ -93,6 +94,13 @@ public class ActivityInfo extends IdEntity  {
 		}else{
 			if (LwxfStringUtils.getStringLength(this.companyId) > 50) {
 				validResult.put("companyId", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
+			}
+		}
+		if (this.branchId == null) {
+			validResult.put("branchId", ErrorCodes.VALIDATE_NOTNULL);
+		}else{
+			if (LwxfStringUtils.getStringLength(this.branchId) > 13) {
+				validResult.put("branchId", ErrorCodes.VALIDATE_LENGTH_TOO_LONG);
 			}
 		}
 		if (this.type == null) {
@@ -308,6 +316,9 @@ public class ActivityInfo extends IdEntity  {
 		}
 	}
 
+	public String getBranchId() {return branchId;}
+
+	public void setBranchId(String branchId) {this.branchId = branchId;}
 
 	public void setNo(String no){
 		this.no=no;

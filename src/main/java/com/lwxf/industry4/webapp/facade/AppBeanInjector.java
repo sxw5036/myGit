@@ -13,6 +13,7 @@ import com.lwxf.industry4.webapp.baseservice.cache.RedisUtils;
 import com.lwxf.industry4.webapp.baseservice.cache.SyncGetByRedis;
 import com.lwxf.industry4.webapp.baseservice.rongcloud.service.SendSystemMessageService;
 import com.lwxf.industry4.webapp.baseservice.security.csrf.CsrfService;
+import com.lwxf.industry4.webapp.bizservice.branch.BranchService;
 import com.lwxf.industry4.webapp.bizservice.company.CompanyEmployeeService;
 import com.lwxf.industry4.webapp.bizservice.company.CompanyService;
 import com.lwxf.industry4.webapp.bizservice.company.EmployeePermissionService;
@@ -26,6 +27,7 @@ import com.lwxf.industry4.webapp.bizservice.system.*;
 import com.lwxf.industry4.webapp.bizservice.user.UserExtraService;
 import com.lwxf.industry4.webapp.bizservice.user.UserService;
 import com.lwxf.industry4.webapp.bizservice.user.UserThirdInfoService;
+import com.lwxf.industry4.webapp.bizservice.warehouse.StorageService;
 import com.lwxf.industry4.webapp.common.component.BaseFileUploadComponent;
 import com.lwxf.industry4.webapp.common.jmail.JMailService;
 import com.lwxf.industry4.webapp.common.mobile.weixin.WeixinCfg;
@@ -96,6 +98,7 @@ public abstract class AppBeanInjector {
 	public static final ReservationService reservationService;
 	public static final EmployeePermissionService employeePermissionService;
 	public static final CompanyService companyService;
+	public static final BranchService branchService;
 	public static final CompanyEmployeeService companyEmployeeService;
 	public static final MenusService menusService;
 	public static final OperationsService operationsService;
@@ -107,6 +110,7 @@ public abstract class AppBeanInjector {
 	public static final DeptService deptService;
 	public static final RolePermissionService rolePermissionService;
 	public static final BasecodeService basecodeService;
+	public static final StorageService storageService;
 
 	/**
 	 * facade注入
@@ -148,6 +152,7 @@ public abstract class AppBeanInjector {
 		employeePermissionService = (EmployeePermissionService) SpringContextUtil.getBean("employeePermissionService");
 		companyEmployeeService = (CompanyEmployeeService) SpringContextUtil.getBean("companyEmployeeService");
 		companyService = (CompanyService) SpringContextUtil.getBean("companyService");
+		branchService = (BranchService) SpringContextUtil.getBean("branchService");
 		menusService = (MenusService) SpringContextUtil.getBean("menusService");
 		operationsService = (OperationsService) SpringContextUtil.getBean("operationsService");
 		productCategoryService = (ProductCategoryService) SpringContextUtil.getBean("productCategoryService");
@@ -158,6 +163,7 @@ public abstract class AppBeanInjector {
 		deptService = (DeptService) SpringContextUtil.getBean("deptService");
 		rolePermissionService = (RolePermissionService) SpringContextUtil.getBean("rolePermissionService");
 		basecodeService = (BasecodeService) SpringContextUtil.getBean("basecodeService");
+		storageService = (StorageService) SpringContextUtil.getBean("storageService");
 		// facade bean
 		userFacade = (UserFacade) SpringContextUtil.getBean("userFacade");
 		userThirdInfoFacade = (UserThirdInfoFacade) SpringContextUtil.getBean("userThirdInfoFacade");

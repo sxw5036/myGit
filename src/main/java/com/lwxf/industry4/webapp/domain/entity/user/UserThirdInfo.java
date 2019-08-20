@@ -1,13 +1,10 @@
 package com.lwxf.industry4.webapp.domain.entity.user;
 import java.util.*;
 import java.sql.*;
-import java.util.Date;
 import java.util.Arrays;
 import java.util.List;
-
 import com.lwxf.industry4.webapp.domain.entity.base.AbstractNoIdEntity;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
-import com.lwxf.mybatis.utils.TypesExtend;
 import com.lwxf.commons.exception.ErrorCodes;
 import com.lwxf.commons.utils.DataValidatorUtils;
 import com.lwxf.commons.utils.LwxfStringUtils;
@@ -47,6 +44,10 @@ public class UserThirdInfo extends AbstractNoIdEntity {
 	private String rongcloudToken;
 	@Column(type = Types.VARCHAR,length = 260,name = "app_token",displayName = "app的token值")
 	private String appToken;
+	@Column(type = Types.VARCHAR,length = 260,name = "branchId",displayName = "企业id")
+	private String branchId;
+	@Column(type = Types.VARCHAR,length = 260,name = "companyId",displayName = "经销商id")
+	private String companyId;
 
 	public UserThirdInfo() {
 	}
@@ -179,6 +180,13 @@ public class UserThirdInfo extends AbstractNoIdEntity {
 		}
 	}
 
+	public String getCompanyId() {return companyId;}
+
+	public void setCompanyId(String companyId) {this.companyId = companyId;}
+
+	public String getBranchId() {return branchId;}
+
+	public void setBranchId(String branchId) {this.branchId = branchId;}
 
 	public void setUserId(String userId){
 		this.userId=userId;

@@ -24,7 +24,7 @@ public interface ContentsTypeService extends BaseService <ContentsType, String> 
 
 	PaginatedList<ContentsType> selectByFilter(PaginatedFilter paginatedFilter);
 
-	List<ContentsType> findContentsTypeList();
+	List<ContentsType> findContentsTypeListByBranchId(String branchId);
 
 	ContentsType findContentsListByCode(String typeIdOrCode);
 

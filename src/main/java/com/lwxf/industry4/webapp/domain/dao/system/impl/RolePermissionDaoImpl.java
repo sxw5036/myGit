@@ -90,5 +90,11 @@ public class RolePermissionDaoImpl extends BaseDaoImpl<RolePermission, String> i
 		return this.getSqlSession().selectList(sqlId);
 	}
 
+	@Override
+	public int addList(List<RolePermission> rolePermissionList) {
+		String sqlId = this.getNamedSqlId("addList");
+		return this.getSqlSession().insert(sqlId,rolePermissionList);
+	}
+
 
 }

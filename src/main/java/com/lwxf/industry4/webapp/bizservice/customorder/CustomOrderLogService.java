@@ -2,6 +2,7 @@ package com.lwxf.industry4.webapp.bizservice.customorder;
 
 
 import java.util.List;
+import java.util.Map;
 
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
@@ -25,5 +26,7 @@ public interface CustomOrderLogService extends BaseService <CustomOrderLog, Stri
 	PaginatedList<CustomOrderLog> selectByFilter(PaginatedFilter paginatedFilter);
 	List<CustomOrderLogDto> findByOrderIdAndState(String orderId, Integer stage);
 
+	List<CustomOrderLog> findByOrderId(String orderId);
 
+	PaginatedList<Map> findMessageOrderInfo(PaginatedFilter paginatedFilter);
 }

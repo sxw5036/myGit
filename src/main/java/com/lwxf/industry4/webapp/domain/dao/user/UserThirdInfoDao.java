@@ -3,6 +3,7 @@ package com.lwxf.industry4.webapp.domain.dao.user;
 
 import java.util.List;
 
+import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseNoIdDao;
 import com.lwxf.industry4.webapp.domain.entity.user.UserThirdInfo;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
@@ -41,4 +42,6 @@ public interface UserThirdInfoDao extends BaseNoIdDao<UserThirdInfo> {
 	List<UserThirdInfo> findByAppTokenAndUserId(String appToken,String userId);
 
 	UserThirdInfo findByAppToken(String appToken);
+
+	Object userlogout(MapContext mapContext);
 }

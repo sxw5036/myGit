@@ -1,39 +1,45 @@
 package com.lwxf.industry4.webapp.controller.admin.factory.supplier;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.lwxf.commons.exception.ErrorCodes;
+import com.lwxf.commons.utils.LwxfStringUtils;
+import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import com.lwxf.industry4.webapp.common.utils.FileMimeTypeUtil;
+import com.lwxf.industry4.webapp.common.utils.LoginUtil;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.domain.dto.supplier.MaterialDto;
+import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierDto;
+import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierDtoFowWx;
+import com.lwxf.industry4.webapp.domain.entity.supplier.Supplier;
+import com.lwxf.industry4.webapp.domain.entity.supplier.SupplierProduct;
+import com.lwxf.industry4.webapp.facade.admin.factory.supplier.SupplierFacade;
+import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.lwxf.commons.json.JsonMapper;
-import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
-import com.lwxf.industry4.webapp.common.enums.company.CompanyStatus;
-import com.lwxf.industry4.webapp.common.enums.company.CompanyType;
-import com.lwxf.industry4.webapp.common.enums.user.UserSex;
-import com.lwxf.industry4.webapp.common.enums.user.UserState;
-import com.lwxf.industry4.webapp.common.enums.user.UserType;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
-import com.lwxf.industry4.webapp.common.uniquecode.UniquneCodeGenerator;
-import com.lwxf.industry4.webapp.common.utils.WebUtils;
-import com.lwxf.industry4.webapp.domain.dto.company.CompanyDto;
-import com.lwxf.industry4.webapp.domain.entity.supplier.SupplierProduct;
-import com.lwxf.industry4.webapp.domain.entity.user.User;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
-import com.lwxf.industry4.webapp.facade.admin.factory.supplier.SupplierFacade;
 import com.lwxf.mybatis.utils.MapContext;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 功能：
  *
- * @author：dongshibo(F_baisi)
- * @create：2018/12/29/029 15:22
+ * @author：zhangxiaolin(F_baisi)
+ * @create：2019/07/10 15:22
  * @version：2018 Version：1.0
  * @company：老屋新房 Created with IntelliJ IDEA
  */
+@Api(value="SupplierController",tags={"F端后台管理接口:供应商信息管理"})
 @RestController
-@RequestMapping(value = "/api/f/suppliers",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON_CHARTSET)
+@RequestMapping(value = "/api/f/",produces = WebConstant.RESPONSE_CONTENT_TYPE_JSON_CHARTSET)
 public class SupplierController {
 	@Resource(name = "supplierFacade")
 	private SupplierFacade supplierFacade;
@@ -44,154 +50,255 @@ public class SupplierController {
 	 * @param pageSize
 	 * @return
 	 */
-	@GetMapping
-	private String findAllSupplierList(@RequestParam(required = false) String companyName,
-									   @RequestParam(required = false)Integer status,
-									   @RequestParam(required = false) String leaderTel,
-									   @RequestParam(required = false) Integer pageNum,
-									   @RequestParam(required = false) Integer pageSize){
-
+	@ApiResponse(code = 200, message = "查询成功")
+	@ApiOperation(value = "供应商信息列表", notes = "",response = SupplierDtoFowWx.class)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "area", value = "地区名称", dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "companyName", value = "供应商公司名称", dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "leaderTel", value = "联系电话", dataType = "string", paramType = "query"),
+			@ApiImplicitParam(name = "type", value = "类型", dataType = "integer", paramType = "query" ),
+			@ApiImplicitParam(name = "keywords", value = "关键字：供应商名称、联系人名称、联系人电话", dataType = "string", paramType = "query" ),
+			@ApiImplicitParam(name = "status", value = "状态:0：禁用，1：启用", dataType = "integer", paramType = "query" ),
+			@ApiImplicitParam(name = "supplierStage", value = "类型:0：意向，1：签约", dataType = "integer", paramType = "query" ),
+	})
+	@GetMapping("suppliers")
+	private RequestResult findAllSupplierList(@RequestParam(required = false) String area,
+											  @RequestParam(required = false) String companyName,
+											  @RequestParam(required = false) String leaderTel,
+											  @RequestParam(required = false) String status,
+											  @RequestParam(required = false) String supplierStage,
+											  @RequestParam(required = false) String type,
+											  @RequestParam(required = false) String keywords,
+											  @RequestParam(required = false) Integer pageNum,
+											  @RequestParam(required = false) Integer pageSize,
+											  HttpServletRequest request){
 		if(null == pageSize){
 			pageSize = AppBeanInjector.configuration.getPageSizeLimit();
 		}
 		if(null == pageNum){
 			pageNum = 1;
 		}
-		MapContext mapContext = this.createdMapContent(companyName,leaderTel,status);
-		JsonMapper jsonMapper = new JsonMapper();
-		return jsonMapper.toJson(this.supplierFacade.findAllSupplierList(pageNum,pageSize,mapContext));
-	}
-
-	private MapContext createdMapContent(String companyName, String leaderTel,Integer status) {
-		MapContext mapContext = new MapContext();
-		if(companyName!=null&&!companyName.trim().equals("")){
-			mapContext.put("companyName",companyName);
-		}
-		if(leaderTel!=null&&!leaderTel.trim().equals("")){
-			mapContext.put("leaderTel",leaderTel);
-		}
-		if(status!=null&&status!=-1){
-			mapContext.put(WebConstant.KEY_ENTITY_STATUS,status);
-		}
-		return mapContext;
+		MapContext mapContext = this.createdMapContent(area,companyName,leaderTel,type,status,keywords,supplierStage);
+		mapContext.put("branchId", WebUtils.getCurrBranchId());
+		return this.supplierFacade.findAllSupplierList(pageNum,pageSize,mapContext);
 	}
 
 	/**
-	 * 供应商下新增产品
-	 * @param id
-	 * @param supplierProductList
+	 * 供应商上侧统计
 	 * @return
 	 */
-	@PostMapping("{id}/products")
-	private RequestResult addSupplierProdcut(@PathVariable String id,@RequestBody List<SupplierProduct> supplierProductList){
-		for(SupplierProduct supplierProduct:supplierProductList){
-			supplierProduct.setSupplierId(id);
-			supplierProduct.setCreated(DateUtil.getSystemDate());
-			supplierProduct.setCreator(WebUtils.getCurrUserId());
-			RequestResult result = supplierProduct.validateFields();
-			if (result!=null){
-				return result;
-			}
+	@ApiResponse(code = 200, message = "查询成功")
+	@ApiOperation(value="供应商统计",notes="供应商统计")
+	@GetMapping("countSuppliers")
+	private RequestResult viewSupplierCount(){
+		return this.supplierFacade.countSupplierToday();
+	}
+
+
+	private MapContext createdMapContent(String area,String companyName,String leaderTel,String type,String status,String keywords,String supplierStage) {
+		MapContext mapContext = new MapContext();
+		if(area!=null&&!area.trim().equals("")){
+			mapContext.put("area",area);
 		}
-		return this.supplierFacade.addSupplierProdcut(id,supplierProductList);
+		if(companyName!=null&&!companyName.trim().equals("")){
+			mapContext.put("supplierName",companyName);
+		}
+		if(leaderTel!=null&&!leaderTel.trim().equals("")){
+			mapContext.put("supplierPhone",leaderTel);
+		}
+		if(type!=null&&!type.trim().equals("")){
+			mapContext.put("categoryId",type);
+		}
+		if(supplierStage!=null&&!supplierStage.trim().equals("")){
+			mapContext.put("supplierStage",supplierStage);
+		}
+		if(status!=null&&!status.trim().equals("")){
+			mapContext.put("status",status);
+		}
+		if(status!=null&&!status.trim().equals("")){
+			mapContext.put("supplierStage",status);
+		}
+		if(keywords!=null&&!keywords.trim().equals("")){
+			mapContext.put("keywords",keywords);
+		}
+		return mapContext;
 	}
 
 	/**
 	 * 新增供应商
-	 * @param company
 	 * @return
 	 */
-	@PostMapping
-	private RequestResult addSupplier(@RequestBody CompanyDto company){
-		//公司表信息
-		company.setCreated(DateUtil.getSystemDate());
-		company.setCreator(WebUtils.getCurrUserId());
-		company.setType(CompanyType.SUPPLIER.getValue());
-		company.setStatus(CompanyStatus.INTENTION.getValue());
-		company.setFollowers(0);
-		if(company.getNo()==null&&company.getNo().trim().equals("")){
-			company.setNo(null);
-		}
-		RequestResult result = company.validateFields();
-		if(result!=null){
-			return result;
-		}
-		return this.supplierFacade.addSupplier(company);
+
+	@ApiResponse(code = 200, message = "查询成功")
+	@ApiOperation(value="添加供应商",notes="添加供应商信息",response = Supplier.class)
+	@PostMapping("suppliers")
+	private RequestResult addSupplier(@RequestBody SupplierDto supplier, HttpServletRequest request){
+		return this.supplierFacade.addSupplier(supplier);
 	}
 
 	/**
-	 * 供应商添加负责人
-	 * @param user
-	 * @param id
+	 * 新增供应商产品
 	 * @return
 	 */
-	@PostMapping("{id}")
-	private RequestResult addSupplierLeader(@RequestBody User user,@PathVariable String id){
-		//用户信息
-		user.setType(UserType.DEALER.getValue());
-		user.setSex(UserSex.MAN.getValue());
-		user.setAvatar(AppBeanInjector.configuration.getUserDefaultAvatar());
-		user.setTimeZone(WebConstant.TIMEZONE_DEFAULT);
-		user.setLanguage(WebConstant.LANGUAGE_DEFAULT);
-		user.setCreated(DateUtil.getSystemDate());
-		user.setState(UserState.ENABLED.getValue());
-		user.setLoginName(AppBeanInjector.uniquneCodeGenerator.getNextNo(UniquneCodeGenerator.UniqueResource.USER_LOGNAME_NO));
-		user.setFollowers(0);
-		user.setChangedLoginName(false);
-		RequestResult result = user.validateFields();
-		if(result!=null){
-			return result;
-		}
-		return this.supplierFacade.addSupplierLeader(user,id);
+//	@ApiResponse(code = 200, message = "查询成功")
+//	@ApiOperation(value="添加供应商产品",notes="添加供应商产品信息",response = SupplierProduct.class)
+//	@PostMapping("suppliers/{supplierId}/product")
+//	private RequestResult addSupplierProduct(@PathVariable String supplierId,
+//											 @RequestBody SupplierProduct supplierProduct){
+//		supplierProduct.setSupplierId(supplierId);
+//		return this.supplierFacade.addSupplierProduct(supplierProduct);
+//	}
+	@ApiResponse(code = 200, message = "查询成功")
+	@ApiOperation(value="添加供应商产品",notes="添加供应商产品信息",response = MaterialDto.class)
+	@PostMapping("suppliers/{supplierId}/product")
+	private RequestResult addSupplierProduct(@PathVariable String supplierId,
+											 @RequestBody List<SupplierProduct> supplierProducts){
+		return this.supplierFacade.addSupplierProduct(supplierId,supplierProducts);
 	}
 
 	/**
-	 * 查询供应商下的产品列表
-	 * @param id
-	 * @param categoryId
-	 * @param pageNum
-	 * @param pageSize
+	 * 根据ID查询供应商详情
 	 * @return
 	 */
-	@GetMapping("{id}/products")
-	private RequestResult findProductList(@PathVariable String id,@RequestParam(required = false) String categoryId,@RequestParam(required = false,defaultValue = "1") Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize ){
-		MapContext mapContext= this.createMapContent(id,categoryId);
-		return this.supplierFacade.findProductList(mapContext,pageNum,pageSize);
+	@ApiResponse(code = 200, message = "查询成功")
+	@ApiOperation(value="查看供应商详情",notes="查看供应商详情",response = SupplierDtoFowWx.class)
+	@GetMapping("/suppliers/{supplierId}")
+	@ApiImplicitParam(name = "supplierId", value = "供应商id", dataType = "string", paramType = "path")
+	private RequestResult findSupplierInfo(@PathVariable String supplierId,HttpServletRequest request){
+		RequestResult result=this.supplierFacade.viewSupplierInfo(supplierId);
+		return result;
 	}
 
 	/**
-	 * 修改供应商下的产品价格及备注
-	 * @param id
-	 * @param productId
-	 * @param mapContext
+	 * 附件图片上传
+	 * @param multipartFileList 多个附件
 	 * @return
 	 */
-	@PutMapping("{id}/products/{productId}")
-	private RequestResult updateProduct(@PathVariable String id,@PathVariable String productId,@RequestBody MapContext mapContext){
-		RequestResult result = SupplierProduct.validateFields(mapContext);
-		if(result!=null){
-			return result;
+	@ApiOperation(value="附件图片上传",notes="返回值样例:{ \"code\": \"200\", \"data\": { \"ids\": [ \"4tuqvoqutzpc\", \"4tuqvovumolc\" ] } }")
+	@PostMapping(value = "/suppliers/uploadImages")
+	public RequestResult uploadImages(@RequestBody List<MultipartFile> multipartFileList, HttpServletRequest request){
+		String atoken=request.getHeader("X-ATOKEN");
+		MapContext mapInfo = LoginUtil.checkLogin(atoken);
+		String uid =mapInfo.get("userId")==null?null:mapInfo.get("userId").toString();
+		if(uid==null){
+			return ResultFactory.generateErrorResult(com.lwxf.industry4.webapp.common.exceptions.ErrorCodes.VALIDATE_USER_NOT_LOGGED, AppBeanInjector.i18nUtil.getMessage("VALIDATE_USER_NOT_LOGGED"));
 		}
-		return this.supplierFacade.updateProduct(id,productId,mapContext);
+		Map<String, Object> errorInfo = new HashMap<>();
+		if(multipartFileList!=null && multipartFileList.size()>0) {
+			for (MultipartFile multipartFile : multipartFileList) {
+				if (multipartFile == null) {
+					errorInfo.put("multipartFile", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+				}
+				if (!FileMimeTypeUtil.isLegalImageType(multipartFile)) {
+					errorInfo.put("multipartFile", AppBeanInjector.i18nUtil.getMessage("VALIDATE_ILLEGAL_ARGUMENT"));
+				}
+				if (multipartFile.getSize() > 1024L * 1024L * AppBeanInjector.configuration.getUploadBackgroundMaxsize()) {
+					return ResultFactory.generateErrorResult(ErrorCodes.BIZ_FILE_SIZE_LIMIT_10031, LwxfStringUtils.format(AppBeanInjector.i18nUtil.getMessage("BIZ_FILE_SIZE_LIMIT_10031"), AppBeanInjector.configuration.getUploadBackgroundMaxsize()));
+				}
+				if (errorInfo.size() > 0) {
+					return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, errorInfo);
+				}
+			}
+		}
+		return this.supplierFacade.uploadImage(uid,multipartFileList);
 	}
 
 	/**
-	 * 删除供应商下的产品
-	 * @param id
-	 * @param productId
+	 * 产品图片上传
 	 * @return
 	 */
-	@DeleteMapping("{id}/products/{productId}")
-	private RequestResult deleteProduct(@PathVariable String id,@PathVariable String productId){
-		return this.supplierFacade.deleteProduct(id,productId);
+	@ApiOperation(value="附件图片上传",notes="返回值样例:{ \"code\": \"200\", \"data\": { \"ids\": [ \"4tuqvoqutzpc\", \"4tuqvovumolc\" ] } }")
+	@PostMapping(value = "/suppliers/uploadProductImages")
+	public RequestResult uploadProductImages(@RequestParam(required = false) String supplierId,@RequestBody List<MultipartFile> multipartFileList, HttpServletRequest request){
+		Map<String, Object> errorInfo = new HashMap<>();
+		if (multipartFileList == null) {
+			errorInfo.put("multipartFile", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}
+		if (!FileMimeTypeUtil.isLegalImageType(multipartFileList.get(0))) {
+			errorInfo.put("multipartFile", AppBeanInjector.i18nUtil.getMessage("VALIDATE_ILLEGAL_ARGUMENT"));
+		}
+		if (multipartFileList.get(0).getSize() > 1024L * 1024L * AppBeanInjector.configuration.getUploadBackgroundMaxsize()) {
+			return ResultFactory.generateErrorResult(ErrorCodes.BIZ_FILE_SIZE_LIMIT_10031, LwxfStringUtils.format(AppBeanInjector.i18nUtil.getMessage("BIZ_FILE_SIZE_LIMIT_10031"), AppBeanInjector.configuration.getUploadBackgroundMaxsize()));
+		}
+		if (errorInfo.size() > 0) {
+			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, errorInfo);
+		}
+		return this.supplierFacade.uploadProductImage(supplierId,multipartFileList.get(0));
 	}
 
-	private MapContext createMapContent(String id,String categoryId) {
-		MapContext mapContext = MapContext.newOne();
-		if(categoryId!=null&&!categoryId.trim().equals("")){
-			mapContext.put(WebConstant.KEY_ENTITY_CATEGORY_ID,categoryId);
-		}
-		mapContext.put("supplierId",id);
-		return mapContext;
+	/**
+	 * 供应商更新
+	 * @return
+	 */
+	@ApiOperation(value="更新供应商信息",notes="更新供应商信息")
+	@PutMapping(value = "suppliers/{supplierId}")
+	public String updateSupplier(@PathVariable String supplierId,
+									  @RequestBody MapContext map, HttpServletRequest request) {
+		JsonMapper jsonMapper=new JsonMapper();
+		return jsonMapper.toJson(this.supplierFacade.updateSupplier(supplierId,map));
+	}
+
+	/**
+	 * 删除供应商
+	 * @return
+	 */
+	@ApiOperation(value="更新供应商信息",notes="更新供应商信息")
+	@DeleteMapping(value = "suppliers/{supplierId}")
+	public String deleteSupplier(@PathVariable String supplierId,HttpServletRequest request) {
+		JsonMapper jsonMapper=new JsonMapper();
+		return jsonMapper.toJson(this.supplierFacade.deleteSupplier(supplierId));
+	}
+
+	/**
+	 * 供应商更新
+	 * @return
+	 */
+	@ApiOperation(value="更新供应商产品信息",notes="更新供应商产品信息")
+	@PutMapping(value = "suppliers/product/{prodId}")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name = "prodId",value = "产品id",dataType = "string",paramType = "path",required = true)
+	})
+	public String updateSupplierProduct(
+										@PathVariable String prodId,
+										@RequestBody MapContext map,
+										HttpServletRequest request) {
+		JsonMapper jsonMapper=new JsonMapper();
+		RequestResult result=this.supplierFacade.updateSupplierProduct(prodId,map);
+		return jsonMapper.toJson(result);
+	}
+
+	/**
+	 * 删除供应商产品
+	 * @return
+	 */
+	@ApiOperation(value="删除供应商产品",notes="删除供应商产品")
+	@DeleteMapping(value = "suppliers/product/{prodId}")
+	public String deleteSupplierProduct(@PathVariable String prodId,HttpServletRequest request) {
+		JsonMapper jsonMapper=new JsonMapper();
+		return jsonMapper.toJson(this.supplierFacade.deleteSupplierProduct(prodId));
+	}
+
+//	@ApiOperation(value="删除供应商产品",notes="删除供应商产品")
+//	@DeleteMapping(value = "suppliers/{supplierId}/product/{prodId}")
+//	@ApiImplicitParams({
+//			@ApiImplicitParam(name = "supplierId",value = "供应商id",dataType = "string",paramType = "path",required = true),
+//			@ApiImplicitParam(name = "prodId",value = "产品id",dataType = "string",paramType = "path",required = true)
+//	})
+//	private String deleteSupplierProduct(@PathVariable String supplierId,
+//										 @PathVariable String prodId){
+//		JsonMapper jsonMapper=JsonMapper.createAllToStringMapper();
+//		RequestResult result=this.supplierFacade.deleteSupplierProduct(supplierId,prodId);
+//		return jsonMapper.toJson(result);
+//	}
+
+	/**
+	 * 删除供应商产品
+	 * @return
+	 */
+	@ApiOperation(value="删除供应商产品",notes="删除供应商产品")
+	@DeleteMapping(value = "suppliers/images/{imgId}")
+	public String deleteSupplierImg(@PathVariable String imgId,HttpServletRequest request) {
+		JsonMapper jsonMapper=new JsonMapper();
+		return jsonMapper.toJson(this.supplierFacade.deleteSupplierImages(imgId));
 	}
 }

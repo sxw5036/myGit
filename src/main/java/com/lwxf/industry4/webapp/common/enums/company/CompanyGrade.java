@@ -2,8 +2,12 @@ package com.lwxf.industry4.webapp.common.enums.company;
 
 public enum CompanyGrade {
 
-    LEVELZERO(0,"初级"),
-    LEVELONE(1,"一级");
+    LEVELZERO(0,"一级"),
+    LEVELONE(1,"二级"),
+    LEVELTWO(2,"三级"),
+    LEVELTHREE(3,"四级"),
+    LEVELFOUR(4,"五级"),
+    ;
 
     private int value;
     private String name;

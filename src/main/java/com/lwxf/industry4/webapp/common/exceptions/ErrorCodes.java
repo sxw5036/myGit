@@ -79,4 +79,16 @@ public abstract class ErrorCodes extends com.lwxf.commons.exception.ErrorCodes {
 	public final static String VALIDATE_INVALID_ID_NUMBER_20037="20037";
 	//订单产品不存在
 	public final static String BIZ_PRODUCT_DOES_NOT_EXIST_10089="10089";
+	//已经是店主
+	public final static String BIZ_BANK_NOT_FOUND_10090="10090";
+	//银行余额不足
+	public final static String BIZ_BANK_NOT_FOUND_10091="10091";
+	//该类型生产单不存在
+	public final static String BIZ_THIS_TYPE_OF_PRODUCE_ORDER_NOT_EXIST_10092 = "10092";
+	//财务审核实付金额不能为空
+	public final static String BIZ_PAYMENT_PAY_AMOUNT_NOT_NULL_10093 = "10093";
+	//资源存在 不允许重复新增
+	public final static String BIZ_NO_REPETITION_ALLOWED_10094 = "10094";
+	//经销商账户余额不足
+	public final static String BIZ_DEALERACCOUNT_LOW_10095="10095";
 }

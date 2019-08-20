@@ -10,7 +10,7 @@ package com.lwxf.industry4.webapp.common.enums.company;
  */
 public enum CompanyStatus {
 	INTENTION(0,"意向"),
-	NORMAL(1,"正常"),
+	NORMAL(1,"签约(正常)"),
 	RETIRED_NETWORK(2,"已退网"),
 	CLOSED_DOWN(3,"已倒闭"),
 	DISABLED(4,"已禁用"),

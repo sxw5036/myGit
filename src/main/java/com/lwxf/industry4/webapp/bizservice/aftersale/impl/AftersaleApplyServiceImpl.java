@@ -5,10 +5,8 @@ import javax.annotation.Resource;
 
 import java.util.*;
 
+import com.lwxf.industry4.webapp.domain.dto.aftersale.AftersaleStatementDto;
 import org.springframework.stereotype.Service;
-
-import org.apache.xmlbeans.impl.xb.xsdschema.Public;
-
 import com.lwxf.industry4.webapp.bizservice.aftersale.AftersaleApplyService;
 import com.lwxf.industry4.webapp.bizservice.base.BaseServiceImpl;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
@@ -19,10 +17,11 @@ import com.lwxf.industry4.webapp.domain.dao.aftersale.AftersaleApplyFilesDao;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.AftersaleDto;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.AftersaleOrderDto;
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
+import com.lwxf.industry4.webapp.domain.dto.printTable.AftersalesPrintTableDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.OrderPrintTableDto;
 import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApply;
 import com.lwxf.industry4.webapp.domain.entity.aftersale.AftersaleApplyFiles;
 import com.lwxf.mybatis.utils.MapContext;
-
 
 /**
  * 功能：
@@ -37,7 +36,6 @@ public class AftersaleApplyServiceImpl extends BaseServiceImpl<AftersaleApply, S
 
 
 	@Resource
-
 	@Override	public void setDao( AftersaleApplyDao aftersaleApplyDao) {
 		this.dao = aftersaleApplyDao;
 	}
@@ -49,8 +47,12 @@ public class AftersaleApplyServiceImpl extends BaseServiceImpl<AftersaleApply, S
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public PaginatedList<AftersaleDto> selectByFilter(PaginatedFilter paginatedFilter) {
-		//
 		return this.dao.selectByFilter(paginatedFilter) ;
+	}
+
+	@Override
+	public PaginatedList<AftersaleDto> selectDtoByFilter(PaginatedFilter paginatedFilter) {
+		return this.dao.selectDtoByFilter(paginatedFilter) ;
 	}
 
 	@Override
@@ -182,6 +184,41 @@ public class AftersaleApplyServiceImpl extends BaseServiceImpl<AftersaleApply, S
 			}
 			return aftersaleOrderNo;
 		}
+
+	@Override
+	public List<AftersaleApply> findAftersaleListByOrderId(String orderId) {
+		return this.dao.findAftersaleListByOrderId(orderId);
 	}
+
+	@Override
+	public int deleteByResultOrderId(String orderId) {
+		return this.dao.deleteByResultOrderId(orderId);
+	}
+
+	@Override
+	public Map<String, Long> countAftersale(String branchId) {
+		return this.dao.countAftersale(branchId);
+	}
+
+	@Override
+	public PaginatedList<MapContext> findWxAftersaleApplyList(PaginatedFilter paginatedFilter) {
+		return this.dao.findWxAftersaleApplyList(paginatedFilter);
+	}
+
+	@Override
+	public MapContext countAftersaleForPageIndex(String branchId) {
+		return this.dao.countAftersaleForPageIndex(branchId);
+	}
+
+	@Override
+	public AftersalesPrintTableDto findAftersalesPrintInfo(String id) {
+		return this.dao.findAftersalesPrintInfo(id);
+	}
+
+	@Override
+	public OrderPrintTableDto findOrderPrintTable(MapContext mapContext) {
+		return this.dao.findOrderPrintTable(mapContext);
+	}
+}
 
 

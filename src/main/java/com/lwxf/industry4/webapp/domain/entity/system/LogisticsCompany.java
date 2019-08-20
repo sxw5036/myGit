@@ -48,6 +48,9 @@ public class LogisticsCompany extends IdEntity  {
 	private String creator;
 	@Column(type = TypesExtend.DATETIME,nullable = false,name = "created",displayName = "创建时间")
 	private Date created;
+	private String branchId;
+	private String cityAreaName;
+	private String creatorName;
 
     public LogisticsCompany() {  
      } 
@@ -111,6 +114,9 @@ public class LogisticsCompany extends IdEntity  {
 		}
 		if (this.created == null) {
 			validResult.put("created", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}
+		if (this.branchId == null) {
+			validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
 		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
@@ -306,5 +312,29 @@ public class LogisticsCompany extends IdEntity  {
 
 	public Date getCreated(){
 		return created;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public String getCityAreaName() {
+		return cityAreaName;
+	}
+
+	public void setCityAreaName(String cityAreaName) {
+		this.cityAreaName = cityAreaName;
+	}
+
+	public String getCreatorName() {
+		return creatorName;
+	}
+
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
 	}
 }

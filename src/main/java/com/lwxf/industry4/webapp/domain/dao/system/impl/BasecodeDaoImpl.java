@@ -46,4 +46,28 @@ public class BasecodeDaoImpl extends BaseDaoImpl<Basecode, String> implements Ba
 		String sqlId = this.getNamedSqlId("findAll");
 		return this.getSqlSession().selectList(sqlId);
 	}
+
+	@Override
+	public Basecode findByTypeAndValue(String type, String value) {
+		String sqlId = this.getNamedSqlId("findByTypeAndValue");
+		MapContext mapContext = new MapContext();
+		mapContext.put("type",type);
+		mapContext.put("value",value);
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public List<Basecode> findByType(String type) {
+		String sqlId = this.getNamedSqlId("findByType");
+		return this.getSqlSession().selectList(sqlId,type);
+	}
+
+	@Override
+	public Basecode findByTypeAndCode(String typeString, String code) {
+		String sqlId = this.getNamedSqlId("findByTypeAndCode");
+		MapContext mapContext = new MapContext();
+		mapContext.put("type",typeString);
+		mapContext.put("code",code);
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
 }

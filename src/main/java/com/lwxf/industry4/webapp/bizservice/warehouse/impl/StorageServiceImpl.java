@@ -49,8 +49,8 @@ public class StorageServiceImpl extends BaseServiceImpl<Storage, String, Storage
 	}
 
 	@Override
-	public Storage findOneByName(String name) {
-		return this.dao.findOneByName(name);
+	public Storage findOneByName(String name,String branchId) {
+		return this.dao.findOneByName(name,branchId);
 	}
 
 	@Override
@@ -65,8 +65,8 @@ public class StorageServiceImpl extends BaseServiceImpl<Storage, String, Storage
 
 
 	@Override
-	public Storage findOneByProductCategoryId(String productCategoryId) {
-		return this.dao.findOneByProductCategoryId(productCategoryId);
+	public Storage findOneByProductCategoryKey(String key,String branchId) {
+		return this.dao.findOneByProductCategoryKey(key,branchId);
 	}
 
 	@Override

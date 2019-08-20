@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.mybatis.utils.MapContext;
@@ -42,9 +43,9 @@ public class ProductCategoryDaoImpl extends BaseDaoImpl<ProductCategory, String>
 	}
 
 	@Override
-	public List<ProductCategory> findAll() {
-		String sql = this.getNamedSqlId("findAll");
-		return this.getSqlSession().selectList(sql);
+	public List<ProductCategory> findAllByBranchId(String branchId) {
+		String sql = this.getNamedSqlId("findAllByBranchId");
+		return this.getSqlSession().selectList(sql,branchId);
 	}
 
 	@Override
@@ -54,9 +55,12 @@ public class ProductCategoryDaoImpl extends BaseDaoImpl<ProductCategory, String>
 	}
 
 	@Override
-	public ProductCategory selectProductCategoryByName(String name) {
+	public ProductCategory selectProductCategoryByName(String name,String branchId) {
 		String sql = this.getNamedSqlId("selectProductCategoryByName");
-		return this.getSqlSession().selectOne(sql,name);
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("name",name);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 }

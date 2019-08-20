@@ -12,8 +12,10 @@ import org.springframework.stereotype.Repository;
 
 
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
+import com.lwxf.industry4.webapp.common.enums.company.DealerEmployeeRole;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.company.companyEmployeeDto.CompanyEmploeeDto;
 import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
 import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto;
@@ -49,7 +51,11 @@ public class CompanyEmployeeDaoImpl extends BaseDaoImpl<CompanyEmployee, String>
 	@Override
 	public List<CompanyEmployee> selectShopkeeperByCompanyIds(List<String> ids) {
 		String sqlId = this.getNamedSqlId("selectShopkeeperByCompanyIds");
-		return this.getSqlSession().selectList(sqlId,ids);
+		MapContext mapContext = new MapContext();
+		mapContext.put("ids",ids);
+		mapContext.put("key",DealerEmployeeRole.SHOPKEEPER.getValue());
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
+		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
 	@Override
@@ -115,6 +121,7 @@ public class CompanyEmployeeDaoImpl extends BaseDaoImpl<CompanyEmployee, String>
 		MapContext mapContext = new MapContext();
 		mapContext.put("cid",cid);
 		mapContext.put("roleKey",roleKey);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,WebUtils.getCurrBranchId());
 		return this.getSqlSession().update(sqlId,mapContext);
 	}
 
@@ -225,5 +232,11 @@ public class CompanyEmployeeDaoImpl extends BaseDaoImpl<CompanyEmployee, String>
 	public List<String> findAllDianzhuId() {
 		String sqlId = this.getNamedSqlId("findAllDianzhuId");
 		return this.getSqlSession().selectList(sqlId);
+	}
+
+	@Override
+	public List<MapContext> findsalemans(String branchId) {
+		String sqlId = this.getNamedSqlId("findsalemans");
+		return this.getSqlSession().selectList(sqlId,branchId);
 	}
 }

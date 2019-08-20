@@ -80,4 +80,16 @@ WHERE  id = #{id}
         update dispatch_bill_plan_item set status = #{status} where finished_stock_item_id = #{finishedStockItemId}
     </update>
 
+    <delete id="deleteByOrderId">
+        delete from dispatch_bill_plan_item where finished_stock_item_id in (select item.id from finished_stock_item item left join finished_stock f on item.finished_stock_id = f.id where f.order_id = #{orderId})
+    </delete>
+
+    <select id="findCountByBranchId" resultType="com.lwxf.mybatis.utils.MapContext">
+        SELECT
+            (select count(*) from dispatch_bill_plan_item   where dispatch_bill_plan_id in(select id from dispatch_bill_plan where  date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} )) as plann,
+            (select count(*) from dispatch_bill_plan_item   where dispatch_bill_plan_id in(select id from dispatch_bill_plan where  date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} ) and status=1) as orver,
+            (select count(*) from dispatch_bill   where date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} ) as num
+
+    </select>
+
 </mapper>

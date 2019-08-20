@@ -1,10 +1,12 @@
 package com.lwxf.industry4.webapp.domain.dto.customorder;
 
+import com.lwxf.industry4.webapp.domain.entity.customorder.ProduceOrder;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
+import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockItemDto;
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrderFiles;
 import com.lwxf.industry4.webapp.domain.entity.customorder.OrderProduct;
@@ -25,6 +27,25 @@ public class OrderProductDto extends OrderProduct {
 	private String updateUserName;
 	@ApiModelProperty(value = "附件集合")
 	private List<CustomOrderFiles> uploadFiles;
+	@ApiModelProperty(value = "生产单集合")
+	private List<ProduceOrderDto> produceOrderList;
+	@ApiModelProperty(value = "类型名称")
+	private String typeName;
+	@ApiModelProperty(value = "系列名称")
+	private String seriesName;
+	@ApiModelProperty(value = "资源文件ID")
+	private List<String> fileIds;
+	@ApiModelProperty(value = "包裹信息")
+	private List<FinishedStockItemDto> finishedStockItemDtos;
+
+
+	public List<ProduceOrderDto> getProduceOrderList() {
+		return produceOrderList;
+	}
+
+	public void setProduceOrderList(List<ProduceOrderDto> produceOrderList) {
+		this.produceOrderList = produceOrderList;
+	}
 
 	public String getCreatorName() {
 		return creatorName;
@@ -49,4 +70,37 @@ public class OrderProductDto extends OrderProduct {
 	public void setUploadFiles(List<CustomOrderFiles> uploadFiles) {
 		this.uploadFiles = uploadFiles;
 	}
+
+	public String getTypeName() {
+		return typeName;
+	}
+
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+
+	public String getSeriesName() {
+		return seriesName;
+	}
+
+	public void setSeriesName(String seriesName) {
+		this.seriesName = seriesName;
+	}
+
+	public List<String> getFileIds() {
+		return fileIds;
+	}
+
+	public void setFileIds(List<String> fileIds) {
+		this.fileIds = fileIds;
+	}
+
+	public List<FinishedStockItemDto> getFinishedStockItemDtos() {
+		return finishedStockItemDtos;
+	}
+
+	public void setFinishedStockItemDtos(List<FinishedStockItemDto> finishedStockItemDtos) {
+		this.finishedStockItemDtos = finishedStockItemDtos;
+	}
+
 }

@@ -35,7 +35,7 @@ public class User extends IdEntity  {
 	private Integer sex;
 	@Column(type = Types.VARCHAR,length = 50,name = "email",displayName = "")
 	private String email;
-	@Column(type = Types.VARCHAR,length = 50,name = "avatar",displayName = "头像，默认为AppBeanInjector.configuration.getUserDefaultAvatar()")
+	@Column(type = Types.VARCHAR,length = 200,name = "avatar",displayName = "头像，默认为AppBeanInjector.configuration.getUserDefaultAvatar()")
 	private String avatar;
 	@Column(type = Types.DATE,name = "birthday",displayName = "生日")
 	private Date birthday;
@@ -63,6 +63,7 @@ public class User extends IdEntity  {
 	private Integer type;
 	@Column(type = Types.BIT,nullable = false,name = "is_changed_login_name",displayName = "登录名是否已被更改过，false-未被更改；true-已更改（一个用户只能修改一次登录名）")
 	private Boolean changedLoginName;
+	private String branchId;
 
 	public User() {
 	}
@@ -89,7 +90,7 @@ public class User extends IdEntity  {
 		}else{
 			this.email=null;
 		}
-		if (LwxfStringUtils.getStringLength(this.avatar) > 50) {
+		if (LwxfStringUtils.getStringLength(this.avatar) > 200) {
 			validResult.put("avatar", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
 		if (LwxfStringUtils.getStringLength(this.mobile) > 20) {
@@ -221,7 +222,7 @@ public class User extends IdEntity  {
 			}
 		}
 		if(map.containsKey("avatar")) {
-			if (LwxfStringUtils.getStringLength(map.getTypedValue("avatar",String.class)) > 50) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("avatar",String.class)) > 200) {
 				validResult.put("avatar", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
@@ -428,5 +429,13 @@ public class User extends IdEntity  {
 
 	public Boolean getChangedLoginName(){
 		return changedLoginName;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

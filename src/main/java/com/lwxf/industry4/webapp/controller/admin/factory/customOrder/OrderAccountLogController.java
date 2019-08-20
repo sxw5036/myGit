@@ -37,9 +37,10 @@ public class OrderAccountLogController {
 	 * @return
 	 */
 	@GetMapping("price")
-	private RequestResult findOrderPriceList(@RequestParam(required = false) String no,@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize){
-		MapContext mapContext = this.createMapContext(no,Arrays.asList(OrderStatus.FACTORY_CONFIRMED_FPROCE.getValue(),OrderStatus.DEALER_CONFIRMED_FPRICE.getValue()));
-		return this.orderAccountLogFacade.findOrderList(mapContext,pageNum,pageSize);
+	private RequestResult findOrderPriceList(@RequestParam(required = false) String no,@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize,
+											 @RequestParam(required = false) String customerTel){
+//		MapContext mapContext = this.createMapContext(no,Arrays.asList(OrderStatus.FACTORY_CONFIRMED_FPROCE.getValue(),OrderStatus.DEALER_CONFIRMED_FPRICE.getValue()),customerTel);
+		return this.orderAccountLogFacade.findOrderList(null,pageNum,pageSize);
 	}
 	/**
 	 * 查询需要审设计费的订单列表
@@ -49,9 +50,10 @@ public class OrderAccountLogController {
 	 * @return
 	 */
 	@GetMapping("/designfee")
-	private RequestResult findOrderDesignFeeList(@RequestParam(required = false) String no,@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize){
-		MapContext mapContext = this.createMapContext(no,Arrays.asList(OrderStatus.TO_ADD_DESIGNFEE.getValue(),OrderStatus.TO_BE_CONFIRMED_DESIGNFEE.getValue()));
-		return this.orderAccountLogFacade.findOrderList(mapContext,pageNum,pageSize);
+	private RequestResult findOrderDesignFeeList(@RequestParam(required = false) String no,@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize,
+												 @RequestParam(required = false) String customerTel){
+//		MapContext mapContext = this.createMapContext(no,Arrays.asList(OrderStatus.TO_ADD_DESIGNFEE.getValue(),OrderStatus.TO_BE_CONFIRMED_DESIGNFEE.getValue()),customerTel);
+		return this.orderAccountLogFacade.findOrderList(null,pageNum,pageSize);
 	}
 
 	/**
@@ -75,13 +77,16 @@ public class OrderAccountLogController {
 		return this.orderAccountLogFacade.updateOrderAccount(id,OrderAccountLogType.DESIGN.getValue(),orderAccountLog);
 	}
 
-	private MapContext createMapContext(String no,List<Integer> status) {
+	private MapContext createMapContext(String no,List<Integer> status,String customerTel) {
 		MapContext mapContext = new MapContext();
 		if(no!=null&&!no.trim().equals("")){
 			mapContext.put(WebConstant.STRING_NO,no);
 		}
 		if(status!=null&&status.size()!=0){
 			mapContext.put(WebConstant.KEY_ENTITY_STATUS, status);
+		}
+		if(customerTel!=null){
+			mapContext.put("customerTel",customerTel);
 		}
 		return mapContext;
 	}

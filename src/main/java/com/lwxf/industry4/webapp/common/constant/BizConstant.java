@@ -70,6 +70,7 @@ public class BizConstant {
 	 */
 	public static final String PAYMENT_SIMPLE_TYPE_1 = "收入";
 	public static final String PAYMENT_SIMPLE_TYPE_2 = "支出";
+	public static final String PAYMENT_SIMPLE_TYPE_3 = "银行调拨";
 
 
 

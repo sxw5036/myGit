@@ -16,9 +16,12 @@ import org.springframework.stereotype.Repository;
 import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.enums.customorder.ProduceOrderState;
+import com.lwxf.industry4.webapp.common.enums.financing.PaymentFunds;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.customorder.ProduceOrderDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.CoordinationPrintTableDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.customorder.ProduceOrderDao;
@@ -50,7 +53,10 @@ public class ProduceOrderDaoImpl extends BaseDaoImpl<ProduceOrder, String> imple
 	@Override
 	public ProduceOrderDto findOneById(String id) {
 		String sqlId = this.getNamedSqlId("findOneById");
-		return this.getSqlSession().selectOne(sqlId,id);
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_ENTITY_ID,id);
+		mapContext.put("funds", PaymentFunds.ORDER_FEE_CHARGE.getValue());
+		return this.getSqlSession().selectOne(sqlId,mapContext);
 	}
 
 	@Override
@@ -78,11 +84,20 @@ public class ProduceOrderDaoImpl extends BaseDaoImpl<ProduceOrder, String> imple
 	}
 
 	@Override
-	public List<ProduceOrder> findIncompleteListByOrderId(String customOrderId) {
+	public List<ProduceOrderDto> findProduceOrderByProductId(String id) {
+		String sqlId = this.getNamedSqlId("findProduceOrderByProductId");
+		return this.getSqlSession().selectList(sqlId,id);
+	}
+
+
+
+	@Override
+	public List<ProduceOrder> findIncompleteListByOrderId(String customOrderId,List<Integer> ways) {
 		String sqlId = this.getNamedSqlId("findIncompleteListByOrderId");
 		MapContext mapContext = new MapContext();
 		mapContext.put(WebConstant.KEY_ENTITY_STATE,Arrays.asList(ProduceOrderState.NOT_YET_BEGUN.getValue(),ProduceOrderState.IN_PRODUCTION.getValue()));
 		mapContext.put("orderId",customOrderId);
+		mapContext.put("way",ways);
 		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
@@ -96,21 +111,18 @@ public class ProduceOrderDaoImpl extends BaseDaoImpl<ProduceOrder, String> imple
 	}
 
 	@Override
-	public List<ProduceOrder> findListByOrderIdAndWays(String id, List<Integer> ways) {
-		String sqlId = this.getNamedSqlId("findListByOrderIdAndWays");
+	public List<ProduceOrder> findListByOrderIdAndTypesAndWays(String id, List<Integer> types, List<Integer> ways) {
+		String sqlId = this.getNamedSqlId("findListByOrderIdAndTypesAndWays");
 		MapContext mapContext = new MapContext();
 		mapContext.put("orderId",id);
+		mapContext.put("types",types);
 		mapContext.put("ways",ways);
 		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
 	@Override
-	public int updateStateByIds(List<String> ids, int state) {
-		String sqlId = this.getNamedSqlId("updateStateByIds");
-		MapContext mapContext = new MapContext();
-		mapContext.put("ids",ids);
-		mapContext.put(WebConstant.KEY_ENTITY_STATE,state);
-		mapContext.put("actualTime",DateUtil.getSystemDate());
+	public int updateMapContextByIds(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("updateMapContextByIds");
 		return this.getSqlSession().update(sqlId,mapContext);
 	}
 
@@ -120,17 +132,44 @@ public class ProduceOrderDaoImpl extends BaseDaoImpl<ProduceOrder, String> imple
 		MapContext mapContext = new MapContext();
 		mapContext.put("ids",ids);
 		mapContext.put("planTime",planTime);
+		mapContext.put("actualTime",planTime);
+		mapContext.put(WebConstant.KEY_ENTITY_STATE,ProduceOrderState.IN_PRODUCTION.getValue());
+		mapContext.put("planCreated",DateUtil.getSystemDate());
+		mapContext.put("planCreator",WebUtils.getCurrUserId());
 		return this.getSqlSession().update(sqlId,mapContext);
 	}
 
 	@Override
-	public PaginatedList<ProduceOrder> findProduceOrderList(PaginatedFilter paginatedFilter) {
-		String sqlId = this.getNamedSqlId("findProduceOrderList");
-		//
-		//  过滤查询参数
-		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<ProduceOrder> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
-		return this.toPaginatedList(pageList);
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public int deleteByProductId(String pId) {
+		String sqlId = this.getNamedSqlId("deleteByProductId");
+		return this.getSqlSession().delete(sqlId,pId);
+	}
+
+	@Override
+	public List findListOrderIdByPId(List ids) {
+		String sqlId = this.getNamedSqlId("findListOrderIdByPId");
+		return this.getSqlSession().selectList(sqlId,ids);
+	}
+
+	@Override
+	public CoordinationPrintTableDto findCoordinationPrintInfo(String id) {
+		String sqlId = this.getNamedSqlId("findCoordinationPrintInfo");
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_ENTITY_ID,id);
+		mapContext.put("funds",PaymentFunds.COORDINATION.getValue());
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public MapContext findCoordinationCount(String branchId) {
+		String sqlId = this.getNamedSqlId("findCoordinationCount");
+		return this.getSqlSession().selectOne(sqlId,branchId);
 	}
 
 	@Override

@@ -5,17 +5,16 @@
         <id column="id" property="id" jdbcType="CHAR" />
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="product_category_id" property="productCategoryId" jdbcType="CHAR" />
-        <result column="key" property="key" jdbcType="VARCHAR" />
         <result column="notes" property="notes" jdbcType="VARCHAR" />
         <result column="creator" property="creator" jdbcType="CHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="storekeeper" property="storekeeper" jdbcType="CHAR" />
+        <result column="branch_id" property="branchId" jdbcType="CHAR" />
     </resultMap>
     <resultMap id="StorageDtoMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.StorageDto">
         <id column="id" property="id" jdbcType="CHAR" />
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="product_category_id" property="productCategoryId" jdbcType="CHAR" />
-        <result column="key" property="key" jdbcType="VARCHAR" />
         <result column="notes" property="notes" jdbcType="VARCHAR" />
         <result column="creator" property="creator" jdbcType="CHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
@@ -42,10 +41,10 @@
         <result column="pre_output" property="preOutput" jdbcType="INTEGER" />
     </resultMap>
     <sql id="columns">
-id, name, product_category_id, `key`, notes, creator, created, storekeeper
+s.id, s.name, s.product_category_id, s.notes, s.creator, s.created, s.storekeeper
 </sql>
     <sql id="columnDtos">
-s.id, s.name, s.product_category_id, s.`key`, s.notes, s.creator, s.created, s.storekeeper,u.name storekeeperName,s.categoryName,s.creatorName,s.categoryType
+s.id, s.name, s.product_category_id, s.notes, s.creator, s.created, s.storekeeper,u.name storekeeperName,s.categoryName,s.creatorName,s.categoryType
 </sql>
     <sql id="columnStockDtos">
 s.id, s.storage_id, s.product_id, s.price, s.operator, s.operate_time,  s.quantity, s.shelf, s.column, s.tier,s.storageName,s.operatorName,p.name productName,s.pre_output
@@ -71,9 +70,6 @@ FROM   user u RIGHT join (
             <if test="productCategoryId != null">
                 AND s.product_category_id = #{productCategoryId}
             </if>
-            <if test="key != null">
-                AND s.`key` = #{key}
-            </if>
             <if test="notes != null">
                 AND s.notes = #{notes}
             </if>
@@ -85,6 +81,9 @@ FROM   user u RIGHT join (
             </if>
             <if test="storekeeper != null">
                 AND s.storekeeper = #{storekeeper}
+            </if>
+            <if test="branchId != null">
+                AND s.branch_id = #{branchId}
             </if>
             <if test="types != null and types.size>0">
                 AND category.type in
@@ -100,8 +99,8 @@ FROM   user u RIGHT join (
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-storage(id, name, product_category_id, `key`, notes, creator, created, storekeeper)
- VALUES(#{id}, #{name}, #{productCategoryId}, #{key}, #{notes}, #{creator}, #{created}, #{storekeeper})
+storage(id, name, product_category_id, notes, creator, created, storekeeper,branch_id)
+ VALUES(#{id}, #{name}, #{productCategoryId}, #{notes}, #{creator}, #{created}, #{storekeeper},#{branchId})
 </insert>
 
     <update id="updateByMapContext">
@@ -113,9 +112,6 @@ UPDATE storage
     <if test="_parameter.containsKey('productCategoryId') and productCategoryId != null">
         product_category_id = #{productCategoryId},
     </if>
-    <if test="_parameter.containsKey('key') and key != null">
-    `key` = #{key},
-</if>
     <if test="_parameter.containsKey('notes')">
     notes = #{notes},
 </if>
@@ -134,7 +130,7 @@ WHERE  id = #{id}
 
     <select id="findOneByName" resultMap="StorageMap">
         select <include refid="columns"/> from storage
-        where name = #{name}
+        where name = #{name} and branch_id=#{branchId}
     </select>
 
     <select id="findOneById" resultMap="StorageDtoMap">
@@ -155,11 +151,12 @@ WHERE  id = #{id}
         ) s ON u.id = s.operator
         ) s ON p.id = s.product_id
     </select>
-    <select id="findOneByProductCategoryId" resultMap="StorageMap">
+    <select id="findOneByProductCategoryKey" resultMap="StorageMap">
         select
         <include refid="columns"/>
-        from storage
-        where product_category_id = #{productCategoryId}
+        from storage s left join product_category category on s.product_category_id = category.id
+        where category.`key` = #{key}
+        and s.branch_id = #{branchId}
         limit 1
     </select>
 

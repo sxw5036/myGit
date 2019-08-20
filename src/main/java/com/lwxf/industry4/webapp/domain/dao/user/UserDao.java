@@ -94,12 +94,6 @@ public interface UserDao extends BaseDao<User, String> {
 	 */
 	User findByLoginName(String loginName);
 
-	/**
-	 * 根据用户的启用状态和角色查询用户集合
-	 * @param mapContext
-	 * @return
-	 */
-	List<User> findClerkListByStateAndRole(MapContext mapContext);
 
 	/**
 	 * 根据用户的Id查询用户的信息
@@ -112,40 +106,20 @@ public interface UserDao extends BaseDao<User, String> {
 
 	Map<String, Object> findUserById(String id);
 
-	List<String> findIdByName(String name);
-
 
 	UserAreaDto selectUserAreaDtoById(String id);
 
-
-	PaginatedList<User> findUserListByLikeName(PaginatedFilter paginatedFilter);
-
-
-
-
-
 	List<User> selectCompanyShopkeeperByCompanyIds(List ids,String roleKey);
-
-	List<Map<String,String>> findEmpIdAndEmpNameByCid(MapContext params);
 
 	UserAreaDto findUserMessageById(String userId);
 
 
 	UserAreaDto findCityNameByUID(String userId);
 
-
-	List<UserAreaDto> findCustomerByCompanyIdAndCustomer(MapContext mapContext);
-
 	List<User> findByUserIds(List<String> values);
 	PaginatedList<UserAreaDto> findByClient(PaginatedFilter paginatedFilter);
 
 	UserAreaDto findByUid (String userId);
-
-	List<UserAreaDto> findCustInfoByCompanyIdAndStatus(MapContext mapContext);
-	PaginatedList<User> findEmpInfoByCompanyIdAndStatus(PaginatedFilter paginatedFilter);
-
-	PaginatedList<UserAreaDto> findShareMemberByPidAndStatusAndIdentity(PaginatedFilter paginatedFilter);
-
 
     Map factoryUserPersonalInfo(MapContext params);
 
@@ -154,4 +128,7 @@ public interface UserDao extends BaseDao<User, String> {
     Map findFactoryUserAccountInfo(String companyId,String userId);
 
 
+	List<String> findAllUserIdByBranchId(String branchId);
+
+	User findByMobileAndBranchId(String mobile, String branchId);
 }

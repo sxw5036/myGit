@@ -54,6 +54,8 @@ public class ActivityFacadeImpl extends BaseFacadeImpl implements ActivityFacade
 
     @Override
     public RequestResult findListActivities(MapContext mapContext,Integer pageNum,Integer pageSize) {
+        String branchId=WebUtils.getCurrBranchId();
+        mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
         PaginatedFilter paginatedFilter = new PaginatedFilter();
         paginatedFilter.setFilters(mapContext);
         Pagination pagination = new Pagination();
@@ -76,6 +78,7 @@ public class ActivityFacadeImpl extends BaseFacadeImpl implements ActivityFacade
     @Override
     @Transactional(value = "transactionManager")
     public RequestResult addActivity(ActivityDto activityDto) {
+        activityDto.setBranchId(WebUtils.getCurrBranchId());
         this.activityInfoService.addActivityInfo(activityDto);
         MapContext map = MapContext.newOne();
         map.put("id",activityDto.getCoverId());
@@ -85,7 +88,7 @@ public class ActivityFacadeImpl extends BaseFacadeImpl implements ActivityFacade
         //修改活动链接
         MapContext mapContext = new MapContext();
         mapContext.put(WebConstant.KEY_ENTITY_ID,activityDto.getId());
-        mapContext.put(WebConstant.KEY_COMMON_LINK,AppBeanInjector.configuration.getContentPath().concat("?type=1&id=").concat(activityDto.getId()));
+        mapContext.put(WebConstant.KEY_COMMON_LINK,AppBeanInjector.configuration.getDomainUrl().concat(AppBeanInjector.configuration.getActivitionContentPath()).concat("?type=1&id=").concat(activityDto.getId()));
         this.activityInfoService.updateByMapContext(mapContext);
         return ResultFactory.generateSuccessResult();
     }
@@ -259,6 +262,8 @@ public class ActivityFacadeImpl extends BaseFacadeImpl implements ActivityFacade
     @Override
     @Transactional(value = "transactionManager")
     public RequestResult findJoinRecord(MapContext mapContext,Integer pageNum,Integer pageSize) {
+        String branchId=WebUtils.getCurrBranchId();
+        mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
         PaginatedFilter paginatedFilter = new PaginatedFilter();
         paginatedFilter.setFilters(mapContext);
         Pagination pagination = new Pagination();

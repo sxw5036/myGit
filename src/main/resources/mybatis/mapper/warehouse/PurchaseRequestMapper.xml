@@ -80,6 +80,9 @@ SELECT <include refid="columnDtos" />
 <if test="no != null">
     AND r.no like CONCAT('',#{no},'')
 </if>
+<if test="branchId != null">
+    AND p.branch_id = #{branchId}
+</if>
 </trim></where>
 ) r left join storage s on r.storage_id = s.id left join user u on r.creator = u.id
 </select>

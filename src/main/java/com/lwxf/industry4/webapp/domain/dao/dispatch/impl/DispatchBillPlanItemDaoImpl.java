@@ -62,4 +62,16 @@ public class DispatchBillPlanItemDaoImpl extends BaseDaoImpl<DispatchBillPlanIte
 		return this.getSqlSession().update(sqlId,updatePlanItem);
 	}
 
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public MapContext findCountByBranchId(String branchId) {
+		String sqlId = this.getNamedSqlId("findCountByBranchId");
+		return this.getSqlSession().selectOne(sqlId,branchId);
+	}
+
 }

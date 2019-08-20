@@ -46,32 +46,19 @@ public class RoleServiceImpl extends BaseServiceImpl<Role, String, RoleDao> impl
 	}
 
 	@Override
-	public Role selectByKey(String key) {
-		return this.dao.selectByKey(key);
+	public Role selectByKey(String key,String branchId) {
+		return this.dao.selectByKey(key,branchId);
 	}
 
 	@Override
-	public List<Role> findListByType(Integer type,String key) {
-		return this.dao.findListByType(type,key);
+	public List<Role> findListByType(Integer type,String key,String branchId) {
+		return this.dao.findListByType(type,key,branchId);
 	}
 
 
 	@Override
 	public Role findRoleByCidAndUid(String userId, String companyId) {
 		return this.dao.findRoleByCidAndUid(userId,companyId);
-	}
-
-
-
-	@Override
-	public List<Role> findAllFactoryRole() {
-		return this.dao.findAllFactoryRole();
-	}
-
-	@Override
-	public Role findRoleByKey(String key) {
-
-		return this.dao.findRoleByKey(key);
 	}
 
 }

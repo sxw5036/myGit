@@ -54,8 +54,11 @@ public class DesignStyleDaoImpl extends BaseDaoImpl<DesignStyle, String> impleme
 	}
 
 	@Override
-	public DesignStyle selectOneByName(String name) {
+	public DesignStyle selectOneByName(String name,String branchId) {
+		MapContext params=MapContext.newOne();
+		params.put("name",name);
+		params.put("branchId",branchId);
 		String sqlId = this.getNamedSqlId("selectOneByName");
-		return this.getSqlSession().selectOne(sqlId,name);
+		return this.getSqlSession().selectOne(sqlId,params);
 	}
 }

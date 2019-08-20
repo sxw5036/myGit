@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwxf.industry4.webapp.domain.dao.branch.BranchDao">
+    <resultMap id="BranchMap" type="com.lwxf.industry4.webapp.domain.entity.branch.Branch">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="leader_name" property="leaderName" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="expire_date" property="expireDate" jdbcType="VARCHAR" />
+        <result column="pay_date" property="payDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <resultMap id="BranchDtoMap" type="com.lwxf.industry4.webapp.domain.dto.branch.BranchDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="tel" property="tel" jdbcType="VARCHAR" />
+        <result column="leader_name" property="leaderName" jdbcType="VARCHAR" />
+        <result column="area" property="area" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="expire_date" property="expireDate" jdbcType="VARCHAR" />
+        <result column="pay_date" property="payDate" jdbcType="TIMESTAMP" />
+        <result column="statusName" property="statusName"/>
+        <result column="typeName" property="typeName"/>
+    </resultMap>
+    <sql id="columns">
+id, name, status, address, tel, leader_name, area, type, created, expire_date, pay_date
+</sql>
+    <sql id="columnDtos">
+b.*,c.value statusName,cc.value typeName
+</sql>
+
+    <select id="selectById" resultMap="BranchMap" parameterType="String">
+SELECT <include refid="columns" />
+FROM   branch
+WHERE  id = #{id}
+</select>
+
+    <select id="selectByFilter" resultMap="BranchMap">
+SELECT <include refid="columns" />
+FROM   branch
+<where><trim prefixOverrides="AND">
+<if test="id != null">
+    id = #{id}
+</if>
+<if test="name != null">
+    AND name = #{name}
+</if>
+<if test="status != null">
+    AND status = #{status}
+</if>
+<if test="address != null">
+    AND address = #{address}
+</if>
+<if test="tel != null">
+    AND tel = #{tel}
+</if>
+<if test="leaderName != null">
+    AND leader_name = #{leaderName}
+</if>
+<if test="area != null">
+    AND area = #{area}
+</if>
+<if test="type != null">
+    AND type = #{type}
+</if>
+<if test="created != null">
+    AND created = #{created}
+</if>
+<if test="expireDate != null">
+    AND expire_date = #{expireDate}
+</if>
+<if test="payDate != null">
+    AND pay_date = #{payDate}
+</if>
+</trim></where>
+
+</select>
+
+    <insert id="insert" useGeneratedKeys="false">
+INSERT INTO 
+branch(id, name, status, address, tel, leader_name, area, type, created, expire_date, pay_date)
+VALUES(#{id}, #{name}, #{status}, #{address}, #{tel}, #{leaderName}, #{area}, #{type}, #{created}, #{expireDate}, #{payDate})
+</insert>
+
+    <update id="updateByMapContext">
+UPDATE branch
+<set><trim suffixOverrides=",">
+<if test="_parameter.containsKey('name') and name != null">
+    name = #{name},
+</if>
+    <if test="_parameter.containsKey('status') and status != null">
+    status = #{status},
+</if>
+    <if test="_parameter.containsKey('address')">
+    address = #{address},
+</if>
+    <if test="_parameter.containsKey('tel')">
+    tel = #{tel},
+</if>
+    <if test="_parameter.containsKey('leaderName')">
+    leader_name = #{leaderName},
+</if>
+    <if test="_parameter.containsKey('area')">
+    area = #{area},
+</if>
+    <if test="_parameter.containsKey('type') and type != null">
+    type = #{type},
+</if>
+    <if test="_parameter.containsKey('expireDate')">
+    expire_date = #{expireDate},
+</if>
+    <if test="_parameter.containsKey('payDate')">
+    pay_date = #{payDate}
+</if>
+</trim></set>
+WHERE  id = #{id}
+</update>
+
+    <delete id="deleteById" parameterType="String">
+DELETE FROM   branch
+WHERE  id = #{id}
+</delete>
+
+    <select id="findListByFilter" resultMap="BranchDtoMap">
+        select <include refid="columnDtos"/> from branch b
+        left join basecode c on b.status = c.code
+        left join basecode cc on b.type = cc.code
+        where c.type = 'branchStatus'
+        and cc.type = 'branchType'
+        <trim suffixOverrides="AND">
+            <if test="name != null">
+                AND b.name like CONCAT('%',#{name},'%')
+            </if>
+            <if test="status != null">
+                AND b.status = #{status}
+            </if>
+            <if test="address != null">
+                AND b.address = #{address}
+            </if>
+            <if test="tel != null">
+                AND b.tel like CONCAT('%',#{tel},'%')
+            </if>
+            <if test="leaderName != null">
+                AND b.leader_name = #{leaderName}
+            </if>
+            <if test="area != null">
+                AND b.area = #{area}
+            </if>
+            <if test="type != null">
+                AND b.type = #{type}
+            </if>
+            <if test="created != null">
+                AND b.created = #{created}
+            </if>
+            <if test="expireDate != null">
+                AND b.expire_date = #{expireDate}
+            </if>
+            <if test="payDate != null">
+                AND b.pay_date = #{payDate}
+            </if>
+        </trim>
+    </select>
+
+</mapper>

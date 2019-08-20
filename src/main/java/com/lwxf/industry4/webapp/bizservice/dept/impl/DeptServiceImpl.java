@@ -45,13 +45,13 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept, String, DeptDao> impl
 	}
 
 	@Override
-	public Dept findDeptByNameAndParentId(String name,String parentId) {
-		return this.dao.findDeptByNameAndParentId(name,parentId);
+	public Dept findDeptByNameAndParentId(String name,String parentId,String branchId) {
+		return this.dao.findDeptByNameAndParentId(name,parentId,branchId);
 	}
 
 	@Override
-	public Dept findDeptByKey(String key) {
-		return this.dao.findDeptByKey(key);
+	public Dept findDeptByKey(String key,String branchId) {
+		return this.dao.findDeptByKey(key,branchId);
 	}
 
 	@Override
@@ -93,6 +93,11 @@ public class DeptServiceImpl extends BaseServiceImpl<Dept, String, DeptDao> impl
 	@Override
 	public List<Dept> findListByCompanyIdAndParent(String companyId) {
 		return this.dao.findListByCompanyIdAndParent(companyId);
+	}
+
+	@Override
+	public List<Dept> findListByUserId(String currUserId) {
+		return this.dao.findListByUserId(currUserId);
 	}
 
 }

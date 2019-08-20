@@ -1,13 +1,13 @@
 package com.lwxf.industry4.webapp.controller.admin.factory.customermng;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 
+import com.lwxf.commons.json.JsonMapper;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.utils.WebUtils;
+import com.lwxf.industry4.webapp.domain.dto.customer.CustomerDtoV2;
+import com.lwxf.industry4.webapp.domain.entity.customer.CompanyCustomer;
 import com.lwxf.industry4.webapp.domain.entity.user.User;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
 import com.lwxf.industry4.webapp.facade.admin.factory.customermng.CustomerFacade;
@@ -31,43 +31,64 @@ public class CustomerController {
 
     @Resource(name = "fCustomerFacade")
     private CustomerFacade fCustomerFacade;
-    @Resource(name = "customerFacade")
-    private com.lwxf.industry4.webapp.facade.app.dealer.customer.CustomerFacade bCustomerFacade;
 
     /**
      *
      * 查询所有的客户（可以根据公司id和顾客姓名，电话查询）
      * @param companyId
-     * @param condition
      * @return
      */
     @GetMapping(value = "customers")
-    public RequestResult findByClient(@RequestParam(required = false) String companyId,
-                                      @RequestParam(required = false) String condition,
-                                      @RequestParam(required = false) Integer pageSize,
-                                      @RequestParam(required = false) Integer pageNum){
+    @ApiOperation(value = "查询所有的客户",notes = "查询所有的客户",response = CustomerDtoV2.class)
+    public RequestResult findByClient(@RequestParam(required = false)@ApiParam(value = "公司主键ID") String companyId,
+                                      @RequestParam(required = false)@ApiParam(value = "姓名") String name,
+                                      @RequestParam(required = false)@ApiParam(value = "电话") String phone,
+                                      @RequestParam(required = false)@ApiParam(value = "数据量") Integer pageSize,
+                                      @RequestParam(required = false)@ApiParam(value = "页码") Integer pageNum){
         if(null == pageSize){
             pageSize = AppBeanInjector.configuration.getPageSizeLimit();
         }
         if(null == pageNum){
             pageNum = 1;
         }
-        RequestResult result = this.fCustomerFacade.findByClient(companyId, condition,pageSize,pageNum);
+        MapContext mapContext = this.createMapContext(companyId,name,phone);
+        RequestResult result = this.fCustomerFacade.findByClient(mapContext,pageSize,pageNum);
         return result;
+    }
+
+
+    @ApiOperation(value = "查询客户详情",notes = "查询客户详情",response = CustomerDtoV2.class)
+    @GetMapping("/customers/{id}")
+    private RequestResult findClientInfo(@PathVariable String id){
+        return this.fCustomerFacade.findClientInfo(id);
+    }
+
+
+    private MapContext createMapContext(String companyId, String name, String phone) {
+        MapContext mapContext = new MapContext();
+        if(companyId!=null){
+            mapContext.put(WebConstant.KEY_ENTITY_COMPANY_ID,companyId);
+        }
+        if(name!=null&&!name.trim().equals("")){
+            mapContext.put(WebConstant.KEY_ENTITY_NAME,name);
+        }
+        if(phone!=null&&!phone.trim().equals("")){
+            mapContext.put(WebConstant.KEY_ENTITY_PHONE,phone);
+        }
+        return mapContext;
     }
 
     /**
      * 添加顾客
-     * @param params
+     * @param customer
      * @return
      */
     @PostMapping(value = "customers")
-    public RequestResult addClient(@RequestBody MapContext params
-                                   ){
-        String companyId = (String) params.get("companyId");
+    @ApiOperation(value = "添加顾客",notes = "添加顾客")
+    public String addClient(@RequestBody CompanyCustomer customer){
         String currUserId = WebUtils.getCurrUserId();
-        RequestResult result = fCustomerFacade.addCustomer(companyId, params, currUserId);
-        return result;
+        JsonMapper jsonMapper = new JsonMapper();
+        return jsonMapper.toJson(fCustomerFacade.addCustomer(customer, currUserId));
     }
 
     /**
@@ -83,13 +104,24 @@ public class CustomerController {
             @ApiImplicitParam(value = "所需修改的内容",name = "mapContext",dataTypeClass = MapContext.class,paramType = "body")
     })
     public RequestResult updateClient(@PathVariable String cid,@RequestBody MapContext mapContext){
-        RequestResult result = User.validateFields(mapContext);
+        RequestResult result = CompanyCustomer.validateFields(mapContext);
         if(result!=null){
             return result;
         }
         return this.fCustomerFacade.updateClient(cid,mapContext);
     }
-
+    /**
+     * 客户信息统计
+     *
+     * @param
+     * @return
+     */
+    @GetMapping("/customers/count")
+    @ApiOperation(value = "客户信息统计",notes = "客户信息统计")
+    private RequestResult findCustomerCount() {
+        String branchId= WebUtils.getCurrBranchId();
+        return this.fCustomerFacade.findCustomerCount(branchId);
+    }
 
 }
 

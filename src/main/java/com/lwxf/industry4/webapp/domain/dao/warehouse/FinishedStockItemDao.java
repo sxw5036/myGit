@@ -66,4 +66,16 @@ public interface FinishedStockItemDao extends BaseDao<FinishedStockItem, String>
 	MapContext findOneByFinishedStockitemId(String finishedStockItemId);
 
     Integer findNumByCreated(MapContext params);
+
+	Integer findFininshedstockStatementByDateAndIsin(MapContext params);
+
+	Integer findCountByTimeAndType(MapContext params);
+
+	PaginatedList<Map<String,Object>> findListMapByFilter(PaginatedFilter paginatedFilter);
+
+	int deleteByOrderId(String orderId);
+
+	PaginatedList<MapContext> findFinishedStockNos(PaginatedFilter paginatedFilter);
+
+	List<FinishedStockItemDto> findListByProductId(String productId);
 }

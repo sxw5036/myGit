@@ -17,9 +17,8 @@ import com.lwxf.industry4.webapp.domain.dao.customer.CompanyCustomerDao;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
-import com.lwxf.industry4.webapp.domain.dto.customer.CustomerCityCountDto;
-import com.lwxf.industry4.webapp.domain.dto.customer.CustomerDto;
-import com.lwxf.industry4.webapp.domain.dto.customer.FactoryCustomerDto;
+import com.lwxf.industry4.webapp.domain.dto.customer.*;
+import com.lwxf.industry4.webapp.domain.dto.user.UserAreaDto;
 import com.lwxf.industry4.webapp.domain.entity.customer.CompanyCustomer;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.mybatis.utils.MapContext;
@@ -152,5 +151,68 @@ public class CompanyCustomerDaoImpl extends BaseDaoImpl<CompanyCustomer, String>
 	public List<Map> findCompanyCustomer(String companyId) {
 		String sqlId = this.getNamedSqlId("findCompanyCustomer");
 		return this.getSqlSession().selectList(sqlId,companyId);
+	}
+
+	@Override
+	public PaginatedList<WxCustomerDto> findWxCustomers(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findWxCustomers");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<WxCustomerDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public WxCustomerInfoDto findWxCustomerInfo(MapContext params) {
+		String sqlId=this.getNamedSqlId("findWxCustomerInfo");
+		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+	@Override
+	public PaginatedList<WxCustomerDto> findBWxCustomers(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findBWxCustomers");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<WxCustomerDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public CompanyCustomer findByPhoneAndBranchId(String mobile, String companyId) {
+		String sqlId = this.getNamedSqlId("findByPhoneAndBranchId");
+		MapContext mapContext=MapContext.newOne();
+		mapContext.put("phone",mobile);
+		mapContext.put("companyId",companyId);
+		return this.getSqlSession().selectOne(sqlId,mapContext);
+	}
+
+	@Override
+	public CustomerDtoV2 selectDtoById(String id) {
+		String sqlId = this.getNamedSqlId("selectDtoById");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
+
+	@Override
+	public CompanyCustomer findByMobile(String mobile) {
+		String sqlId = this.getNamedSqlId("findByMobile");
+		return this.getSqlSession().selectOne(sqlId,mobile);
+	}
+
+	@Override
+	public PaginatedList<CustomerDtoV2> findByClient(PaginatedFilter filter) {
+		String sqlId = this.getNamedSqlId("findByClient");
+		PageBounds pageBounds = this.toPageBounds(filter.getPagination(), filter.getSorts());
+		PageList<CustomerDtoV2> pageList = (PageList) this.getSqlSession().selectList(sqlId, filter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public CustomerDtoV2 findOneById(String id) {
+		String sqlId = this.getNamedSqlId("findOneById");
+		return this.getSqlSession().selectOne(sqlId,id);
+	}
+
+	@Override
+	public MapContext findCustomerCount(String branchId) {
+		String sqlId = this.getNamedSqlId("findCustomerCount");
+		return this.getSqlSession().selectOne(sqlId,branchId);
 	}
 }

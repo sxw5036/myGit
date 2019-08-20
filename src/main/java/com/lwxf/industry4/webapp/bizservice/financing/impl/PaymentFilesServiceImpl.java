@@ -49,4 +49,9 @@ public class PaymentFilesServiceImpl extends BaseServiceImpl<PaymentFiles, Strin
 	public List<PaymentFiles> findByPaymentId(String paymentId) {
 		return this.dao.findByPaymentId(paymentId);
 	}
+
+	@Override
+	public int deleteByPaymentId(String paymentId) {
+		return this.dao.deleteByPaymentId(paymentId);
+	}
 }

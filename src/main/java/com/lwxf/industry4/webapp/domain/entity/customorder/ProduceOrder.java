@@ -85,7 +85,7 @@ public class ProduceOrder extends IdEntity  {
 	@ApiModelProperty(value = "生产方式 0 自产 1 外协 2 特供实木")
 	private Integer way;
 	@Column(type = Types.TINYINT,nullable = false,name = "state",displayName = "生产拆单状态:0 未开始 1 生产中 2 已完成")
-	@ApiModelProperty(value = "生产拆单状态:0 未开始 1 生产中 2 已完成")
+	@ApiModelProperty(value = "生产拆单状态  自产:0 未开始 1 生产中 2 已完成   外协:0 待报价 1 待支付 2 待收货 3 完成")
 	private Integer state;
 	@Column(type = Types.DATE,name = "planned_time",displayName = "计划生产时间")
 	@ApiModelProperty(value = "计划生产时间")
@@ -93,6 +93,21 @@ public class ProduceOrder extends IdEntity  {
 	@Column(type = Types.DATE,name = "actual_time",displayName = "实际生产时间")
 	@ApiModelProperty(value = "实际生产时间")
 	private Date actualTime;
+	private String branchId;
+	@Column(type = Types.CHAR,length = 13,updatable = false,name = "order_product_id",displayName = "订单产品ID")
+	private String orderProductId;
+	@Column(type = Types.TINYINT,name = "permit",displayName = "是否允许生产 0 不允许 1 允许 只使用在自产的生产单")
+	@ApiModelProperty(value = "是否允许生产 0 不允许 1 允许 只使用在自产的生产单")
+	private Integer permit;
+	@Column(type = Types.TINYINT,name = "resource_type",displayName = "0:订单,1:售后单")
+	@ApiModelProperty(value = "0:订单,1:售后单")
+	private Integer resourceType;
+	@Column(type = Types.DATE,name = "plan_created",displayName = "生产计划创建时间")
+	@ApiModelProperty(value = "生产计划创建时间")
+	private Date planCreated;
+	@Column(type = Types.CHAR,length = 13,nullable = false,updatable = false,name = "plan_creator",displayName = "生产计划创建人")
+	@ApiModelProperty(value = "生产计划创建人")
+	private String planCreator;
 
 	public ProduceOrder() {
 	}
@@ -123,9 +138,6 @@ public class ProduceOrder extends IdEntity  {
 		if (LwxfStringUtils.getStringLength(this.updateUser) > 13) {
 			validResult.put("updateUser", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
-		if (this.count == null) {
-			validResult.put("count", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-		}
 		if (LwxfStringUtils.getStringLength(this.notes) > 300) {
 			validResult.put("notes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
@@ -150,6 +162,9 @@ public class ProduceOrder extends IdEntity  {
 		if (this.state == null) {
 			validResult.put("state", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
 		}
+		if (this.resourceType == null) {
+			validResult.put("resourceType", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
 		}else {
@@ -157,7 +172,7 @@ public class ProduceOrder extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("updateUser","updateTime","completionTime","count","notes","amount","coordinationName","coordinationAccount","coordinationBank","pay","type","way","state","plannedTime","actualTime");
+	private final static List<String> propertiesList = Arrays.asList("updateUser","updateTime","completionTime","count","notes","amount","coordinationName","coordinationAccount","coordinationBank","pay","type","way","state","plannedTime","actualTime","orderProductId","permit","planCreated","planCreator");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -210,11 +225,6 @@ public class ProduceOrder extends IdEntity  {
 				validResult.put("updateUser", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
-		if(map.containsKey("count")) {
-			if (map.get("count")  == null) {
-				validResult.put("count", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-			}
-		}
 		if(map.containsKey("notes")) {
 			if (LwxfStringUtils.getStringLength(map.getTypedValue("notes",String.class)) > 300) {
 				validResult.put("notes", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
@@ -233,6 +243,11 @@ public class ProduceOrder extends IdEntity  {
 		if(map.containsKey("coordinationBank")) {
 			if (LwxfStringUtils.getStringLength(map.getTypedValue("coordinationBank",String.class)) > 50) {
 				validResult.put("coordinationBank", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if(map.containsKey("orderProductId")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("orderProductId",String.class)) > 13) {
+				validResult.put("orderProductId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if(map.containsKey("pay")) {
@@ -431,5 +446,53 @@ public class ProduceOrder extends IdEntity  {
 
 	public void setActualTime(Date actualTime) {
 		this.actualTime = actualTime;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+
+	public String getOrderProductId() {
+		return orderProductId;
+	}
+
+	public void setOrderProductId(String orderProductId) {
+		this.orderProductId = orderProductId;
+	}
+
+	public Integer getPermit() {
+		return permit;
+	}
+
+	public void setPermit(Integer permit) {
+		this.permit = permit;
+	}
+
+	public Integer getResourceType() {
+		return resourceType;
+	}
+
+	public void setResourceType(Integer resourceType) {
+		this.resourceType = resourceType;
+	}
+
+	public Date getPlanCreated() {
+		return planCreated;
+	}
+
+	public void setPlanCreated(Date planCreated) {
+		this.planCreated = planCreated;
+	}
+
+	public String getPlanCreator() {
+		return planCreator;
+	}
+
+	public void setPlanCreator(String planCreator) {
+		this.planCreator = planCreator;
 	}
 }

@@ -56,7 +56,7 @@ public class DesignStyleServiceImpl extends BaseServiceImpl<DesignStyle, String,
 	}
 
 	@Override
-	public DesignStyle selectOneByName(String name) {
-		return this.dao.selectOneByName(name);
+	public DesignStyle selectOneByName(String name,String branchId) {
+		return this.dao.selectOneByName(name,branchId);
 	}
 }

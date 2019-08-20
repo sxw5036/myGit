@@ -6,8 +6,10 @@ import java.util.List;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDao;
+import com.lwxf.industry4.webapp.domain.dto.system.LcNameAndNum;
 import com.lwxf.industry4.webapp.domain.entity.system.LogisticsCompany;
 import com.lwxf.mybatis.annotation.IBatisSqlTarget;
+import com.lwxf.mybatis.utils.MapContext;
 
 
 /**
@@ -23,5 +25,11 @@ public interface LogisticsCompanyDao extends BaseDao<LogisticsCompany, String> {
 
 	PaginatedList<LogisticsCompany> selectByFilter(PaginatedFilter paginatedFilter);
 
-	List<LogisticsCompany> findAllNormal();
+	List<LogisticsCompany> findAllNormalByBranchId(MapContext mapContext);
+
+	List<LcNameAndNum> findLCNameAndNum(MapContext parmas);
+
+	LogisticsCompany findByNO(String no);
+
+	LogisticsCompany findByLogisticId(String logisticId);
 }

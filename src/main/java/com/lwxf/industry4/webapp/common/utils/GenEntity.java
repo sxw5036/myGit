@@ -24,7 +24,7 @@ public class GenEntity {
 	/**
 	 * 数据库连接
 	 */
-	private static final String URL = "jdbc:mysql://192.168.1.4:3306/industry4?useUnicode=true&characterEncoding=UTF-8";
+	private static final String URL = "jdbc:mysql://192.168.1.4:3306/industry4_wisdom?useUnicode=true&characterEncoding=UTF-8";
 	private static final String NAME = "root";
 	private static final String PASS = "lwxf@123";
 	private static final String DRIVER = "com.mysql.jdbc.Driver";

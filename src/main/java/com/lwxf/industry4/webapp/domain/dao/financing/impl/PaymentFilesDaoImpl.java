@@ -46,4 +46,10 @@ public class PaymentFilesDaoImpl extends BaseDaoImpl<PaymentFiles, String> imple
 		String sqlId = this.getNamedSqlId("findByPaymentId");
 		return this.getSqlSession().selectList(sqlId,paymentId);
 	}
+
+	@Override
+	public int deleteByPaymentId(String paymentId) {
+		String sqlId = this.getNamedSqlId("deleteByPaymentId");
+		return this.getSqlSession().delete(sqlId,paymentId);
+	}
 }

@@ -43,9 +43,9 @@ public class ContentsTypeDaoImpl extends BaseDaoImpl<ContentsType, String> imple
 	}
 
 	@Override
-	public List<ContentsType> findContentsTypeList() {
-		String sqlId = this.getNamedSqlId("findContentsTypeList");
-		return this.getSqlSession().selectList(sqlId);
+	public List<ContentsType> findContentsTypeListByBranchId(String branchId) {
+		String sqlId = this.getNamedSqlId("findContentsTypeListByBranchId");
+		return this.getSqlSession().selectList(sqlId,branchId);
 	}
 
 	@Override

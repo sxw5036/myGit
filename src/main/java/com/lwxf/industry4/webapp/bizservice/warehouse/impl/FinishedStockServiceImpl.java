@@ -103,12 +103,26 @@ public class FinishedStockServiceImpl extends BaseServiceImpl<FinishedStock, Str
 	}
 
 	@Override
-	public Map findMapByOrderId(String orderId) {
-		return this.dao.findMapByOrderId(orderId);
+	public int deleteByOrderId(String orderId) {
+		return this.dao.deleteByOrderId(orderId);
 	}
 
 	@Override
-	public Map findGoStockByPOId(String produceOrderId) {
-		return this.dao.findGoStockByPOId(produceOrderId);
+	public List<FinishedStockDto> findWxFinishedList(String orderId) {
+		List<FinishedStockDto> finishedStockDtoList=this.dao.findWxFinishedList(orderId);
+		for(FinishedStockDto finishedStockDto:finishedStockDtoList){
+			finishedStockDto.setFinishedStockItemDtos(this.dao.findListByFinishedStockId(finishedStockDto.getId()));
+		}
+		return finishedStockDtoList;
+	}
+
+	@Override
+	public MapContext findCountByBranchId(String branchId) {
+		return this.dao.findCountByBranchId(branchId);
+	}
+
+	@Override
+	public Map findMapByOrderId(String orderId) {
+		return this.dao.findMapByOrderId(orderId);
 	}
 }

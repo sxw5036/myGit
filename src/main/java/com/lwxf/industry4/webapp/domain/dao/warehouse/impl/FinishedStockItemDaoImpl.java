@@ -158,4 +158,46 @@ public class FinishedStockItemDaoImpl extends BaseDaoImpl<FinishedStockItem, Str
 		String sqlId = this.getNamedSqlId("findNumByCreated");
 		return this.getSqlSession().selectOne(sqlId,params);
 	}
+
+	@Override
+	public Integer findFininshedstockStatementByDateAndIsin(MapContext params) {
+		String sqlId = this.getNamedSqlId("findFininshedstockStatementByDateAndIsin");
+		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+	@Override
+	public Integer findCountByTimeAndType(MapContext params) {
+		String sqlId=this.getNamedSqlId("findCountByTimeAndType");
+		return this.getSqlSession().selectOne(sqlId,params);
+	}
+
+	@Override
+	public PaginatedList<Map<String,Object>> findListMapByFilter(PaginatedFilter paginatedFilter) {
+		String sqlId = this.getNamedSqlId("findListMapByFilter");
+		//
+		//  过滤查询参数
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<Map<String,Object>> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public PaginatedList<MapContext> findFinishedStockNos(PaginatedFilter paginatedFilter) {
+		String sqlId=this.getNamedSqlId("findFinishedStockNos");
+		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
+		PageList<MapContext> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public List<FinishedStockItemDto> findListByProductId(String productId) {
+		String sqlId=this.getNamedSqlId("findListByProductId");
+		return this.getSqlSession().selectList(sqlId,productId);
+	}
 }

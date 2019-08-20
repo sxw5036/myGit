@@ -28,4 +28,6 @@ public interface DealerShippingLogisticsDao extends BaseNoIdDao<DealerShippingLo
 	PaginatedList<DealerShippingLogistics> selectByFilter(PaginatedFilter paginatedFilter);
 
 	DealerShippingLogistics findOneByCompanyId(String companyId);
+
+	int updateByCompanyId(MapContext updateDealerShipping);
 }

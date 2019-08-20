@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.github.miemiedev.mybatis.paginator.domain.PageBounds;
 import com.github.miemiedev.mybatis.paginator.domain.PageList;
+import com.lwxf.industry4.webapp.domain.dto.supplier.SupplierDtoFowWx;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -34,12 +35,12 @@ public class SupplierProductDaoImpl extends BaseDaoImpl<SupplierProduct, String>
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public PaginatedList<SupplierProductDto> selectByFilter(PaginatedFilter paginatedFilter) {
+	public PaginatedList<SupplierProduct> selectByFilter(PaginatedFilter paginatedFilter) {
 		String sqlId = this.getNamedSqlId("selectByFilter");
 		//
 		//  过滤查询参数
 		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
-		PageList<SupplierProductDto> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
+		PageList<SupplierProduct> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
 		return this.toPaginatedList(pageList);
 	}
 
@@ -61,4 +62,15 @@ public class SupplierProductDaoImpl extends BaseDaoImpl<SupplierProduct, String>
 		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
+	@Override
+	public List<SupplierProduct> selectAllSupplierProduct(MapContext map) {
+		String sqlId = this.getNamedSqlId("selectAllSupplierProduct");
+		return this.getSqlSession().selectList(sqlId,map);
+	}
+
+	@Override
+	public int deleteBySupplierId(String supplierId) {
+		String sqlId = this.getNamedSqlId("deleteBySupplierId");
+		return this.getSqlSession().delete(sqlId,supplierId);
+	}
 }

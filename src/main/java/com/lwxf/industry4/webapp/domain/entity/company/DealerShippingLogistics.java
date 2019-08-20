@@ -32,6 +32,7 @@ public class DealerShippingLogistics extends AbstractNoIdEntity {
 	private String companyId;
 	@Column(type = Types.CHAR,length = 13,nullable = false,updatable = false,name = "logistics_company_id",displayName = "")
 	private String logisticsCompanyId;
+	private String branchId;
 
     public DealerShippingLogistics() {  
      } 
@@ -94,5 +95,13 @@ public class DealerShippingLogistics extends AbstractNoIdEntity {
 
 	public String getLogisticsCompanyId(){
 		return logisticsCompanyId;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

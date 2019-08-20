@@ -10,6 +10,7 @@ import java.util.Set;
 import com.lwxf.industry4.webapp.bizservice.common.UploadFilesService;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.uploadFiles.UploadFileDto;
 import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,7 @@ public class UploadFilesServiceImpl extends BaseServiceImpl<UploadFiles, String,
 	}
 
 	@Override
-	public int updateMicImageStatus(String[] ids) {
+	public int updateMicImageStatus(List<String> ids) {
 		return this.dao.updateMicImageStatus(ids);
 	}
 
@@ -106,8 +107,8 @@ public class UploadFilesServiceImpl extends BaseServiceImpl<UploadFiles, String,
 	}
 
 	@Override
-	public List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId,boolean status,int typeId) {
-		return this.dao.findByResourceIdAndStatusAndTypeId(ResourcedId,status,typeId);
+	public List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId,Integer status) {
+		return this.dao.findByResourceIdAndStatusAndTypeId(ResourcedId,status);
 	}
 
 	@Override
@@ -146,5 +147,15 @@ public class UploadFilesServiceImpl extends BaseServiceImpl<UploadFiles, String,
 	@Override
 	public List<UploadFiles> findShowImageByCidAndStatusAndResType(String companyId, Integer status, Integer resourceType) {
 		return this.dao.findShowImageByCidAndStatusAndResType(companyId,status,resourceType);
+	}
+
+	@Override
+	public int updateByIds(MapContext mapContext) {
+		return this.dao.updateByIds(mapContext);
+	}
+
+	@Override
+	public List<UploadFileDto> findByCidAndStatusAndType(MapContext params) {
+		return this.dao.findByCidAndStatusAndType(params);
 	}
 }

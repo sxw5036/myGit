@@ -16,9 +16,8 @@ import com.lwxf.industry4.webapp.bizservice.base.BaseServiceImpl;
 
 
 import com.lwxf.industry4.webapp.domain.dto.aftersale.DateNum;
-import com.lwxf.industry4.webapp.domain.dto.customer.CustomerCityCountDto;
-import com.lwxf.industry4.webapp.domain.dto.customer.CustomerDto;
-import com.lwxf.industry4.webapp.domain.dto.customer.FactoryCustomerDto;
+import com.lwxf.industry4.webapp.domain.dto.customer.*;
+import com.lwxf.industry4.webapp.domain.dto.user.UserAreaDto;
 import com.lwxf.industry4.webapp.domain.entity.customer.CompanyCustomer;
 import com.lwxf.industry4.webapp.domain.entity.customorder.CustomOrder;
 import com.lwxf.mybatis.utils.MapContext;
@@ -129,5 +128,50 @@ public class CompanyCustomerServiceImpl extends BaseServiceImpl<CompanyCustomer,
 	public List<Map> findCompanyCustomer(String companyId) {
 		return this.dao.findCompanyCustomer(companyId);
 
+	}
+
+	@Override
+	public PaginatedList<WxCustomerDto> findWxCustomers(PaginatedFilter paginatedFilter) {
+		return this.dao.findWxCustomers(paginatedFilter);
+	}
+
+	@Override
+	public WxCustomerInfoDto findWxCustomerInfo(MapContext params) {
+		return this.dao.findWxCustomerInfo(params);
+	}
+
+	@Override
+	public PaginatedList<WxCustomerDto> findBWxCustomers(PaginatedFilter paginatedFilter) {
+		return this.dao.findBWxCustomers(paginatedFilter);
+	}
+
+	@Override
+	public CompanyCustomer findByPhoneAndBranchId(String mobile, String companyId) {
+		return this.dao.findByPhoneAndBranchId(mobile,companyId);
+	}
+
+	@Override
+	public CustomerDtoV2 selectDtoById(String id) {
+		return this.dao.selectDtoById(id);
+	}
+
+	@Override
+	public CompanyCustomer findByMobile(String mobile) {
+		return this.dao.findByMobile(mobile);
+	}
+
+	@Override
+	public PaginatedList<CustomerDtoV2> findByClient(PaginatedFilter filter) {
+		return this.dao.findByClient(filter);
+	}
+
+	@Override
+	public CustomerDtoV2 findOneById(String id) {
+		return this.dao.findOneById(id);
+	}
+
+	@Override
+	public MapContext findCustomerCount(String branchId) {
+		return this.dao.findCustomerCount(branchId);
 	}
 }

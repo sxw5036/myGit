@@ -45,18 +45,22 @@ public class DeptDaoImpl extends BaseDaoImpl<Dept, String> implements DeptDao {
 	}
 
 	@Override
-	public Dept findDeptByNameAndParentId(String name,String parentId) {
+	public Dept findDeptByNameAndParentId(String name,String parentId,String branchId) {
 		String sql = this.getNamedSqlId("findDeptByNameAndParentId");
 		MapContext mapContext = new MapContext();
 		mapContext.put(WebConstant.KEY_ENTITY_NAME,name);
 		mapContext.put(WebConstant.KEY_ENTITY_PARENTID,parentId);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
 		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 	@Override
-	public Dept findDeptByKey(String key) {
+	public Dept findDeptByKey(String key,String branchId) {
 		String sql = this.getNamedSqlId("findDeptByKey");
-		return this.getSqlSession().selectOne(sql,key);
+		MapContext mapContext = new MapContext();
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		mapContext.put(WebConstant.KEY_WxPay_KEY,key);
+		return this.getSqlSession().selectOne(sql,mapContext);
 	}
 
 	@Override
@@ -115,6 +119,12 @@ public class DeptDaoImpl extends BaseDaoImpl<Dept, String> implements DeptDao {
 	public List<Dept> findListByCompanyIdAndParent(String companyId) {
 		String sql = this.getNamedSqlId("findListByCompanyIdAndParent");
 		return this.getSqlSession().selectList(sql,companyId);
+	}
+
+	@Override
+	public List<Dept> findListByUserId(String currUserId) {
+		String sqlId = this.getNamedSqlId("findListByUserId");
+		return this.getSqlSession().selectList(sqlId,currUserId);
 	}
 
 }

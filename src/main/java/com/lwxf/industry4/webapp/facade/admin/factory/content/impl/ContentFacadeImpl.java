@@ -43,7 +43,7 @@ public class ContentFacadeImpl extends BaseFacadeImpl implements ContentFacade {
 				mapContext.put("designContentList",this.schemeContentService.findBySchemeId(id));
 				return ResultFactory.generateRequestResult(mapContext);
 			case 1://活动
-				return ResultFactory.generateRequestResult(this.activityInfoService.findById(id));
+				return ResultFactory.generateRequestResult(this.activityInfoService.findOneById(id));
 			case 2://内容
 				return ResultFactory.generateRequestResult(this.contentsService.findContentById(id));
 			default:

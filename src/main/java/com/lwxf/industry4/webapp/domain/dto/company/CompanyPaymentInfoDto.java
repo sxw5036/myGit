@@ -38,6 +38,16 @@ public class CompanyPaymentInfoDto {
     private String typeName;
     @ApiModelProperty(value="记账人ID",name="holder")
     private String holder; //记账人
+    @ApiModelProperty(value="银行",name="bank")
+    private String bank; //银行
+
+    public String getBank() {
+        return bank;
+    }
+
+    public void setBank(String bank) {
+        this.bank = bank;
+    }
 
     public String getPaymentId() {
         return paymentId;

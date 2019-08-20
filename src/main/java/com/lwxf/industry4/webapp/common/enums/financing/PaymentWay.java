@@ -13,7 +13,10 @@ public enum PaymentWay {
 	ALIPAY(0,"支付宝"),
 	WEIXIN(1,"微信"),
 	CASH(2,"现金"),
-	BANK(3,"银行转账");
+	BANK(3,"银行转账"),
+	DEALER_ACCOUNT(4,"经销商账户"),
+	VISA(5,"刷卡"),
+	QITA(6,"其他");
 
 	private Integer value;
 	private String name;

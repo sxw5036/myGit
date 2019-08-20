@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.dispatch.DispatchBillItemDto;
 import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
@@ -68,6 +69,16 @@ public class DispatchBillItemServiceImpl extends BaseServiceImpl<DispatchBillIte
 	@Override
 	public List<MapContext> findByDispatchBillId(String dispatchBillId) {
 		return this.dao.findByDispatchBillId(dispatchBillId);
+	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		return this.dao.deleteByOrderId(orderId);
+	}
+
+	@Override
+	public List<DispatchBillItemDto> findListByDIdAndTypes(String id, List<Integer> types) {
+		return this.dao.findListByDIdAndTypes(id,types);
 	}
 
 }

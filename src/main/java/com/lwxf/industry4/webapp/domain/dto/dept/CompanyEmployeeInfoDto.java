@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
 import com.lwxf.industry4.webapp.domain.entity.company.*;
+import com.lwxf.industry4.webapp.domain.entity.user.UserBasis;
 
 /**
  * 功能：
@@ -30,7 +31,8 @@ public class CompanyEmployeeInfoDto {
 	private List<EmployeeEducationExperienceDto> employeeEducationExperienceList;//查询员工教育经历表
 	@ApiModelProperty(value = "员工考核信息",name = "employeeAssessmentList")
 	private List<EmployeeAssessmentDto> employeeAssessmentList;//查询员工考核信息表
-
+	@ApiModelProperty(value = "用户基础信息")
+	private UserBasis userBasis;
 	public EmployeeDeptDto getEmployeeDeptDto() {
 		return employeeDeptDto;
 	}
@@ -77,5 +79,13 @@ public class CompanyEmployeeInfoDto {
 
 	public void setEmployeeAssessmentList(List<EmployeeAssessmentDto> employeeAssessmentList) {
 		this.employeeAssessmentList = employeeAssessmentList;
+	}
+
+	public UserBasis getUserBasis() {
+		return userBasis;
+	}
+
+	public void setUserBasis(UserBasis userBasis) {
+		this.userBasis = userBasis;
 	}
 }

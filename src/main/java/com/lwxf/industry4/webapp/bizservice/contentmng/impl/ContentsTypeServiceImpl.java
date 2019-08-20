@@ -47,8 +47,8 @@ public class ContentsTypeServiceImpl extends BaseServiceImpl<ContentsType, Strin
 	}
 
 	@Override
-	public List<ContentsType> findContentsTypeList() {
-		return this.dao.findContentsTypeList();
+	public List<ContentsType> findContentsTypeListByBranchId(String branchId) {
+		return this.dao.findContentsTypeListByBranchId(branchId);
 	}
 
 	@Override

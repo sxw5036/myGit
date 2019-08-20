@@ -50,4 +50,14 @@ public class CustomOrderLogServiceImpl extends BaseServiceImpl<CustomOrderLog, S
 	public List<CustomOrderLogDto> findByOrderIdAndState(String orderId, Integer stage) {
 		return this.dao.findByOrderIdAndState(orderId, stage);
 	}
+
+	@Override
+	public List<CustomOrderLog> findByOrderId(String orderId) {
+		return this.dao.findByOrderId(orderId);
+	}
+
+	@Override
+	public PaginatedList<Map> findMessageOrderInfo(PaginatedFilter paginatedFilter) {
+		return this.dao.findMessageOrderInfo(paginatedFilter);
+	}
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.activity.ActivityInfoDto;
 import com.lwxf.mybatis.utils.MapContext;
 import com.lwxf.industry4.webapp.domain.dao.base.BaseDaoImpl;
 import com.lwxf.industry4.webapp.domain.dao.activity.ActivityInfoDao;
@@ -109,5 +110,11 @@ public class ActivityInfoDaoImpl extends BaseDaoImpl<ActivityInfo, String> imple
 		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
 		PageList<Map> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
 		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public ActivityInfoDto findOneById(String id) {
+		String sqlId = this.getNamedSqlId("findOneById");
+		return this.getSqlSession().selectOne(sqlId,id);
 	}
 }

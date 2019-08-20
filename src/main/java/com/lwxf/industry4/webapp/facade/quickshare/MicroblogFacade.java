@@ -24,11 +24,6 @@ public interface MicroblogFacade extends BaseFacade {
 //	RequestResult addMicroblog(Microblog microblog);
 
 	RequestResult uploadMicroblogImage(List<MultipartFile> files);
-	/**
-	 * 查询普通类型的帖子
-	 * @return
-	 */
-	RequestResult findByLimit(Integer pageNum, Integer pageSize,MapContext mapContext);
 
 	/**
 	 * 根据ID查询帖子详情
@@ -45,7 +40,5 @@ public interface MicroblogFacade extends BaseFacade {
 //	RequestResult findByMemberId(Integer pageNum, Integer pageSize);
 
 	RequestResult updateStatus(String id, MapContext mapContext);
-
-	RequestResult findNameByCreator(String name);
 
 }

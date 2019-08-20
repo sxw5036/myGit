@@ -16,6 +16,7 @@ import com.lwxf.industry4.webapp.domain.dao.company.DealerShippingLogisticsDao;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import com.lwxf.industry4.webapp.domain.entity.company.DealerShippingLogistics;
+import com.lwxf.mybatis.utils.MapContext;
 
 
 /**
@@ -47,6 +48,11 @@ public class DealerShippingLogisticsServiceImpl extends BaseNoIdServiceImpl<Deal
 	@Override
 	public DealerShippingLogistics findOneByCompanyId(String companyId) {
 		return this.dao.findOneByCompanyId(companyId);
+	}
+
+	@Override
+	public int updateByCompanyId(MapContext updateDealerShipping) {
+		return this.dao.updateByCompanyId(updateDealerShipping);
 	}
 
 }

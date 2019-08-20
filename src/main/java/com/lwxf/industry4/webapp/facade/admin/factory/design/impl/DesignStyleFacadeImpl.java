@@ -17,6 +17,7 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.design.DesignSchemeDto;
 import com.lwxf.industry4.webapp.domain.entity.design.DesignStyle;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
@@ -43,6 +44,8 @@ public class DesignStyleFacadeImpl extends BaseFacadeImpl implements DesignStyle
 
 	@Override
 	public RequestResult findStyleList(MapContext mapContext) {
+		String branchId= WebUtils.getCurrBranchId();
+		mapContext.put("branchId",branchId);
 		List<DesignStyle> designStyleList = this.designStyleService.findListByFilter(mapContext);
 		return ResultFactory.generateRequestResult(designStyleList);
 	}
@@ -50,13 +53,15 @@ public class DesignStyleFacadeImpl extends BaseFacadeImpl implements DesignStyle
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult addStyle(DesignStyle designStyle) {
+		String branchId= WebUtils.getCurrBranchId();
 		//判断名称是否重复
-		DesignStyle oneByName = this.designStyleService.selectOneByName(designStyle.getName());
+		DesignStyle oneByName = this.designStyleService.selectOneByName(designStyle.getName(),branchId);
 		if(oneByName!=null){
 			Map result = new HashMap();
 			result.put(WebConstant.KEY_ENTITY_NAME,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
 		}
+		designStyle.setBranchId(branchId);
 		this.designStyleService.add(designStyle);
 		return ResultFactory.generateRequestResult(designStyle);
 	}
@@ -64,6 +69,7 @@ public class DesignStyleFacadeImpl extends BaseFacadeImpl implements DesignStyle
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult updateStyle(String id, MapContext mapContext) {
+		String branchId= WebUtils.getCurrBranchId();
 		//判断风格是否存在
 		DesignStyle designStyle = this.designStyleService.findById(id);
 		if(designStyle==null){
@@ -72,7 +78,7 @@ public class DesignStyleFacadeImpl extends BaseFacadeImpl implements DesignStyle
 		//如果修改名称则判断名称是否重复
 		String name = mapContext.getTypedValue("name", String.class);
 		if(name!=null){
-			DesignStyle oneByName = this.designStyleService.selectOneByName(name);
+			DesignStyle oneByName = this.designStyleService.selectOneByName(name,branchId);
 			if(oneByName!=null&&!oneByName.getId().equals(id)){
 				Map result = new HashMap();
 				result.put(WebConstant.KEY_ENTITY_NAME,AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
@@ -87,8 +93,10 @@ public class DesignStyleFacadeImpl extends BaseFacadeImpl implements DesignStyle
 	@Override
 	@Transactional(value = "transactionManager")
 	public RequestResult deleteStyle(String id) {
+		String branchId= WebUtils.getCurrBranchId();
 		MapContext mapContext = new MapContext();
 		mapContext.put("designStyleId",id);
+		mapContext.put("branchId",branchId);
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
 		paginatedFilter.setFilters(mapContext);
 		PaginatedList<DesignSchemeDto> listByFilter = this.designSchemeService.findListByFilter(paginatedFilter);

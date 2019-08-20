@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeCertificateDto;
 import com.lwxf.industry4.webapp.domain.dto.dept.UpdateUserRoleDeptDto;
 import com.lwxf.industry4.webapp.domain.entity.company.EmployeeAssessment;
 import com.lwxf.industry4.webapp.domain.entity.company.EmployeeCertificate;
@@ -51,7 +52,7 @@ public interface DeptFacade extends BaseFacade {
 
 	RequestResult deleteEmployeeAssessment(String eid, String id);
 
-	RequestResult addEmployeeCertificate(String eid, EmployeeCertificate employeeCertificate);
+	RequestResult addEmployeeCertificate(String eid, EmployeeCertificateDto employeeCertificate);
 
 	RequestResult updataEmployeeCertificate(String eid, String id, MapContext mapContext);
 

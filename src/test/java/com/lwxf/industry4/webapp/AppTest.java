@@ -22,6 +22,7 @@ import com.lwxf.commons.json.JsonMapper;
 import com.lwxf.commons.utils.DateUtil;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.shiro.ShiroUtil;
+import com.lwxf.industry4.webapp.common.uniquecode.UniquneCodeGenerator;
 import com.lwxf.industry4.webapp.common.utils.LwxfAssert;
 import com.lwxf.industry4.webapp.common.utils.UserExtraUtil;
 import com.lwxf.industry4.webapp.domain.entity.user.User;
@@ -36,6 +37,8 @@ import com.lwxf.industry4.webapp.common.shiro.ShiroUtil;
 import com.lwxf.industry4.webapp.common.utils.UserExtraUtil;
 import com.lwxf.industry4.webapp.domain.entity.user.User;
 import com.lwxf.industry4.webapp.domain.entity.user.UserExtra;
+import com.lwxf.industry4.webapp.facade.AppBeanInjector;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -136,7 +139,7 @@ public class AppTest
         Assert.isTrue(proptest.equals(desTool.decrypt(proptestAfter)));
 
         //String localtest = "ip=port=dbname=user=password";
-        String localtest = "192.168.1.4=3306=appplatform=root=lwxf@123";
+        String localtest = "192.168.1.4=3306=industry4_wisdom=root=lwxf@123";
         String localtestAfter=desTool.encrypt(localtest);
         System.out.println("localtest 加密后的值：" + localtestAfter);
         Assert.isTrue(localtest.equals(desTool.decrypt(localtestAfter)));
@@ -222,7 +225,7 @@ public class AppTest
     public void testGeneralEntityId(){
         IIdGenerator idGenerator = new LwxfWorkerIdGenerator(1);
         for (int i = 0; i < 10; i++) {
-            System.out.println(idGenerator.nextId().toString());
+//            System.out.println(idGenerator.nextId().toString());
             System.out.println(idGenerator.nextStringId());
         }
     }
@@ -470,5 +473,22 @@ public class AppTest
         }else{
             System.out.println(servletPath.concat("路径匹配失败"));
         }
+    }
+
+    @org.junit.Test
+    public void testPatternIdCard(){
+        Pattern pattern = Pattern.compile("^[1-9][0-7]\\d{4}((19\\d{2}(0[13-9]|1[012])(0[1-9]|[12]\\d|30))|(19\\d{2}(0[13578]|1[02])31)|(19\\d{2}02(0[1-9]|1\\d|2[0-8]))|(19([13579][26]|[2468][048]|0[48])0229))\\d{3}(\\d|X|x)?");
+        Matcher matcher = pattern.matcher("410721199510011074");
+        if(matcher.matches()){
+            System.out.println("是正确的");
+        }else{
+            System.out.println("NO!!!");
+        }
+    }
+
+    @org.junit.Test
+    public void testOrderNo(){
+        String b = AppBeanInjector.uniquneCodeGenerator.getNextNo(UniquneCodeGenerator.UniqueResource.ORDER_NO);
+        System.out.println(b);
     }
 }

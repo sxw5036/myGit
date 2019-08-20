@@ -34,8 +34,6 @@ public class Contents extends IdEntity  {
 	private static final long serialVersionUID = 1L;
 	@Column(type = Types.VARCHAR,length = 50,nullable = false,name = "name",displayName = "标题")
 	private String name;
-	@Column(type = Types.CHAR,length = 10,nullable = false,name = "code",displayName = "文件类型(0:学习 1帮助 2新闻)")
-	private String code;
 	@Column(type = Types.VARCHAR,length = 50,name = "cover",displayName = "封面图片地址")
 	private String cover;
 	@Column(type = Types.VARCHAR,length = 500,name = "summary",displayName = "内容摘要")
@@ -47,7 +45,7 @@ public class Contents extends IdEntity  {
 	private Date publishTime;
 	@Column(type = Types.CHAR,length = 13,name = "publisher",displayName = "发布人")
 	private String publisher;
-	@Column(type = Types.TINYINT,nullable = false,name = "is_top",displayName = "是否置顶（0：不置顶 1：置顶）")
+	@Column(type = Types.TINYINT,name = "is_top",displayName = "是否置顶（0：不置顶 1：置顶）")
 	private Integer top;
 	@Column(type = TypesExtend.DATETIME,nullable = false,name = "created",displayName = "创建时间")
 	private Date created;
@@ -57,7 +55,8 @@ public class Contents extends IdEntity  {
 	private String contentsTypeId;
 	@Column(type = Types.VARCHAR,length = 150,name = "link",displayName = "链接路径")
 	private String link;
-
+	@Column(type = Types.CHAR,length = 13,nullable = false,name = "branch_id",displayName = "企业id")
+	private String branchId;
     public Contents() {  
      } 
 
@@ -68,13 +67,6 @@ public class Contents extends IdEntity  {
 		}else{
  			if (LwxfStringUtils.getStringLength(this.name) > 50) {
 				validResult.put("name", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
-			}
-		}
-		if (this.code == null) {
-			validResult.put("code", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-		}else{
- 			if (LwxfStringUtils.getStringLength(this.code) > 10) {
-				validResult.put("code", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if (LwxfStringUtils.getStringLength(this.cover) > 50) {
@@ -89,9 +81,6 @@ public class Contents extends IdEntity  {
 		if (LwxfStringUtils.getStringLength(this.publisher) > 13) {
 			validResult.put("publisher", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
-		if (this.top == null) {
-			validResult.put("top", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-		}
 		if (this.created == null) {
 			validResult.put("created", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
 		}
@@ -100,6 +89,13 @@ public class Contents extends IdEntity  {
 		}else{
  			if (LwxfStringUtils.getStringLength(this.creator) > 13) {
 				validResult.put("creator", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if (this.branchId == null) {
+			validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}else{
+			if (LwxfStringUtils.getStringLength(this.branchId) > 13) {
+				validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if (this.contentsTypeId == null) {
@@ -116,7 +112,7 @@ public class Contents extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("id","name","code","cover","summary","status","publishTime","publisher","top","created","creator","contentsTypeId");
+	private final static List<String> propertiesList = Arrays.asList("id","name","cover","summary","status","publishTime","publisher","top","created","creator","contentsTypeId");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -155,15 +151,6 @@ public class Contents extends IdEntity  {
 			}else{
  				if (LwxfStringUtils.getStringLength(map.getTypedValue("name",String.class)) > 50) {
 					validResult.put("name", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
-				}
-			}
-		}
-		if(map.containsKey("code")) {
-			if (map.getTypedValue("code",String.class)  == null) {
-				validResult.put("code", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-			}else{
- 				if (LwxfStringUtils.getStringLength(map.getTypedValue("code",String.class)) > 10) {
-					validResult.put("code", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 				}
 			}
 		}
@@ -222,6 +209,9 @@ public class Contents extends IdEntity  {
 		}
 	}
 
+	public String getBranchId() {return branchId;}
+
+	public void setBranchId(String branchId) {this.branchId = branchId;}
 
 	public void setName(String name){
 		this.name=name;
@@ -229,14 +219,6 @@ public class Contents extends IdEntity  {
 
 	public String getName(){
 		return name;
-	}
-
-	public void setCode(String code){
-		this.code=code;
-	}
-
-	public String getCode(){
-		return code;
 	}
 
 	public void setCover(String cover){

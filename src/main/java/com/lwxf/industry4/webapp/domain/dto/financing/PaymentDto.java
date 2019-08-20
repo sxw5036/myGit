@@ -1,9 +1,16 @@
 package com.lwxf.industry4.webapp.domain.dto.financing;
 
+import com.lwxf.industry4.webapp.common.enums.financing.PaymentTypeNew;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.List;
+
+import com.lwxf.industry4.webapp.common.constant.BizConstant;
+import com.lwxf.industry4.webapp.common.enums.financing.PaymentSimpleFunds;
+import com.lwxf.industry4.webapp.common.enums.financing.PaymentWay;
 import com.lwxf.industry4.webapp.domain.entity.financing.Payment;
+import com.lwxf.industry4.webapp.domain.entity.financing.PaymentFiles;
 
 /**
  * 功能：
@@ -34,6 +41,65 @@ public class PaymentDto extends Payment {
     private String customName;//客户名称
     @ApiModelProperty(value = "订单类型:0 - 正常订单；1 - 补产订单；2 - 返货单；3 - 打样订单；4 - 样板订单；5 - 展示厅订单;6 - 补发订单")
     private Integer orderType;
+    @ApiModelProperty(value="类型名称",name="companyName")
+    private String typeName;
+    @ApiModelProperty(value="支付方式名称",name="waysName")
+    private String waysName;
+    @ApiModelProperty(value="款项名称",name="fundsName")
+    private String fundsName;
+    @ApiModelProperty(value="付款状态名称",name="statusName")
+    private String statusName;
+    @ApiModelProperty(value = "资源文件")
+    private List<PaymentFiles> paymentFilesList;
+
+
+    public String getStatusName() {
+        if(this.getStatus()==null)
+            return "";
+        String statusValue="";
+        if(this.getStatus()==0){
+            statusValue="待付款";
+        }else if(this.getStatus()==1){
+            statusValue="已付款";
+        }
+        return statusValue;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getWaysName() {
+        if(this.getWay()!=null&& this.getWay()>-1){
+            return PaymentWay.getByValue(this.getWay())==null?"":PaymentWay.getByValue(this.getWay()).getName();
+        }else{
+            return "";
+        }
+    }
+
+    public void setWaysName(String waysName) {
+        this.waysName = waysName;
+    }
+
+    public String getFundsName() {
+        return fundsName;
+    }
+
+    public void setFundsName(String fundsName) {
+        this.fundsName = fundsName;
+    }
+    public String getTypeName() {
+        if(this.getType()!=null && this.getType()>-1){
+            return PaymentTypeNew.getByValue(this.getType()).getName();
+        }else{
+            return "";
+        }
+
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
 
     public String getTransferTime() {
         return transferTime;
@@ -105,6 +171,14 @@ public class PaymentDto extends Payment {
 
     public void setOrderType(Integer orderType) {
         this.orderType = orderType;
+    }
+
+    public List<PaymentFiles> getPaymentFilesList() {
+        return paymentFilesList;
+    }
+
+    public void setPaymentFilesList(List<PaymentFiles> paymentFilesList) {
+        this.paymentFilesList = paymentFilesList;
     }
 }
 

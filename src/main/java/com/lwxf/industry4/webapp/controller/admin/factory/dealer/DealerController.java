@@ -4,19 +4,13 @@ import io.rong.models.response.TokenResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
 import javax.annotation.Resource;
-
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-
 import com.lwxf.commons.exception.ErrorCodes;
 import com.lwxf.commons.json.JsonMapper;
 import com.lwxf.commons.utils.DateUtil;
@@ -25,7 +19,6 @@ import com.lwxf.industry4.webapp.baseservice.rongcloud.RongCloudUtils;
 import com.lwxf.industry4.webapp.baseservice.sms.yunpian.SmsUtil;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.dto.UserInfoObj;
-import com.lwxf.industry4.webapp.common.enums.company.CompanyStatus;
 import com.lwxf.industry4.webapp.common.enums.company.CompanyType;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentFunds;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentStatus;
@@ -64,19 +57,16 @@ public class DealerController {
 
     /**
      * 新增经销商公司
-     *
      * @param company
      * @return
      */
     @PostMapping("companies")
     @ApiOperation(value = "新增经销商公司",notes = "新增经销商公司",response = CompanyDto.class)
     private String addDealer(@RequestBody@ApiParam(value = "公司信息") CompanyDto company) {
-
         JsonMapper jsonMapper = new JsonMapper();
         //公司表信息
         company.setCreated(DateUtil.getSystemDate());
         company.setCreator(WebUtils.getCurrUserId());
-        company.setStatus(CompanyStatus.INTENTION.getValue());
         company.setFollowers(0);
         if (company.getNo() == null && company.getNo().trim().equals("")) {
             company.setNo(AppBeanInjector.uniquneCodeGenerator.getNextNo(UniquneCodeGenerator.UniqueResource.COMPANY_NO));
@@ -87,12 +77,22 @@ public class DealerController {
         }
         RequestResult result = this.dealerFacade.addDealer(company);
         return jsonMapper.toJson(result);
+    }
 
+    /**
+     * 新增经销商公司
+     * @return
+     */
+    @PostMapping("init/{branchId}")
+    @ApiOperation(value = "初始化所有公司账户",notes = "初始化所有公司账户")
+    private String initDealerAccount(@PathVariable String branchId) {
+        JsonMapper jsonMapper = new JsonMapper();
+        RequestResult result = this.dealerFacade.initDealerAccount(branchId);
+        return jsonMapper.toJson(result);
     }
 
     /**
      * 经销商激活
-     *
      * @param cid
      * @return
      */
@@ -149,6 +149,7 @@ public class DealerController {
             pageNum = 1;
         }
         MapContext mapContent = this.createMapContent(name, type, mobile, no,status,null);
+        mapContent.put("branchId",WebUtils.getCurrBranchId());
         RequestResult dealerList = this.dealerFacade.findDealerCompanyList(mapContent, pageNum, pageSize);
         JsonMapper jsonMapper = new JsonMapper();
         return jsonMapper.toJson(dealerList);
@@ -175,12 +176,14 @@ public class DealerController {
     @PutMapping("/companies/{cid}")
     @ApiOperation(value = "修改经销商公司信息",notes = "修改经销商公司信息")
     private String updateDealerCompany(@PathVariable String cid, @RequestBody MapContext mapContext) {
+        String logisticsCompanyId = mapContext.getTypedValue("logisticsCompanyId",String.class);
+        mapContext.remove("logisticsCompanyId");
         RequestResult result = Company.validateFields(mapContext);
         JsonMapper jsonMapper = new JsonMapper();
         if (result != null) {
             return jsonMapper.toJson(result);
         }
-        return jsonMapper.toJson(this.dealerFacade.updateDealerCompany(mapContext, cid));
+        return jsonMapper.toJson(this.dealerFacade.updateDealerCompany(mapContext, cid,logisticsCompanyId));
     }
 
     /**
@@ -243,6 +246,7 @@ public class DealerController {
         payment.setCompanyId(cid);
         payment.setWay(PaymentWay.BANK.getValue());
         payment.setHolder("红田集团");
+        payment.setBranchId(WebUtils.getCurrBranchId());
         return this.dealerFacade.submitDealer(cid,payment);
     }
 
@@ -262,8 +266,26 @@ public class DealerController {
                                          @RequestParam(required = false) String loginName,@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize){
         MapContext mapContext = this.createMapContent(name,UserType.DEALER.getValue(),mobile,null,status,loginName);
         JsonMapper jsonMapper = new JsonMapper();
+        mapContext.put("branchId",WebUtils.getCurrBranchId());
         return jsonMapper.toJson(this.dealerFacade.findDealerList(mapContext,pageNum,pageSize));
     }
+
+    /**
+	 * 查询经销商详情
+	 * @param id
+	 * @return
+	 */
+    @GetMapping("/{id}")
+    @ApiOperation(value = "查询经销商详情",notes = "查询经销商详情",response = CompanyEmployeeDto.class)
+    private String findDealerInfo(@PathVariable@ApiParam(value = "公司ID") String id){
+        MapContext mapContext = new MapContext();
+        mapContext.put("cid",id);
+        JsonMapper jsonMapper = new JsonMapper();
+        mapContext.put("branchId",WebUtils.getCurrBranchId());
+        return jsonMapper.toJson(this.dealerFacade.findDealerList(mapContext,1,1));
+    }
+
+
 
     /**
      * 修改经销商的用户信息
@@ -306,6 +328,18 @@ public class DealerController {
     private String updateDealerAccountPwd(@PathVariable String id,@RequestBody MapContext mapContext){
         JsonMapper jsonMapper = new JsonMapper();
         return jsonMapper.toJson(this.dealerFacade.updateDealerAccountPwd(id,mapContext.getTypedValue("newPassword",String.class)));
+    }
+    /**
+     * 经销商信息统计
+     *
+     * @param
+     * @return
+     */
+    @GetMapping("/companies/count")
+    @ApiOperation(value = "经销商信息统计",notes = "经销商信息统计")
+    private RequestResult findDealerCount() {
+        String branchId= WebUtils.getCurrBranchId();
+        return this.dealerFacade.findDealerCount(branchId);
     }
 
     private MapContext createMapContent(String name, Integer type, String mobile, String no,Integer status,String loginName) {

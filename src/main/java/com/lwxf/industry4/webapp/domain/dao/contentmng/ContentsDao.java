@@ -32,7 +32,7 @@ public interface ContentsDao extends BaseDao<Contents, String> {
 
 	ContentsContent findContentMessage(String contentsId);
 
-	List<ContentsDto> findContentsList(String typeId);
+	List<ContentsDto> findTopContentsList(String typeId,String branchId);
 
     List<Map> findByCodeAndStatus(MapContext map);
 

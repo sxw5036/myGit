@@ -1,27 +1,22 @@
 package com.lwxf.industry4.webapp.bizservice.dept.impl;
 
 
+import javax.annotation.Resource;
+
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.stereotype.Service;
 
-import org.springframework.stereotype.Component;
-
-
+import com.lwxf.industry4.webapp.bizservice.base.BaseServiceImpl;
 import com.lwxf.industry4.webapp.bizservice.dept.DeptMemberService;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.org.DeptDao;
+import com.lwxf.industry4.webapp.domain.dao.org.DeptMemberDao;
 import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
 import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto;
-import com.lwxf.industry4.webapp.domain.entity.org.Dept;
-import com.lwxf.industry4.webapp.domain.entity.user.User;
-import com.lwxf.mybatis.utils.MapContext;
-import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
-import com.lwxf.industry4.webapp.bizservice.base.BaseServiceImpl;
-import com.lwxf.industry4.webapp.domain.dao.org.DeptMemberDao;
 import com.lwxf.industry4.webapp.domain.entity.org.DeptMember;
+import com.lwxf.mybatis.utils.MapContext;
 
 
 /**
@@ -94,6 +89,11 @@ public class DeptMemberServiceImpl extends BaseServiceImpl<DeptMember, String, D
 	@Override
 	public List<String> findDeptNameByEmployeeId(String employeeId) {
 		return this.dao.findDeptNameByEmployeeId(employeeId);
+	}
+
+	@Override
+	public List selectUserIdByDeptId(String deptId) {
+		return this.dao.selectUserIdByDeptId(deptId);
 	}
 
 }

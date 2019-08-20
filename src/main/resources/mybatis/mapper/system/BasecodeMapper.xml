@@ -91,4 +91,15 @@ WHERE  id = #{id}
         select <include refid="columns"/> from basecode
     </select>
 
+    <select id="findByTypeAndValue" resultMap="BasecodeMap">
+        select <include refid="columns"/> from basecode where type = #{type} and value = #{value}
+    </select>
+    <select id="findByTypeAndCode" resultMap="BasecodeMap">
+        select <include refid="columns"/> from basecode where type = #{type} and code = #{code}
+    </select>
+
+    <select id="findByType" resultMap="BasecodeMap">
+        select <include refid="columns"/> from basecode where type = #{type}
+    </select>
+
 </mapper>

@@ -52,7 +52,10 @@ public class DispatchBillPlan extends IdEntity  {
 	private String updator;
 	@Column(type = Types.VARCHAR,length = 200,name = "note",displayName = "备注")
 	@ApiModelProperty(value = "备注")
-	protected String note;
+	private String note;
+	@Column(type = Types.CHAR,length = 13,name = "branchId",displayName = "企业id")
+	@ApiModelProperty(value = "企业id")
+	private String branchId;
 
     public DispatchBillPlan() {  
      } 
@@ -67,6 +70,13 @@ public class DispatchBillPlan extends IdEntity  {
 		}else{
  			if (LwxfStringUtils.getStringLength(this.creator) > 13) {
 				validResult.put("creator", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
+		if (this.branchId == null) {
+			validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}else{
+			if (LwxfStringUtils.getStringLength(this.branchId) > 13) {
+				validResult.put("branchId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
 		if (this.num == null) {
@@ -209,5 +219,13 @@ public class DispatchBillPlan extends IdEntity  {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

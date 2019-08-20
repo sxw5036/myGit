@@ -29,7 +29,7 @@ public interface ContentsService extends BaseService <Contents, String> {
 
 	ContentsDto findContentById(String code);
 
-	List<ContentsDto> findContentsList(String typeId);
+	List<ContentsDto> findTopContentsList(String typeId,String branchId);
 
 	int add(ContentsDto contentsDto);
 

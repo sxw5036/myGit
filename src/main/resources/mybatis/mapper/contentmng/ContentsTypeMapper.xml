@@ -17,9 +17,9 @@ SELECT <include refid="columns" />
 FROM   contents_type
 WHERE  id = #{id}
 </select>
-    <select id="findContentsTypeList" resultMap="ContentsTypeMap">
+    <select id="findContentsTypeListByBranchId" resultMap="ContentsTypeMap">
         SELECT <include refid="columns" />
-        FROM   contents_type
+        FROM   contents_type where branch_id = #{branchId}
     </select>
     <select id="findContentsListByCode" resultMap="ContentsTypeMap">
         SELECT <include refid="columns" />

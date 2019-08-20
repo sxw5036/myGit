@@ -3,8 +3,8 @@ package com.lwxf.industry4.webapp.common.enums.financing;
 /**
  * 功能：
  *
- * @author：dongshibo(F_baisi)
- * @create：2019/1/22/022 9:30
+ * @author：zhangxiaolin(F_baisi)
+ * @create：2019/8/12/022 9:30
  * @version：2019 Version：1.0
  * @company：老屋新房 Created with IntelliJ IDEA
  */
@@ -12,7 +12,8 @@ public enum PaymentTypeNew {
 
     INCOME(1,"收入"),
     OUTLAY(2,"支出"),
-    CHARGEBACK(3,"扣款");
+    CHARGEBACK(3,"扣款"),
+    COOPERATE_PAY(4,"厂家外协支付");//厂家账户扣款
 
     private Integer value;
     private String name;

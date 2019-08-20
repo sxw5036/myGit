@@ -1,4 +1,7 @@
 package com.lwxf.industry4.webapp.domain.entity.customer;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.*;
 import java.sql.*;
 import java.util.Date;
@@ -26,32 +29,54 @@ import com.lwxf.industry4.webapp.common.result.ResultFactory;
  * @dept：老屋新房 Created with IntelliJ IDEA 
  */ 
 @Table(name = "company_customer",displayName = "company_customer")
+@ApiModel(value = "客户信息",description = "客户信息")
 public class CompanyCustomer extends IdEntity  {
 	private static final long serialVersionUID = 1L;
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "company_id",displayName = "")
+	@ApiModelProperty(value = "公司ID")
 	private String companyId;
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "user_id",displayName = "")
+	@ApiModelProperty(value = "用户ID")
 	private String userId;
 	@Column(type = Types.TINYINT,nullable = false,name = "status",displayName = "状态：0 - 新建；1 - 跟进中；2 - 已下单；3 - 已流逝（已在其他商家下订单）")
+	@ApiModelProperty(value = "状态")
 	private Integer status;
 	@Column(type = Types.CHAR,length = 13,nullable = false,name = "creator",displayName = "创建人")
+	@ApiModelProperty(value = "创建人")
 	private String creator;
 	@Column(type = TypesExtend.DATETIME,nullable = false,name = "created",displayName = "创建时间")
+	@ApiModelProperty(value = "创建时间")
 	private Date created;
 	@Column(type = Types.CHAR,length = 13,name = "customer_manager",displayName = "客户经理，默认为创建人，后期可能根据经销商业务调整变更业务经理")
+	@ApiModelProperty(value = "客户经理")
 	private String customerManager;
 	@Column(type = Types.TINYINT,nullable = false,name = "grade",displayName = "客户等级：0 - 普通客户（低消费阶层）；1 - 中等客户（中等消费阶层）；2 - 高端客户（高端消费阶层）；3 - 特等客户（视钱如粪土）； ")
+	@ApiModelProperty(value = "客户等级")
 	private Integer grade;
 	@Column(type = Types.TINYINT,nullable = false,name = "source",displayName = "客户来源：0-C端注册，1-电话访问，2-上门拜访，3-公众号，4-网络，5-电商（天猫，京东）")
+	@ApiModelProperty(value = "客户来源")
 	private Integer source;
 	@Column(type = Types.VARCHAR,length = 50,name = "community",displayName = "小区名称")
+	@ApiModelProperty(value = "小区名称")
 	private String community;
 	@Column(type = Types.CHAR,length = 13,name = "city_area_id",displayName = "地区Id")
+	@ApiModelProperty(value = "地区Id")
 	private String cityAreaId;
 	@Column(type = Types.VARCHAR,length = 200,name = "address",displayName = "客户详细地址")
+	@ApiModelProperty(value = "客户详细地址")
 	private String address;
 	@Column(type = Types.VARCHAR,length = 500,name = "remarks",displayName = "备注信息")
+	@ApiModelProperty(value = "备注信息")
 	private String remarks;
+	@Column(type = Types.VARCHAR,length = 100,name = "name",displayName = "客户姓名")
+	@ApiModelProperty(value = "客户姓名")
+	private String name;
+	@Column(type = Types.VARCHAR,length = 30,name = "phone",displayName = "客户电话")
+	@ApiModelProperty(value = "客户电话")
+	private String phone;
+	@Column(type = Types.VARCHAR,length = 2,name = "sex",displayName = "客户性别")
+	@ApiModelProperty(value = "客户性别")
+	private Integer sex;
 
     public CompanyCustomer() {  
      } 
@@ -66,9 +91,7 @@ public class CompanyCustomer extends IdEntity  {
 			}
 		}
 		if (this.userId == null) {
-			validResult.put("userId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-		}else{
- 			if (LwxfStringUtils.getStringLength(this.userId) > 13) {
+			if (LwxfStringUtils.getStringLength(this.userId) > 13) {
 				validResult.put("userId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 			}
 		}
@@ -106,6 +129,13 @@ public class CompanyCustomer extends IdEntity  {
 		if (LwxfStringUtils.getStringLength(this.remarks) > 500) {
 			validResult.put("remarks", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
 		}
+		if(this.name==null){
+			validResult.put("name", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
+		}else{
+			if (LwxfStringUtils.getStringLength(this.name) > 100) {
+				validResult.put("name", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
 		if(validResult.size()>0){
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,validResult);
 		}else {
@@ -113,7 +143,7 @@ public class CompanyCustomer extends IdEntity  {
 		}
 	}
 
-	private final static List<String> propertiesList = Arrays.asList("id","companyId","userId","status","creator","created","customerManager","grade","source","community","cityAreaId","address","remarks");
+	private final static List<String> propertiesList = Arrays.asList("id","companyId","userId","status","creator","created","customerManager","grade","source","community","cityAreaId","address","remarks","name","phone","sex");
 
 	public static RequestResult validateFields(MapContext map) {
 		Map<String, String> validResult = new HashMap<>();
@@ -146,6 +176,11 @@ public class CompanyCustomer extends IdEntity  {
 				validResult.put("source", AppBeanInjector.i18nUtil.getMessage("VALIDATE_INCORRECT_DATA_FORMAT"));
 			}
 		}
+		if(map.containsKey("name")) {
+			if (LwxfStringUtils.getStringLength(map.getTypedValue("name",String.class)) > 100) {
+				validResult.put("name", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
+			}
+		}
 		if(map.containsKey("companyId")) {
 			if (map.getTypedValue("companyId",String.class)  == null) {
 				validResult.put("companyId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
@@ -156,12 +191,8 @@ public class CompanyCustomer extends IdEntity  {
 			}
 		}
 		if(map.containsKey("userId")) {
-			if (map.getTypedValue("userId",String.class)  == null) {
-				validResult.put("userId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-			}else{
  				if (LwxfStringUtils.getStringLength(map.getTypedValue("userId",String.class)) > 13) {
 					validResult.put("userId", AppBeanInjector.i18nUtil.getMessage("VALIDATE_LENGTH_TOO_LONG"));
-				}
 			}
 		}
 		if(map.containsKey("status")) {
@@ -320,5 +351,29 @@ public class CompanyCustomer extends IdEntity  {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public Integer getSex() {
+		return sex;
+	}
+
+	public void setSex(Integer sex) {
+		this.sex = sex;
 	}
 }

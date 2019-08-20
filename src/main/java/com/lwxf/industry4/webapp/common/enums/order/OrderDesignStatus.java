@@ -12,9 +12,7 @@ public enum OrderDesignStatus {
 
     BEINGDESIGNED(0,"设计中"),
     TOAUDIT(1,"待审核"),
-    TORELEASED(2,"待发布"),
-    UNCONFIRMED(3,"待确认"),
-    CONFIRMED(4,"已确认");
+    AUDITED(2,"已审核");
 
 
     private Integer value;

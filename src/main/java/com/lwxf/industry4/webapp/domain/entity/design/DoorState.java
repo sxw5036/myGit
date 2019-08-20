@@ -32,6 +32,9 @@ public class DoorState extends IdEntity  {
 	private String name;
 	@Column(type = Types.VARCHAR,length = 200,name = "notes",displayName = "户型描述")
 	private String notes;
+	@Column(type = Types.VARCHAR,length = 13,name = "branch_id",displayName = "企业Id")
+	private String branchId;
+
 
     public DoorState() {  
      } 
@@ -104,5 +107,13 @@ public class DoorState extends IdEntity  {
 
 	public String getNotes(){
 		return notes;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
 	}
 }

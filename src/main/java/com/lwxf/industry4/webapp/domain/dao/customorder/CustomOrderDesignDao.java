@@ -41,12 +41,7 @@ public interface CustomOrderDesignDao extends BaseDao<CustomOrderDesign, String>
 
     Map findByOrderIdAndStatus(MapContext map);
 
-    PaginatedList<Map> findUnDesign(PaginatedFilter paginatedFilter);
-
-
-	PaginatedList<Map> findDesigned(PaginatedFilter paginatedFilter);
-
-	Map findByOrderIdAndDesignId(MapContext params);
-
 	PaginatedList<CustomOrderDesignDto> findListByFilter(PaginatedFilter paginatedFilter);
+
+	CustomOrderDesignDto findOneByProductId(String orderProductId);
 }

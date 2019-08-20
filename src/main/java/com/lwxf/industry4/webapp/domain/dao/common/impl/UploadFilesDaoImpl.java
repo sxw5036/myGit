@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.domain.dto.uploadFiles.UploadFileDto;
 import com.lwxf.industry4.webapp.domain.entity.common.UploadFiles;
 import com.lwxf.mybatis.utils.MapContext;
 import org.springframework.stereotype.Repository;
@@ -83,7 +84,7 @@ public class UploadFilesDaoImpl extends BaseDaoImpl<UploadFiles, String> impleme
 	}
 
 	@Override
-	public int updateMicImageStatus(String[] ids) {
+	public int updateMicImageStatus(List<String> ids) {
 		String sqlId = this.getNamedSqlId("updateMicImageStatus");
 		return this.getSqlSession().update(sqlId,ids);
 	}
@@ -137,12 +138,11 @@ public class UploadFilesDaoImpl extends BaseDaoImpl<UploadFiles, String> impleme
 	}
 
 	@Override
-	public List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId, boolean status,int typeId) {
+	public List<UploadFiles> findByResourceIdAndStatusAndTypeId(String ResourcedId, Integer status) {
 		String sqlId = this.getNamedSqlId("findByResourceIdAndStatusAndTypeId");
 		MapContext mapContext = MapContext.newOne();
 		mapContext.put("ResourceId",ResourcedId);
 		mapContext.put("status",status);
-		mapContext.put("typeId",typeId);
 		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
@@ -186,5 +186,17 @@ public class UploadFilesDaoImpl extends BaseDaoImpl<UploadFiles, String> impleme
 		mapContext.put("resourceType",resourceType);
 		String sqlId=this.getNamedSqlId("findShowImageByCidAndStatusAndResType");
 		return this.getSqlSession().selectList(sqlId,mapContext);
+	}
+
+	@Override
+	public int updateByIds(MapContext mapContext) {
+		String sqlId = this.getNamedSqlId("updateByIds");
+		return this.getSqlSession().update(sqlId,mapContext);
+	}
+
+	@Override
+	public List<UploadFileDto> findByCidAndStatusAndType(MapContext params) {
+		String sqlId = this.getNamedSqlId("findByCidAndStatusAndType");
+		return this.getSqlSession().selectList(sqlId,params);
 	}
 }

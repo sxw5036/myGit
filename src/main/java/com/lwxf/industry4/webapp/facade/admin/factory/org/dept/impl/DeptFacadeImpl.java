@@ -133,14 +133,14 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 			return ResultFactory.generateResNotFoundResult();
 		}
 		//部门名称不允许重复
-		if(this.deptService.findDeptByNameAndParentId(dept.getName(),dept.getParentId())!=null){
+		if(this.deptService.findDeptByNameAndParentId(dept.getName(),dept.getParentId(),WebUtils.getCurrBranchId())!=null){
 			HashMap<String, String> result = new HashMap<>();
 			result.put("name",AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
 		}
 
 		//判断key是否重复
-		if(this.deptService.findDeptByKey(dept.getKey())!=null){
+		if(this.deptService.findDeptByKey(dept.getKey(),WebUtils.getCurrBranchId())!=null){
 			HashMap<String, String> result = new HashMap<>();
 			result.put("key",AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
@@ -159,7 +159,8 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 	@Transactional(value = "transactionManager")
 	public RequestResult updateDept(MapContext mapContext, String id) {
 		//判断部门是否存在
-		if(!this.deptService.isExist(id)){
+		Dept dept = this.deptService.findById(id);
+		if(dept==null){
 			return ResultFactory.generateResNotFoundResult();
 		}
 		//如果修改部门名称,判断名称是否重复
@@ -168,8 +169,9 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 			MapContext context = MapContext.newOne();
 			context.put(WebConstant.KEY_ENTITY_NAME,name);
 			context.put(WebConstant.KEY_ENTITY_COMPANY_ID,WebUtils.getCurrCompanyId());
-			Dept dept = this.deptService.findOneByKeyOrNameAndCompanyId(context);
-			if(dept!=null&&!dept.getId().equals(id)){
+			context.put(WebConstant.KEY_ENTITY_PARENTID,dept.getParentId());
+			Dept oldDept = this.deptService.findOneByKeyOrNameAndCompanyId(context);
+			if(oldDept!=null&&!oldDept.getId().equals(id)){
 				HashMap<String, String> result = new HashMap<>();
 				result.put("name",AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 				return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
@@ -181,8 +183,9 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 			MapContext context = MapContext.newOne();
 			context.put("key",key);
 			context.put(WebConstant.KEY_ENTITY_COMPANY_ID,WebUtils.getCurrCompanyId());
-			Dept dept = this.deptService.findOneByKeyOrNameAndCompanyId(context);
-			if(dept!=null&&!dept.getId().equals(id)){
+			context.put(WebConstant.KEY_ENTITY_PARENTID,dept.getParentId());
+			Dept oldDept = this.deptService.findOneByKeyOrNameAndCompanyId(context);
+			if(oldDept!=null&&!oldDept.getId().equals(id)){
 				HashMap<String, String> result = new HashMap<>();
 				result.put("key",AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOT_ALLOWED_REPEAT"));
 				return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR,result);
@@ -216,8 +219,6 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 	@Override
 	public RequestResult findMemberList(Integer pageNum,Integer pageSize,MapContext mapContext,String deptId) {
 		PaginatedFilter paginatedFilter = new PaginatedFilter();
-		mapContext.put(WebConstant.KEY_ENTITY_COMPANY_ID,WebUtils.getCurrCompanyId());
-		mapContext.put("type",Arrays.asList(UserType.FACTORY.getValue()));
 		if(deptId!=null&&!deptId.trim().equals("")){
 			//查询部门下的二级部门
 			List<Dept> deptList = this.deptService.selectDeptByCompanyIdAndParentId(WebUtils.getCurrCompanyId(), deptId);
@@ -254,17 +255,18 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 		if(companyEmployee==null){
 			return ResultFactory.generateResNotFoundResult();
 		}
-
-		String idCard = updateDto.getUserBasis().getTypedValue("identityNumber",String.class);
-		if(idCard!=null){
-			Pattern pattern = Pattern.compile("^[1-9][0-7]\\d{4}((19\\d{2}(0[13-9]|1[012])(0[1-9]|[12]\\d|30))|(19\\d{2}(0[13578]|1[02])31)|(19\\d{2}02(0[1-9]|1\\d|2[0-8]))|(19([13579][26]|[2468][048]|0[48])0229))\\d{3}(\\d|X|x)?");
-			Matcher matcher = pattern.matcher(idCard);
-			if(!matcher.matches()){
-				return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_INVALID_ID_NUMBER_20037,AppBeanInjector.i18nUtil.getMessage("VALIDATE_INVALID_ID_NUMBER_20037"));
-			}
-		}
-		updateDto.getUserBasis().put(WebConstant.KEY_ENTITY_USER_ID,companyEmployee.getUserId());
-		this.userBasisService.updateByMapContext(updateDto.getUserBasis());
+       if(updateDto.getUserBasis()!=null) {
+		   String idCard = updateDto.getUserBasis().getTypedValue("identityNumber", String.class);
+		   if (idCard != null) {
+			   Pattern pattern = Pattern.compile("^[1-9][0-7]\\d{4}((19\\d{2}(0[13-9]|1[012])(0[1-9]|[12]\\d|30))|(19\\d{2}(0[13578]|1[02])31)|(19\\d{2}02(0[1-9]|1\\d|2[0-8]))|(19([13579][26]|[2468][048]|0[48])0229))\\d{3}(\\d|X|x)?");
+			   Matcher matcher = pattern.matcher(idCard);
+			   if (!matcher.matches()) {
+				   return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_INVALID_ID_NUMBER_20037, AppBeanInjector.i18nUtil.getMessage("VALIDATE_INVALID_ID_NUMBER_20037"));
+			   }
+		   }
+		   updateDto.getUserBasis().put(WebConstant.KEY_ENTITY_USER_ID,companyEmployee.getUserId());
+		   this.userBasisService.updateByMapContext(updateDto.getUserBasis());
+	   }
 
 		MapContext employee = new MapContext();
 		String roleId = updateDto.getRoleId();
@@ -296,6 +298,9 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 		//判断是否修改状态
 		if(status!=null){
 			employee.put("status",status);
+		}
+		if(updateDto.getNo()!=null){
+			employee.put("no",updateDto.getNo());
 		}
 		if(employee.size()!=0){
 			//修改公司员工表信息
@@ -351,7 +356,8 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 		List<EmployeeEducationExperienceDto> employeeEducationExperienceList = this.employeeEducationExperienceService.findListByEid(eid);
 		//查询员工考核信息表
 		List<EmployeeAssessmentDto> employeeAssessmentList = this.employeeAssessmentService.findListByEid(eid);
-
+		//用户基础信息表
+		UserBasis userBasis = this.userBasisService.findByUserId(employeeDeptDto.getUserId());
 		CompanyEmployeeInfoDto companyEmployeeInfoDto = new CompanyEmployeeInfoDto();
 		companyEmployeeInfoDto.setEmployeeDeptDto(employeeDeptDto);
 		companyEmployeeInfoDto.setEmployeeAssessmentList(employeeAssessmentList);
@@ -359,6 +365,7 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 		companyEmployeeInfoDto.setEmployeeEducationExperienceList(employeeEducationExperienceList);
 		companyEmployeeInfoDto.setEmployeeExperienceList(employeeExperienceList);
 		companyEmployeeInfoDto.setEmployeeInfo(employeeInfo);
+		companyEmployeeInfoDto.setUserBasis(userBasis);
 		return ResultFactory.generateRequestResult(companyEmployeeInfoDto);
 	}
 
@@ -451,7 +458,7 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 
 	@Override
 	@Transactional(value = "transactionManager")
-	public RequestResult addEmployeeCertificate(String eid, EmployeeCertificate employeeCertificate) {
+	public RequestResult addEmployeeCertificate(String eid, EmployeeCertificateDto employeeCertificate) {
 		//判断员工是否存在
 		CompanyEmployee companyEmployee = this.companyEmployeeService.findById(eid);
 		if(companyEmployee==null){
@@ -540,7 +547,7 @@ public class DeptFacadeImpl extends BaseFacadeImpl implements DeptFacade {
 			UploadInfo uploadInfo=AppBeanInjector.baseFileUploadComponent.doUploadByModule(UploadType.FORMAL, multipartFile, UploadResourceType.EMPLOYEE, eid);
 			uploadFiles.setName(uploadInfo.getFileName());
 			uploadFiles.setPath(uploadInfo.getRelativePath());
-			uploadFiles.setFullPath(uploadInfo.getRealPath());
+			uploadFiles.setFullPath(AppBeanInjector.configuration.getDomainUrl()+uploadInfo.getRelativePath());
 			uploadFiles.setMime(uploadInfo.getFileMimeType().getRealType());
 			uploadFiles.setOriginalMime(uploadInfo.getFileMimeType().getOriginalType());
 			uploadFiles.setStatus(UploadType.FORMAL.getValue());

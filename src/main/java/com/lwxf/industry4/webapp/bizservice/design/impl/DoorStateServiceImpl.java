@@ -45,13 +45,9 @@ public class DoorStateServiceImpl extends BaseServiceImpl<DoorState, String, Doo
 		return this.dao.selectByFilter(paginatedFilter) ;
 	}
 
-	@Override
-	public List<DoorState> findAllDoorState() {
-		return this.dao.findAllDoorState();
-	}
 
 	@Override
-	public DoorState findByName(String name) {
-		return this.dao.findByName(name);
+	public DoorState findByName(MapContext mapContext) {
+		return this.dao.findByName(mapContext);
 	}
 }

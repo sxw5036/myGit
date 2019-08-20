@@ -2,140 +2,214 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lwxf.industry4.webapp.domain.dao.customorder.ProduceOrderDao">
     <resultMap id="ProduceOrderMap" type="com.lwxf.industry4.webapp.domain.entity.customorder.ProduceOrder">
-        <id column="id" property="id" jdbcType="CHAR" />
-        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
-        <result column="custom_order_no" property="customOrderNo" jdbcType="VARCHAR" />
-        <result column="no" property="no" jdbcType="VARCHAR" />
-        <result column="creator" property="creator" jdbcType="CHAR" />
-        <result column="created" property="created" jdbcType="DATE" />
-        <result column="update_user" property="updateUser" jdbcType="CHAR" />
-        <result column="update_time" property="updateTime" jdbcType="DATE" />
-        <result column="completion_time" property="completionTime" jdbcType="DATE" />
-        <result column="count" property="count" jdbcType="INTEGER" />
-        <result column="notes" property="notes" jdbcType="VARCHAR" />
-        <result column="amount" property="amount" jdbcType="DECIMAL" />
-        <result column="coordination_name" property="coordinationName" jdbcType="VARCHAR" />
-        <result column="coordination_account" property="coordinationAccount" jdbcType="VARCHAR" />
-        <result column="coordination_bank" property="coordinationBank" jdbcType="VARCHAR" />
-        <result column="is_pay" property="pay" jdbcType="BIT" />
-        <result column="type" property="type" jdbcType="BIT" />
-        <result column="way" property="way" jdbcType="BIT" />
-        <result column="state" property="state" jdbcType="BIT" />
-        <result column="planned_time" property="plannedTime" jdbcType="DATE" />
-        <result column="actual_time" property="actualTime" jdbcType="DATE" />
-
+        <id column="id" property="id" jdbcType="CHAR"/>
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR"/>
+        <result column="custom_order_no" property="customOrderNo" jdbcType="VARCHAR"/>
+        <result column="no" property="no" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="CHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="CHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="completion_time" property="completionTime" jdbcType="TIMESTAMP"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="notes" property="notes" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="coordination_name" property="coordinationName" jdbcType="VARCHAR"/>
+        <result column="coordination_account" property="coordinationAccount" jdbcType="VARCHAR"/>
+        <result column="coordination_bank" property="coordinationBank" jdbcType="VARCHAR"/>
+        <result column="is_pay" property="pay" jdbcType="BIT"/>
+        <result column="type" property="type" jdbcType="BIT"/>
+        <result column="way" property="way" jdbcType="BIT"/>
+        <result column="state" property="state" jdbcType="BIT"/>
+        <result column="planned_time" property="plannedTime" jdbcType="DATE"/>
+        <result column="actual_time" property="actualTime" jdbcType="DATE"/>
+        <result column="branch_id" property="branchId"/>
+        <result column="order_product_id" property="orderProductId" jdbcType="CHAR"/>
+        <result column="permit" property="permit" jdbcType="INTEGER"/>
+        <result column="resource_type" property="resourceType" jdbcType="INTEGER"/>
+        <result column="plan_created" property="planCreated"  jdbcType="TIMESTAMP"/>
+        <result column="plan_creator" property="planCreator"  jdbcType="CHAR"/>
     </resultMap>
     <resultMap id="ProduceOrderDtoMap" type="com.lwxf.industry4.webapp.domain.dto.customorder.ProduceOrderDto">
-        <id column="id" property="id" jdbcType="CHAR" />
-        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR" />
-        <result column="custom_order_no" property="customOrderNo" jdbcType="VARCHAR" />
-        <result column="no" property="no" jdbcType="VARCHAR" />
-        <result column="creator" property="creator" jdbcType="CHAR" />
-        <result column="created" property="created" jdbcType="DATE" />
-        <result column="update_user" property="updateUser" jdbcType="CHAR" />
-        <result column="update_time" property="updateTime" jdbcType="DATE" />
-        <result column="completion_time" property="completionTime" jdbcType="DATE" />
-        <result column="count" property="count" jdbcType="INTEGER" />
-        <result column="notes" property="notes" jdbcType="VARCHAR" />
-        <result column="amount" property="amount" jdbcType="DECIMAL" />
-        <result column="coordination_name" property="coordinationName" jdbcType="VARCHAR" />
-        <result column="coordination_account" property="coordinationAccount" jdbcType="VARCHAR" />
-        <result column="coordination_bank" property="coordinationBank" jdbcType="VARCHAR" />
-        <result column="is_pay" property="pay" jdbcType="BIT" />
-        <result column="type" property="type" jdbcType="BIT" />
-        <result column="way" property="way" jdbcType="BIT" />
-        <result column="state" property="state" jdbcType="BIT" />
+        <id column="id" property="id" jdbcType="CHAR"/>
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR"/>
+        <result column="custom_order_no" property="customOrderNo" jdbcType="VARCHAR"/>
+        <result column="no" property="no" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="CHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="CHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="completion_time" property="completionTime" jdbcType="TIMESTAMP"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="notes" property="notes" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="coordination_name" property="coordinationName" jdbcType="VARCHAR"/>
+        <result column="coordination_account" property="coordinationAccount" jdbcType="VARCHAR"/>
+        <result column="coordination_bank" property="coordinationBank" jdbcType="VARCHAR"/>
+        <result column="is_pay" property="pay" jdbcType="BIT"/>
+        <result column="type" property="type" jdbcType="BIT"/>
+        <result column="way" property="way" jdbcType="BIT"/>
+        <result column="state" property="state" jdbcType="BIT"/>
         <result column="updateUserName" property="updateUserName"/>
         <result column="creatorName" property="creatorName"/>
-        <result column="planned_time" property="plannedTime" jdbcType="DATE" />
-        <result column="actual_time" property="actualTime" jdbcType="DATE" />
+        <result column="planned_time" property="plannedTime" jdbcType="DATE"/>
+        <result column="actual_time" property="actualTime" jdbcType="DATE"/>
         <result column="estimatedDeliveryDate" property="estimatedDeliveryDate" jdbcType="DATE"/>
         <result column="merchandiserName" property="merchandiserName"/>
         <result column="customerName" property="customerName"/>
         <result column="dealerName" property="dealerName"/>
         <result column="payTime" property="payTime"/>
+        <result column="branch_id" property="branchId"/>
+        <result column="order_product_id" property="orderProductId" jdbcType="CHAR"/>
+        <result column="permit" property="permit" jdbcType="INTEGER"/>
+        <result column="resource_type" property="resourceType" jdbcType="INTEGER"/>
+        <result column="payName" property="payName"/>
+        <result column="typeName" property="typeName"/>
+        <result column="wayName" property="wayName"/>
+        <result column="stateName" property="stateName"/>
+        <result column="permitName" property="permitName"/>
+        <result column="companyId" property="companyId"/>
+        <result column="plan_created" property="planCreated"  jdbcType="TIMESTAMP"/>
+        <result column="plan_creator" property="planCreator"  jdbcType="CHAR"/>
     </resultMap>
+
+    <resultMap id="coordinationPrintTableDto"
+               type="com.lwxf.industry4.webapp.domain.dto.printTable.CoordinationPrintTableDto">
+        <id column="id" property="id" jdbcType="CHAR"/>
+        <result column="custom_order_id" property="customOrderId" jdbcType="CHAR"/>
+        <result column="custom_order_no" property="customOrderNo" jdbcType="VARCHAR"/>
+        <result column="no" property="no" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="CHAR"/>
+        <result column="created" property="created" jdbcType="TIMESTAMP"/>
+        <result column="update_user" property="updateUser" jdbcType="CHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="completion_time" property="completionTime" jdbcType="TIMESTAMP"/>
+        <result column="count" property="count" jdbcType="INTEGER"/>
+        <result column="notes" property="notes" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="coordination_name" property="coordinationName" jdbcType="VARCHAR"/>
+        <result column="coordination_account" property="coordinationAccount" jdbcType="VARCHAR"/>
+        <result column="coordination_bank" property="coordinationBank" jdbcType="VARCHAR"/>
+        <result column="is_pay" property="pay" jdbcType="BIT"/>
+        <result column="type" property="type" jdbcType="BIT"/>
+        <result column="way" property="way" jdbcType="BIT"/>
+        <result column="state" property="state" jdbcType="BIT"/>
+        <result column="planned_time" property="plannedTime" jdbcType="DATE"/>
+        <result column="actual_time" property="actualTime" jdbcType="DATE"/>
+        <result column="branch_id" property="branchId"/>
+        <result column="order_product_id" property="orderProductId" jdbcType="CHAR"/>
+        <result column="permit" property="permit" jdbcType="INTEGER"/>
+        <result column="resource_type" property="resourceType" jdbcType="INTEGER"/>
+        <!--<result column="auditorName" property="auditorName"/>-->
+        <result column="dealerName" property="dealerName"/>
+        <result column="leaderName" property="leaderName"/>
+        <result column="leaderTel" property="leaderTel"/>
+        <result column="customerName" property="customerName"/>
+        <result column="customerTel" property="customerTel"/>
+        <!--<result column="payTime" property="payTime"/>-->
+        <result column="community" property="community"/>
+        <!--<result column="paymentNo" property="paymentNo"/>-->
+        <result column="plan_created" property="planCreated"  jdbcType="TIMESTAMP"/>
+        <result column="plan_creator" property="planCreator"  jdbcType="CHAR"/>
+    </resultMap>
+
     <sql id="columns">
-id, custom_order_id, custom_order_no, no, creator, created, update_user, update_time, completion_time, count, notes, amount, coordination_name, coordination_account, coordination_bank, is_pay, type, way,state, planned_time, actual_time
+id, custom_order_id, custom_order_no, no, creator, created, update_user, update_time, completion_time, count, notes, amount, coordination_name, coordination_account, coordination_bank, is_pay, type, way,state, planned_time, actual_time,branch_id,order_product_id,permit,resource_type,plan_created,plan_creator
 </sql>
     <sql id="columnDtos">
-p.id, p.custom_order_id, p.custom_order_no, p.no, p.creator, p.created, p.update_user, p.update_time, p.completion_time, p.count, p.notes, p.amount, p.coordination_name, p.coordination_account, p.coordination_bank, p.is_pay, p.type, p.way,p.state, u.name creatorName,uu.name updateUserName, p.planned_time, p.actual_time
+p.id, p.custom_order_id, p.custom_order_no, p.no, p.creator, p.created, p.update_user, p.update_time, p.completion_time, p.count, p.notes, p.amount, p.coordination_name, p.coordination_account, p.coordination_bank, p.is_pay, p.type, p.way,p.state, u.name creatorName,uu.name updateUserName, p.planned_time, p.actual_time,p.branch_id,p.order_product_id,p.permit,p.resource_type,p.plan_created,p.plan_creator
 </sql>
 
     <select id="selectById" resultMap="ProduceOrderMap" parameterType="String">
-        SELECT <include refid="columns" />
-        FROM   produce_order
-        WHERE  id = #{id}
+        SELECT
+        <include refid="columns"/>
+        FROM produce_order
+        WHERE id = #{id}
     </select>
 
     <select id="selectByFilter" resultMap="ProduceOrderMap">
-        SELECT <include refid="columns" />
-        FROM   produce_order
-        <where><trim prefixOverrides="AND">
-            <if test="id != null">
-                id = #{id}
-            </if>
-            <if test="customOrderId != null">
-                AND custom_order_id = #{customOrderId}
-            </if>
-            <if test="customOrderNo != null">
-                AND custom_order_no = #{customOrderNo}
-            </if>
-            <if test="no != null">
-                AND no = #{no}
-            </if>
-            <if test="creator != null">
-                AND creator = #{creator}
-            </if>
-            <if test="created != null">
-                AND created = #{created}
-            </if>
-            <if test="updateUser != null">
-                AND update_user = #{updateUser}
-            </if>
-            <if test="updateTime != null">
-                AND update_time = #{updateTime}
-            </if>
-            <if test="completionTime != null">
-                AND completion_time = #{completionTime}
-            </if>
-            <if test="count != null">
-                AND count = #{count}
-            </if>
-            <if test="notes != null">
-                AND notes = #{notes}
-            </if>
-            <if test="amount != null">
-                AND amount = #{amount}
-            </if>
-            <if test="coordinationName != null">
-                AND coordination_name = #{coordinationName}
-            </if>
-            <if test="coordinationAccount != null">
-                AND coordination_account = #{coordinationAccount}
-            </if>
-            <if test="coordinationBank != null">
-                AND coordination_bank = #{coordinationBank}
-            </if>
-            <if test="pay != null">
-                AND is_pay = #{pay}
-            </if>
-            <if test="type != null">
-                AND type = #{type}
-            </if>
-            <if test="way != null">
-                AND way = #{way}
-            </if>
-            <if test="state != null">
-                AND state = #{state}
-            </if>
-            <if test="plannedTime != null">
-                AND planned_time = #{plannedTime}
-            </if>
-            <if test="actualTime != null">
-                AND actual_time = #{actualTime}
-            </if>
-        </trim></where>
+        SELECT
+        <include refid="columns"/>
+        FROM produce_order
+        <where>
+            <trim prefixOverrides="AND">
+                <if test="id != null">
+                    id = #{id}
+                </if>
+                <if test="customOrderId != null">
+                    AND custom_order_id = #{customOrderId}
+                </if>
+                <if test="customOrderNo != null">
+                    AND custom_order_no = #{customOrderNo}
+                </if>
+                <if test="no != null">
+                    AND no = #{no}
+                </if>
+                <if test="creator != null">
+                    AND creator = #{creator}
+                </if>
+                <if test="created != null">
+                    AND created = #{created}
+                </if>
+                <if test="updateUser != null">
+                    AND update_user = #{updateUser}
+                </if>
+                <if test="updateTime != null">
+                    AND update_time = #{updateTime}
+                </if>
+                <if test="completionTime != null">
+                    AND completion_time = #{completionTime}
+                </if>
+                <if test="count != null">
+                    AND count = #{count}
+                </if>
+                <if test="notes != null">
+                    AND notes = #{notes}
+                </if>
+                <if test="amount != null">
+                    AND amount = #{amount}
+                </if>
+                <if test="coordinationName != null">
+                    AND coordination_name = #{coordinationName}
+                </if>
+                <if test="coordinationAccount != null">
+                    AND coordination_account = #{coordinationAccount}
+                </if>
+                <if test="coordinationBank != null">
+                    AND coordination_bank = #{coordinationBank}
+                </if>
+                <if test="pay != null">
+                    AND is_pay = #{pay}
+                </if>
+                <if test="type != null">
+                    AND type = #{type}
+                </if>
+                <if test="way != null">
+                    AND way = #{way}
+                </if>
+                <if test="state != null">
+                    AND state = #{state}
+                </if>
+                <if test="plannedTime != null">
+                    AND planned_time = #{plannedTime}
+                </if>
+                <if test="actualTime != null">
+                    AND actual_time = #{actualTime}
+                </if>
+                <if test="branchId != null">
+                    AND branch_id = #{branchId}
+                </if>
+                <if test="orderProductId != null">
+                    AND order_product_id = #{orderProductId}
+                </if>
+                <if test="permit != null">
+                    AND permit = #{permit}
+                </if>
+                <if test="resourceType != null">
+                    AND resource_type = #{resourceType}
+                </if>
+            </trim>
+        </where>
 
     </select>
 
@@ -159,60 +233,74 @@ p.id, p.custom_order_id, p.custom_order_no, p.no, p.creator, p.created, p.update
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO
-produce_order(id, custom_order_id, custom_order_no, no, creator, created, update_user, update_time, completion_time, count, notes, amount, coordination_name, coordination_account, coordination_bank, is_pay, type, way,state, planned_time, actual_time)
-       VALUES(#{id}, #{customOrderId}, #{customOrderNo}, #{no}, #{creator}, #{created}, #{updateUser}, #{updateTime}, #{completionTime}, #{count}, #{notes}, #{amount}, #{coordinationName}, #{coordinationAccount}, #{coordinationBank}, #{pay}, #{type}, #{way},#{state}, #{plannedTime}, #{actualTime})
+produce_order(id, custom_order_id, custom_order_no, no, creator, created, update_user, update_time, completion_time, count, notes, amount, coordination_name, coordination_account, coordination_bank, is_pay, type, way,state, planned_time, actual_time,branch_id,order_product_id,permit,resource_type,plan_created,plan_creator)
+       VALUES(#{id}, #{customOrderId}, #{customOrderNo}, #{no}, #{creator}, #{created}, #{updateUser}, #{updateTime}, #{completionTime}, #{count}, #{notes}, #{amount}, #{coordinationName}, #{coordinationAccount}, #{coordinationBank}, #{pay}, #{type}, #{way},#{state}, #{plannedTime}, #{actualTime},#{branchId},#{orderProductId},#{permit},#{resourceType},#{planCreated},#{planCreator})
 </insert>
 
     <update id="updateByMapContext">
         UPDATE produce_order
-        <set><trim suffixOverrides=",">
-            <if test="_parameter.containsKey('updateUser')">
-                update_user = #{updateUser},
-            </if>
-            <if test="_parameter.containsKey('updateTime')">
-                update_time = #{updateTime},
-            </if>
-            <if test="_parameter.containsKey('completionTime')">
-                completion_time = #{completionTime},
-            </if>
-            <if test="_parameter.containsKey('count') and count != null">
-                count = #{count},
-            </if>
-            <if test="_parameter.containsKey('notes')">
-                notes = #{notes},
-            </if>
-            <if test="_parameter.containsKey('amount')">
-                amount = #{amount},
-            </if>
-            <if test="_parameter.containsKey('coordinationName')">
-                coordination_name = #{coordinationName},
-            </if>
-            <if test="_parameter.containsKey('coordinationAccount')">
-                coordination_account = #{coordinationAccount},
-            </if>
-            <if test="_parameter.containsKey('coordinationBank')">
-                coordination_bank = #{coordinationBank},
-            </if>
-            <if test="_parameter.containsKey('pay') and pay != null">
-                is_pay = #{pay},
-            </if>
-            <if test="_parameter.containsKey('type') and type != null">
-                type = #{type},
-            </if>
-            <if test="_parameter.containsKey('way') and way != null">
-                way = #{way}
-            </if>
-            <if test="_parameter.containsKey('state') and state != null">
-                state = #{state}
-            </if>
-            <if test="_parameter.containsKey('plannedTime')">
-                planned_time = #{plannedTime},
-            </if>
-            <if test="_parameter.containsKey('actualTime')">
-                actual_time = #{actualTime}
-            </if>
-        </trim></set>
-        WHERE  id = #{id}
+        <set>
+            <trim suffixOverrides=",">
+                <if test="_parameter.containsKey('updateUser')">
+                    update_user = #{updateUser},
+                </if>
+                <if test="_parameter.containsKey('updateTime')">
+                    update_time = #{updateTime},
+                </if>
+                <if test="_parameter.containsKey('completionTime')">
+                    completion_time = #{completionTime},
+                </if>
+                <if test="_parameter.containsKey('count') and count != null">
+                    count = #{count},
+                </if>
+                <if test="_parameter.containsKey('notes')">
+                    notes = #{notes},
+                </if>
+                <if test="_parameter.containsKey('amount')">
+                    amount = #{amount},
+                </if>
+                <if test="_parameter.containsKey('coordinationName')">
+                    coordination_name = #{coordinationName},
+                </if>
+                <if test="_parameter.containsKey('coordinationAccount')">
+                    coordination_account = #{coordinationAccount},
+                </if>
+                <if test="_parameter.containsKey('coordinationBank')">
+                    coordination_bank = #{coordinationBank},
+                </if>
+                <if test="_parameter.containsKey('pay') and pay != null">
+                    is_pay = #{pay},
+                </if>
+                <if test="_parameter.containsKey('type') and type != null">
+                    type = #{type},
+                </if>
+                <if test="_parameter.containsKey('way') and way != null">
+                    way = #{way},
+                </if>
+                <if test="_parameter.containsKey('state') and state != null">
+                    state = #{state},
+                </if>
+                <if test="_parameter.containsKey('plannedTime')">
+                    planned_time = #{plannedTime},
+                </if>
+                <if test="_parameter.containsKey('actualTime')">
+                    actual_time = #{actualTime},
+                </if>
+                <if test="_parameter.containsKey('orderProductId')">
+                    order_product_id = #{orderProductId},
+                </if>
+                <if test="_parameter.containsKey('permit')">
+                    permit = #{permit},
+                </if>
+                <if test="_parameter.containsKey('planCreated')">
+                    plan_created = #{planCreated},
+                </if>
+                <if test="_parameter.containsKey('planCreator')">
+                    plan_creator = #{planCreator}
+                </if>
+            </trim>
+        </set>
+        WHERE id = #{id}
     </update>
 
     <delete id="deleteById" parameterType="String">
@@ -221,31 +309,74 @@ WHERE  id = #{id}
 </delete>
 
     <select id="findOneById" resultMap="ProduceOrderDtoMap">
-      select <include refid="columnDtos"/> from produce_order p left join user u on p.creator = u.id left join user uu on p.update_user = uu.id where p.id = #{id}
+        select distinct
+        <include refid="columnDtos"/>
+        ,b.value payName,bb.value typeName
+        ,bbb.value wayName,bbbb.value stateName
+        ,bbbbb.value permitName,c.name dealerName,c.id companyId
+        ,cc.name customerName,uuuu.name merchandiserName
+        ,o.estimated_delivery_date estimatedDeliveryDate
+        ,pay.audited payTime
+        from produce_order p
+        left join user u on p.creator = u.id
+        left join user uu on p.update_user = uu.id
+        left join basecode b on b.code = p.is_pay
+        left join basecode bb on bb.code = p.type
+        left join basecode bbb on bbb.code = p.way
+        left join basecode bbbb on bbbb.code = p.state
+        left join basecode bbbbb on bbbbb.code = p.permit
+        left join custom_order o on o.id = p.custom_order_id
+        left join company c on c.id = o.company_id
+        left join company_customer cc on cc.id = o.customer_id
+        left join user uuuu on o.merchandiser = uuuu.id
+        left join payment pay on pay.custom_order_id = o.id
+        where p.id = #{id}
+        and (pay.funds = #{funds} or pay.funds is null)
+        and (b.type = 'produceOrderPay' or b.type is null)
+        and (bb.type = 'produceOrderType'or bb.type is null)
+        and (bbb.type = 'produceOrderWay' or bbb.type is null)
+        and (bbbb.type = 'produceOrderState' or bbbb.type is null)
+        and (bbbbb.type = 'produceOrderPermit' or bbbbb.type is null)
     </select>
 
     <select id="findListByFilter" resultMap="ProduceOrderDtoMap">
-        select <include refid="columnDtos"/>,c.name dealerName,o.estimated_delivery_date estimatedDeliveryDate,uuu.name customerName,
-        uuuu.name merchandiserName,pay.audited payTime
+        select<include refid="columnDtos"/>,IFNULL(c.name,cc.name) dealerName,o.estimated_delivery_date estimatedDeliveryDate
+        ,IFNULL(uuu.name,uuuuu.name) customerName
+        ,uuuu.name merchandiserName
+        ,b.value payName,bb.value typeName
+        ,bbb.value wayName,bbbb.value stateName
+        ,bbbbb.value permitName
         from produce_order p
         left join user u on p.creator = u.id
         left join user uu on p.update_user = uu.id
         left join custom_order o on o.id = p.custom_order_id
+        left join aftersale_apply a on a.id = p.custom_order_id
+        left join custom_order oo on oo.id = a.custom_order_id
+        left join company_customer uuuuu on oo.customer_id = uuuuu.id
+        left join company cc on a.company_id = cc.id
         left join company c on o.company_id = c.id
-        left join user uuu on o.customer_id = uuu.id
-        left join user uuuu on o.merchandiser = uuuu.id
-        left join payment pay on pay.custom_order_id = o.id
+        left join company_customer uuu on o.customer_id = uuu.id
+        left join user uuuu on p.plan_creator = uuuu.id
+        left join basecode b on b.code = p.is_pay
+        left join basecode bb on bb.code = p.type
+        left join basecode bbb on bbb.code = p.way
+        left join basecode bbbb on bbbb.code = p.state
+        left join basecode bbbbb on bbbbb.code = p.permit
         <where>
             <trim prefixOverrides="AND">
-                pay.funds = #{funds}
+                 (b.type = 'produceOrderPay' )
+                and (bb.type = 'produceOrderType')
+                and (bbb.type = 'produceOrderWay' )
+                and (bbbb.type = 'produceOrderState' )
+                and (bbbbb.type = 'produceOrderPermit')
                 <if test="no != null">
-                    AND p.no = #{no}
+                    AND p.no like '%${no}%'
                 </if>
                 <if test="orderId != null">
                     AND p.custom_order_id = #{orderId}
                 </if>
                 <if test="orderNo != null">
-                    AND p.custom_order_no = #{orderNo}
+                    AND p.custom_order_no like '%${orderNo}%'
                 </if>
                 <if test="state!=null">
                     AND p.state in
@@ -274,26 +405,83 @@ WHERE  id = #{id}
                 <if test="plannedTime==2">
                     AND p.planned_time is not null
                 </if>
+                <if test="branchId!=null">
+                    AND p.branch_id = #{branchId}
+                </if>
+                <if test="actualTimeNow!=null">
+                    AND to_days(p.actual_time) = to_days(now())
+                </if>
+                <if test="plannedTimeNow!=null">
+                    AND to_days(p.planned_time) = to_days(now())
+                </if>
+                <if test="plannedTimeYes!=null">
+                    AND TO_DAYS( NOW( ) ) - TO_DAYS( p.planned_time) >= 1
+                </if>
+                <if test="completionTime!=null">
+                    AND to_days(p.completion_time) = to_days(now())
+                </if>
             </trim>
         </where>
     </select>
 
     <select id="findListByIds" resultMap="ProduceOrderMap">
-        select <include refid="columns"/> from produce_order where id in
+        select
+        <include refid="columns"/>
+        from produce_order where id in
         <foreach collection="list" open="(" separator="," close=")" item="id">
             #{id}
         </foreach>
     </select>
 
     <select id="findListByOrderId" resultMap="ProduceOrderDtoMap">
-        select <include refid="columnDtos"/> from produce_order p left join user u on p.creator = u.id left join user uu on p.update_user = uu.id where p.custom_order_id = #{id}
+        select
+        <include refid="columnDtos"/>
+        ,b.value payName,bb.value typeName
+        ,bbb.value wayName,bbbb.value stateName
+        ,bbbbb.value permitName
+        from produce_order p
+        left join user u on p.creator = u.id
+        left join user uu on p.update_user = uu.id
+        left join basecode b on b.code = p.is_pay
+        left join basecode bb on bb.code = p.type
+        left join basecode bbb on bbb.code = p.way
+        left join basecode bbbb on bbbb.code = p.state
+        left join basecode bbbbb on bbbbb.code = p.permit
+        where p.custom_order_id = #{id}
+        and (b.type = 'produceOrderPay' or b.type is null)
+        and (bb.type = 'produceOrderType'or bb.type is null)
+        and (bbb.type = 'produceOrderWay' or bbb.type is null)
+        and (bbbb.type = 'produceOrderState' or bbbb.type is null)
+        and (bbbbb.type = 'produceOrderPermit' or bbbbb.type is null)
     </select>
 
     <select id="findIncompleteListByOrderId" resultMap="ProduceOrderDtoMap">
-        select <include refid="columnDtos"/> from produce_order p left join user u on p.creator = u.id left join user uu on p.update_user = uu.id where p.custom_order_id = #{id}
+        select
+        <include refid="columnDtos"/>
+        ,b.value payName,bb.value typeName
+        ,bbb.value wayName,bbbb.value stateName
+        ,bbbbb.value permitName
+        from produce_order p
+        left join user u on p.creator = u.id
+        left join user uu on p.update_user = uu.id
+        left join basecode b on b.code = p.is_pay
+        left join basecode bb on bb.code = p.type
+        left join basecode bbb on bbb.code = p.way
+        left join basecode bbbb on bbbb.code = p.state
+        left join basecode bbbbb on bbbbb.code = p.permit
+        where p.custom_order_id = #{id}
+        and (b.type = 'produceOrderPay' or b.type is null)
+        and (bb.type = 'produceOrderType'or bb.type is null)
+        and (bbb.type = 'produceOrderWay' or bbb.type is null)
+        and (bbbb.type = 'produceOrderState' or bbbb.type is null)
+        and (bbbbb.type = 'produceOrderPermit' or bbbbb.type is null)
         and p.state in
         <foreach collection="state" item="s" open="(" close=")" separator=",">
             #{s}
+        </foreach>
+        and p.way in
+        <foreach collection="way" item="w" open="(" close=")" separator=",">
+            #{w}
         </foreach>
     </select>
 
@@ -303,46 +491,135 @@ WHERE  id = #{id}
             #{way}
         </foreach>
     </update>
-    <select id="findListByOrderIdAndWays" resultMap="ProduceOrderMap">
-        select <include refid="columns"/> from produce_order where custom_order_id = #{orderId} and way in
-        <foreach collection="ways" open="(" close=")" item="way" separator=",">
-            #{way}
-        </foreach>
+    <select id="findListByOrderIdAndTypesAndWays" resultMap="ProduceOrderMap">
+        select
+        <include refid="columns"/>
+        from produce_order where custom_order_id = #{orderId}
+        <if test="types!=null and types.size >0">
+            and type in
+            <foreach collection="types" open="(" close=")" item="type" separator=",">
+                #{type}
+            </foreach>
+        </if>
+        <if test="types!=null and types.size >0">
+            and ways in
+            <foreach collection="ways" open="(" close=")" item="way" separator=",">
+                #{way}
+            </foreach>
+        </if>
     </select>
 
-    <update id="updateStateByIds">
-        update produce_order set state = #{state},actual_time = #{actualTime} where id in
+    <update id="updateMapContextByIds">
+        update produce_order
+        <set>
+            <trim suffixOverrides=",">
+                <if test="_parameter.containsKey('updateUser')">
+                    update_user = #{updateUser},
+                </if>
+                <if test="_parameter.containsKey('updateTime')">
+                    update_time = #{updateTime},
+                </if>
+                <if test="_parameter.containsKey('completionTime')">
+                    completion_time = #{completionTime},
+                </if>
+                <if test="_parameter.containsKey('count') and count != null">
+                    count = #{count},
+                </if>
+                <if test="_parameter.containsKey('notes')">
+                    notes = #{notes},
+                </if>
+                <if test="_parameter.containsKey('amount')">
+                    amount = #{amount},
+                </if>
+                <if test="_parameter.containsKey('coordinationName')">
+                    coordination_name = #{coordinationName},
+                </if>
+                <if test="_parameter.containsKey('coordinationAccount')">
+                    coordination_account = #{coordinationAccount},
+                </if>
+                <if test="_parameter.containsKey('coordinationBank')">
+                    coordination_bank = #{coordinationBank},
+                </if>
+                <if test="_parameter.containsKey('pay') and pay != null">
+                    is_pay = #{pay},
+                </if>
+                <if test="_parameter.containsKey('type') and type != null">
+                    type = #{type},
+                </if>
+                <if test="_parameter.containsKey('way') and way != null">
+                    way = #{way}
+                </if>
+                <if test="_parameter.containsKey('state') and state != null">
+                    state = #{state}
+                </if>
+                <if test="_parameter.containsKey('plannedTime')">
+                    planned_time = #{plannedTime},
+                </if>
+                <if test="_parameter.containsKey('actualTime')">
+                    actual_time = #{actualTime},
+                </if>
+                <if test="_parameter.containsKey('orderProductId')">
+                    order_product_id = #{orderProductId},
+                </if>
+                <if test="_parameter.containsKey('permit')">
+                    permit = #{permit}
+                </if>
+            </trim>
+        </set>
+        where id in
         <foreach collection="ids" open="(" close=")" item="id" separator=",">
             #{id}
         </foreach>
     </update>
     <update id="updatePlanTimeByIds">
-        update produce_order set planned_time = #{planTime} where id in
+        update produce_order set planned_time = #{planTime},state = #{state},actual_time = #{actualTime}
+        ,plan_created = #{planCreated},plan_creator = #{planCreator}
+        where id in
         <foreach collection="ids" open="(" close=")" item="id" separator=",">
             #{id}
         </foreach>
     </update>
 
-    <select id="findProduceOrderList" resultMap="ProduceOrderMap">
-        SELECT po.custom_order_id ,po.type,po.custom_order_no,co.created,po.way from produce_order po
-        left join custom_order co on po.custom_order_id=co.id
-        <where><trim prefixOverrides="AND">
-            <if test="orderNo != null">
-                 co.no like '%${orderNo}%'
-            </if>
-            <if test="startTime != null">
-                AND co.created &gt;= #{startTime}
-            </if>
-            <if test="endTime != null">
-                AND co.created &lt; #{endTime}
-            </if>
-            <if test="type != null">
-                AND po.type = #{type}
-            </if>
-        and po.state=2
-        </trim></where>
-        order by created desc
+    <delete id="deleteByOrderId">
+        delete from produce_order where custom_order_id = #{orderId}
+    </delete>
+
+    <delete id="deleteByProductId">
+        delete from produce_order where order_product_id = #{pId}
+    </delete>
+
+    <select id="findListOrderIdByPId" resultType="string">
+        select distinct custom_order_id from produce_order where id in
+        <foreach collection="list" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </select>
 
+    <select id="findCoordinationPrintInfo" resultMap="coordinationPrintTableDto">
+        select p.*,IFNULL(c.name,cc.name) dealerName,IFNULL(c.founder_name,cc.founder_name) leaderName
+        ,IFNULL(c.leader_tel,cc.leader_tel) leaderTel,IFNULL(customer.name,customer2.name) customerName,IFNULL(customer.phone,customer2.phone) customerTel
+        ,IFNULL(customer.community,customer2.community) community
+        from produce_order p
+        left join custom_order o on p.custom_order_id = o.id
+        left join aftersale_apply a on p.custom_order_id = a.id
+        left join company cc on cc.id = a.company_id
+        left join custom_order co on co.id = a.custom_order_id
+        left join company_customer customer2 on co.customer_id = customer2.id
+        left join company c on o.company_id = c.id
+        left join company_customer customer on o.customer_id = customer.company_id
+        where p.id = #{id}
+    </select>
 
+    <select id="findProduceOrderByProductId" resultMap="ProduceOrderDtoMap">
+        select   <include refid="columns"/>
+        from produce_order p
+        where p.way=0 and p.order_product_id=#{orderProductId}
+    </select>
+
+    <select id="findCoordinationCount" resultType="com.lwxf.mybatis.utils.MapContext">
+        select
+            (select count(*)  from produce_order where  branch_id=#{branchId} and way=1 and DATE_FORMAT(created,'%Y-%m-%d')=DATE_FORMAT(now(),'%Y-%m-%d'))as newNum,
+            (select count(*)  from produce_order where  branch_id=#{branchId} and way=1 and is_pay=0 )as afterNum,
+            (select count(*)  from produce_order where  branch_id=#{branchId} and way=1 and DATE_FORMAT(completion_time,'%Y-%m-%d')=DATE_FORMAT(completion_time,'%Y-%m-%d'))as endNum
+    </select>
 </mapper>

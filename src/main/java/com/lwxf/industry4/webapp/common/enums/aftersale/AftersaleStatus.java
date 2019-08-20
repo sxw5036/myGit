@@ -12,10 +12,10 @@ import com.lwxf.industry4.webapp.common.enums.dispatch.DispatchBillStatus;
  */
 public enum AftersaleStatus {
 
-	WAIT(0,"待处理"),
-	TO_BE_IMPLEMENT(1,"待执行"),
-	REFUSE(2,"拒绝售后申请"),
-	COMPLETED(3,"已完成")
+	WAIT(0,"已受理"),
+	TO_BE_PAY(1,"待支付"),
+	TO_BE_DISPATCH(2,"待发货"),
+	COMPLETED(3,"已发货")
 	;
 	private Integer value;
 	private String name;

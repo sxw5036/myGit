@@ -25,7 +25,5 @@ public interface DoorStateDao extends BaseDao<DoorState, String> {
 
 	PaginatedList<DoorState> selectByFilter(PaginatedFilter paginatedFilter);
 
-    List<DoorState> findAllDoorState();
-
-	DoorState findByName(String name);
+	DoorState findByName(MapContext mapContext);
 }

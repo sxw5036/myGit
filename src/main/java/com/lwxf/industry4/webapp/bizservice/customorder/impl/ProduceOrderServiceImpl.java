@@ -7,8 +7,11 @@ import com.lwxf.industry4.webapp.common.enums.customorder.CustomOrderFilesType;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dao.customorder.CustomOrderFilesDao;
+import com.lwxf.industry4.webapp.domain.dao.customorder.OrderProductDao;
 import com.lwxf.industry4.webapp.domain.dao.customorder.ProduceFlowDao;
 import com.lwxf.industry4.webapp.domain.dao.customorder.ProduceOrderDao;
+import com.lwxf.industry4.webapp.domain.dto.customorder.OrderProductDto;
+import com.lwxf.industry4.webapp.domain.dto.printTable.CoordinationPrintTableDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.ProduceOrder;
 import com.lwxf.industry4.webapp.domain.dto.customorder.ProduceOrderDto;
 import com.lwxf.mybatis.utils.MapContext;
@@ -44,6 +47,8 @@ public class ProduceOrderServiceImpl extends BaseServiceImpl<ProduceOrder, Strin
 
 	@Resource(name = "customOrderFilesDao")
 	private CustomOrderFilesDao customOrderFilesDao;
+	@Resource(name = "orderProductDao")
+	private OrderProductDao orderProductDao;
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
@@ -55,7 +60,9 @@ public class ProduceOrderServiceImpl extends BaseServiceImpl<ProduceOrder, Strin
 	@Override
 	public ProduceOrderDto findOneById(String id) {
 		ProduceOrderDto oneById = this.dao.findOneById(id);
-		oneById.setUploadFiles(this.customOrderFilesDao.selectByOrderIdAndType(oneById.getCustomOrderId(),CustomOrderFilesType.PRODUCE_ORDER.getValue(),oneById.getId()));
+		if(oneById!=null){
+			oneById.setUploadFiles(this.customOrderFilesDao.selectByOrderIdAndType(oneById.getCustomOrderId(),CustomOrderFilesType.PRODUCE_ORDER.getValue(),oneById.getId()));
+		}
 		return oneById;
 	}
 
@@ -63,6 +70,8 @@ public class ProduceOrderServiceImpl extends BaseServiceImpl<ProduceOrder, Strin
 	public PaginatedList<ProduceOrderDto> findListByFilter(PaginatedFilter paginatedFilter) {
 		PaginatedList<ProduceOrderDto> listByFilter = this.dao.findListByFilter(paginatedFilter);
 		for(ProduceOrderDto produceOrderDto:listByFilter.getRows()){
+			OrderProductDto orderProductDto=this.orderProductDao.findOneById(produceOrderDto.getOrderProductId());
+			produceOrderDto.setOrderProductDto(orderProductDto);
 			produceOrderDto.setProduceFlowDtos(this.produceFlowDao.findListByProduceOrderId(produceOrderDto.getId()));
 			produceOrderDto.setUploadFiles(this.customOrderFilesDao.selectByOrderIdAndType(produceOrderDto.getCustomOrderId(),CustomOrderFilesType.PRODUCE_ORDER.getValue(),produceOrderDto.getId()));
 		}
@@ -84,10 +93,15 @@ public class ProduceOrderServiceImpl extends BaseServiceImpl<ProduceOrder, Strin
 		}
 		return listByOrderId;
 	}
+	@Override
+	public List<ProduceOrderDto> findProduceOrderByProductId(String id) {
+		List<ProduceOrderDto> listByOrderId = this.dao.findProduceOrderByProductId(id);
+		return listByOrderId;
+	}
 
 	@Override
-	public List<ProduceOrder> findIncompleteListByOrderId(String customOrderId) {
-		return this.dao.findIncompleteListByOrderId(customOrderId);
+	public List<ProduceOrder> findIncompleteListByOrderId(String customOrderId,List<Integer> ways) {
+		return this.dao.findIncompleteListByOrderId(customOrderId,ways);
 	}
 
 	@Override
@@ -96,13 +110,13 @@ public class ProduceOrderServiceImpl extends BaseServiceImpl<ProduceOrder, Strin
 	}
 
 	@Override
-	public List<ProduceOrder> findListByOrderIdAndWays(String id, List<Integer> ways) {
-		return this.dao.findListByOrderIdAndWays(id,ways);
+	public List<ProduceOrder> findListByOrderIdAndTypesAndWays(String id, List<Integer> types, List<Integer> ways) {
+		return this.dao.findListByOrderIdAndTypesAndWays(id,types,ways);
 	}
 
 	@Override
-	public int updateStateByIds(List<String> ids, int state) {
-		return this.dao.updateStateByIds(ids,state);
+	public int updateMapContextByIds(MapContext mapContext) {
+		return this.dao.updateMapContextByIds(mapContext);
 	}
 
 	@Override
@@ -111,8 +125,28 @@ public class ProduceOrderServiceImpl extends BaseServiceImpl<ProduceOrder, Strin
 	}
 
 	@Override
-	public PaginatedList<ProduceOrder> findProduceOrderList(PaginatedFilter paginatedFilter) {
-		return this.dao.findProduceOrderList(paginatedFilter);
+	public int deleteByOrderId(String orderId) {
+		return this.dao.deleteByOrderId(orderId);
+	}
+
+	@Override
+	public int deleteByProductId(String pId) {
+		return this.dao.deleteByProductId(pId);
+	}
+
+	@Override
+	public List findListOrderIdByPId(List ids) {
+		return this.dao.findListOrderIdByPId(ids);
+	}
+
+	@Override
+	public CoordinationPrintTableDto findCoordinationPrintInfo(String id) {
+		return this.dao.findCoordinationPrintInfo(id);
+	}
+
+	@Override
+	public MapContext findCoordinationCount(String branchId) {
+		return this.dao.findCoordinationCount(branchId);
 	}
 
 	@Override

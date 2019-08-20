@@ -28,11 +28,13 @@ import com.lwxf.industry4.webapp.common.enums.company.FactoryEmployeeRole;
 import com.lwxf.industry4.webapp.common.enums.company.ProduceOrderPay;
 import com.lwxf.industry4.webapp.common.enums.customorder.CustomOrderCoordination;
 import com.lwxf.industry4.webapp.common.enums.customorder.CustomOrderIsDesign;
+import com.lwxf.industry4.webapp.common.enums.customorder.ProduceOrderPermit;
 import com.lwxf.industry4.webapp.common.enums.customorder.ProduceOrderState;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentFunds;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentStatus;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentType;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentWay;
+import com.lwxf.industry4.webapp.common.enums.order.OrderDesignStatus;
 import com.lwxf.industry4.webapp.common.enums.order.OrderStatus;
 import com.lwxf.industry4.webapp.common.enums.order.ProduceOrderWay;
 import com.lwxf.industry4.webapp.common.exceptions.ErrorCodes;
@@ -47,7 +49,7 @@ import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto;
 import com.lwxf.industry4.webapp.domain.entity.customorder.*;
 import com.lwxf.industry4.webapp.domain.entity.financing.Payment;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
-import com.lwxf.industry4.webapp.facade.app.dealer.order.OrderFacade;
+import com.lwxf.industry4.webapp.facade.admin.factory.dealer.OrderFacade;
 import com.lwxf.mybatis.utils.MapContext;
 
 /**
@@ -65,152 +67,6 @@ public class CustomOrderController {
     @Resource(name = "orderFacade")
     private OrderFacade orderFacade;
 
-    /**
-     * 查询可生成成品库单的订单
-     *
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    @GetMapping("/finishedorders")
-    private RequestResult findFinishedOrderList(@RequestParam(required = false) Integer pageNum,
-                                                @RequestParam(required = false) Integer pageSize) {
-        if (null == pageSize) {
-            pageSize = AppBeanInjector.configuration.getPageSizeLimit();
-        }
-        if (null == pageNum) {
-            pageNum = 1;
-        }
-        return this.orderFacade.findFinishedOrderList(Arrays.asList(OrderStatus.TO_WAREHOUSE.getValue()), pageNum, pageSize, true);
-    }
-
-    /**
-     * 查询可生成成品库单的订单
-     *
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    @GetMapping("/finishedorders/all")
-    private RequestResult findAllFinishedOrderList(@RequestParam(required = false) Integer pageNum,
-                                                   @RequestParam(required = false) Integer pageSize) {
-        if (null == pageSize) {
-            pageSize = AppBeanInjector.configuration.getPageSizeLimit();
-        }
-        if (null == pageNum) {
-            pageNum = 1;
-        }
-        return this.orderFacade.findFinishedOrderList(Arrays.asList(OrderStatus.TO_OUT_STOCK.getValue(), OrderStatus.TO_DISPATCH.getValue(), OrderStatus.DISPATCHING.getValue()), pageNum, pageSize, false);
-    }
-
-//    /**
-//     * 修改订单状态
-//     *
-//     * @param id
-//     * @param status
-//     * @param mapContext
-//     * @return
-//     */
-//    @PutMapping("/{id}/{status}")
-//    private RequestResult updateOrderStatus(@PathVariable String id,
-//                                            @PathVariable Integer status,
-//                                            @RequestBody(required = false) MapContext mapContext) {
-//        return this.orderFacade.updateOrderStatus(id, status, mapContext);
-//    }
-
-    /**
-     * 设计管理模块修改订单状态
-     * @param id
-     * @return
-     */
-    @PutMapping("/{id}/designerssubmit")
-    private RequestResult designerUpdaterOrderStatus(@PathVariable String id,
-                                                     @RequestBody MapContext mapContext){
-        Integer status = mapContext.getTypedValue(WebConstant.KEY_ENTITY_STATUS,Integer.class);
-        //判断是否修改订单状态为 5(设计中) 6(设计待确认) 7(出厂价待确认)
-        if(!status.equals(OrderStatus.DESIGNING.getValue())&&!status.equals(OrderStatus.TO_SUBMIT.getValue())&&!status.equals(OrderStatus.FACTORY_CONFIRMED_FPROCE.getValue())){
-            return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-        }
-        return this.orderFacade.updateOrderStatus(id,status,mapContext);
-    }
-    /**
-     * 设计管理模块下修改订单审价状态
-     * @param id
-     * @return
-     */
-    @PutMapping("/{id}/designevaluation")
-    private RequestResult designEvaluationUpdaterOrderStatus(@PathVariable String id,
-                                                             @RequestBody MapContext mapContext){
-        Integer status = mapContext.getTypedValue(WebConstant.KEY_ENTITY_STATUS,Integer.class);
-        //判断是否修改订单状态为 |2(设计费待确认)(取消)| 3(设计费待审核)
-        if(!status.equals(OrderStatus.TO_AUDIT_DESIGN.getValue())){
-            return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-        }
-        return this.orderFacade.updateOrderStatus(id,status,null);
-    }
-    /**
-     * 订单管理模块修改订单审价状态
-     * @param id
-     * @return
-     */
-    @PutMapping("/{id}/orderevaluation")
-    private RequestResult orderPriceEvaluationUpdaterOrderStatus(@PathVariable String id,
-                                                     @RequestBody MapContext mapContext){
-        Integer status = mapContext.getTypedValue(WebConstant.KEY_ENTITY_STATUS,Integer.class);
-        //判断是否修改订单状态为 |8(经销商待确认出厂价)(停用)| 9(货款支付审核)
-        if(!status.equals(OrderStatus.TO_AUDIT.getValue())){
-            return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-        }
-        return this.orderFacade.updateOrderStatus(id,status,null);
-    }
-    /**
-     * 生产计划管理模块修改订单状态
-     * @param id
-     * @return
-     */
-    @PutMapping("/{id}/manufactureplan")
-    private RequestResult manufacturePlanUpdaterOrderStatus(@PathVariable String id,
-                                                     @RequestBody MapContext mapContext){
-        Integer status = mapContext.getTypedValue(WebConstant.KEY_ENTITY_STATUS,Integer.class);
-        //判断是否修改订单状态为 11(生产中)
-        if(!status.equals(OrderStatus.IN_PRODUCTION.getValue())){
-            return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-        }
-        return this.orderFacade.updateOrderStatus(id,status,null);
-    }
-    /**
-     * 生产过程管理模块修改订单状态
-     * @param id
-     * @return
-     */
-    @PutMapping("/{id}/manufactureprocess")
-    private RequestResult manufactureProcessUpdaterOrderStatus(@PathVariable String id,
-                                                     @RequestBody MapContext mapContext){
-        Integer status = mapContext.getTypedValue(WebConstant.KEY_ENTITY_STATUS,Integer.class);
-        //判断是否修改订单状态为 12(待入库)
-        if(!status.equals(OrderStatus.TO_WAREHOUSE.getValue())){
-            return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-        }
-        return this.orderFacade.updateOrderStatus(id,status,null);
-    }
-
-    /**
-     * 财务管理模块修改订单状态
-     * @param id
-     * @return
-     */
-    @PutMapping("/{id}/finance")
-    private RequestResult financeUpdaterOrderStatus(@PathVariable String id,
-                                                    @RequestBody MapContext mapContext){
-        Integer status = mapContext.getTypedValue(WebConstant.KEY_ENTITY_STATUS,Integer.class);
-        //判断是否修改订单状态为 4(待设计) 10(待生产)
-        if(!status.equals(OrderStatus.TO_DESIGN.getValue())&&!status.equals(OrderStatus.TO_PRODUCTION.getValue())){
-            return ResultFactory.generateErrorResult(ErrorCodes.BIZ_ORDER_STATUS_ERROR_10077,AppBeanInjector.i18nUtil.getMessage("BIZ_ORDER_STATUS_ERROR_10077"));
-        }
-        return this.orderFacade.updateOrderStatus(id,status,null);
-    }
-
-
 
     /**
      * 通过条件查询订单列表
@@ -225,23 +81,33 @@ public class CustomOrderController {
      * @return
      */
     @GetMapping
+	@ApiImplicitParams({
+			@ApiImplicitParam(value = "开始日期",name = "startTime",dataType = "date",paramType = "query")
+	})
     @ApiOperation(value = "通过条件查询订单列表",notes = "通过条件查询订单列表",response = CustomOrderDto.class)
     private String findOrderList(@RequestParam(required = false)@ApiParam(value = "订单编号") String no,
                                  @RequestParam(required = false)@ApiParam(value = "客户电话") String customerTel,
+                                 @RequestParam(required = false)@ApiParam(value = "客户名称") String customerName,
                                  @RequestParam(required = false)@ApiParam(value = "页码") Integer pageNum,
                                  @RequestParam(required = false)@ApiParam(value = "每页数据量") Integer pageSize,
                                  @RequestParam(required = false)@ApiParam(value = "订单状态集合") List<Integer> status,
                                  @RequestParam(required = false)@ApiParam(value = "是否分配设计师") Boolean allocated,
                                  @RequestParam(required = false)@ApiParam(value = "厂房最终报价是否已确认") Boolean confirmFprice,
                                  @RequestParam(required = false)@ApiParam(value = "经销商电话") String dealerTel,
-                                 @RequestParam(required = false)@ApiParam(value = "公司主键ID") String companyId) {
+                                 @RequestParam(required = false)@ApiParam(value = "收货地址") String address,
+                                 @RequestParam(required = false)@ApiParam(value = "公司主键ID") String companyId,
+                                 @RequestParam(required = false)@ApiParam(value = "经销商公司名称") String companyName,
+								 @RequestParam(required = false)@ApiParam(value = "开始日期") String startTime,
+								 @RequestParam(required = false)@ApiParam(value = "是否需要设计 0 不需要 1 需要") Integer design,
+								 @RequestParam(required = false)@ApiParam(value = "结束日期") String endTime
+								 ) {
         if (null == pageSize) {
             pageSize = AppBeanInjector.configuration.getPageSizeLimit();
         }
         if (null == pageNum) {
             pageNum = 1;
         }
-        MapContext mapContext = this.createMapContext(no, customerTel, status,companyId , allocated, confirmFprice,dealerTel);
+        MapContext mapContext = this.createMapContext(no, customerTel, status,companyId ,address, allocated, confirmFprice,dealerTel,startTime,endTime,design,companyName,customerName);
         JsonMapper jsonMapper = new JsonMapper();
         return jsonMapper.toJson(this.orderFacade.findOrderList(mapContext, pageNum, pageSize));
     }
@@ -257,8 +123,9 @@ public class CustomOrderController {
     })
     @ApiOperation(value = "查询订单详情",notes = "查询订单详情",response =CustomOrderInfoDto.class )
     @GetMapping("/{id}/info")
-    private RequestResult findOrderInfo(@PathVariable String id) {
-        return this.orderFacade.findOrderInfo(id);
+    private String findOrderInfo(@PathVariable String id) {
+        JsonMapper jsonMapper = new JsonMapper();
+        return jsonMapper.toJson(this.orderFacade.findOrderInfo(id));
     }
 
     /**
@@ -288,6 +155,22 @@ public class CustomOrderController {
     }
 
     /**
+     * 查询订单详情
+     *
+     * @param id
+     * @return
+     */
+    @ApiResponses({
+            @ApiResponse(code = 200,message = "查询成功",response =CustomOrderInfoDto.class )
+    })
+    @ApiOperation(value = "查询订单详情",notes = "查询订单详情",response =CustomOrderInfoDto.class )
+    @GetMapping("/{id}/infoNew")
+    private String viewOrderInfo(@PathVariable String id) {
+        JsonMapper jsonMapper = new JsonMapper();
+        return jsonMapper.toJson(this.orderFacade.findOrderInfoNew(id));
+    }
+
+    /**
      * 查询订单下的设计详情
      *
      * @param id
@@ -302,20 +185,20 @@ public class CustomOrderController {
     }
 
     /**
-     * 新建设计记录
+     * 新建设计方案
      *
      * @param id
      * @param customOrderDesign
      * @return
      */
     @PostMapping("/{id}/designs")
+    @ApiOperation(value = "新建设计方案",notes = "新建设计方案" )
     private RequestResult addOrderDesign(@PathVariable String id,
-                                         @RequestBody CustomOrderDesign customOrderDesign) {
+                                         @RequestBody@ApiParam(value = "设计方案信息") CustomOrderDesign customOrderDesign) {
         customOrderDesign.setCustomOrderId(id);
-        customOrderDesign.setNo(AppBeanInjector.uniquneCodeGenerator.getNextNo(UniquneCodeGenerator.UniqueResource.DESIGN_NO));
         customOrderDesign.setCreated(DateUtil.getSystemDate());
-        customOrderDesign.setDesigner(WebUtils.getCurrUserId());
-        customOrderDesign.setStatus(0);
+        customOrderDesign.setStartTime(DateUtil.getSystemDate());
+        customOrderDesign.setStatus(OrderDesignStatus.BEINGDESIGNED.getValue());
         RequestResult result = customOrderDesign.validateFields();
         if (result != null) {
             return result;
@@ -332,6 +215,7 @@ public class CustomOrderController {
      * @return
      */
     @PutMapping("/{id}/designs/{designId}")
+    @ApiOperation(value = "修改设计记录",notes = "修改设计记录")
     private RequestResult updateDesign(@PathVariable String id,
                                        @PathVariable String designId,
                                        @RequestBody MapContext mapContext) {
@@ -340,10 +224,11 @@ public class CustomOrderController {
             return result;
         }
         Integer status = mapContext.getTypedValue("status", Integer.class);
-        if (status != null && status.equals(3)) {
+        if (status != null && status.equals(OrderDesignStatus.TOAUDIT.getValue())) {
             mapContext.put("endTime", DateUtil.getSystemDate());
-        } else if (status != null && status.equals(0)) {
-            mapContext.put("endTime", null);
+        } else if (status != null && status.equals(OrderDesignStatus.AUDITED.getValue())) {
+            mapContext.put("examineTime", DateUtil.getSystemDate());
+            mapContext.put("examineUser",WebUtils.getCurrUserId());
         }
         return this.orderFacade.updateDesign(id, designId, mapContext);
     }
@@ -356,6 +241,7 @@ public class CustomOrderController {
      * @return
      */
     @DeleteMapping("{id}/designs/{designId}")
+    @ApiOperation(value = "删除设计记录",notes = "删除设计记录")
     private RequestResult deleteDesign(@PathVariable String id,
                                        @PathVariable String designId) {
         return this.orderFacade.deleteDesign(id, designId);
@@ -371,6 +257,7 @@ public class CustomOrderController {
      * @return
      */
     @PostMapping("{id}/designs/{designId}/files")
+    @ApiOperation(value = "上传设计图片",notes = "上传设计图片")
     private RequestResult uploadFile(@PathVariable String id,
                                      @PathVariable String designId,
                                      @RequestParam Integer category,
@@ -426,34 +313,17 @@ public class CustomOrderController {
     @PostMapping
     private String addOrder(@RequestBody CustomOrderInfoDto customOrderInfoDto) {
         CustomOrderDto customOrder = customOrderInfoDto.getCustomOrder();
-//        Payment payment = null;
-        if(customOrder.getIsDesign().equals(CustomOrderIsDesign.NEED_DESIGN.getValue())){
-            //如果订单需要设计 则状态为 订单设计费待审核 否则状态为 货款支付审核
-//            payment = new Payment();
-//            payment.setHolder("红田集团");
-//            payment.setNo(AppBeanInjector.uniquneCodeGenerator.getNextNo(UniquneCodeGenerator.UniqueResource.PAYMENT_NO));
-//            payment.setAmount(new BigDecimal(customOrder.getDesignFee()));
-//            payment.setCompanyId(customOrder.getCompanyId());
-//            payment.setStatus(PaymentStatus.PENDING_PAYMENT.getValue());
-//            payment.setCreated(DateUtil.getSystemDate());
-//            payment.setCreator(WebUtils.getCurrUserId());
-//            payment.setWay(PaymentWay.BANK.getValue());
-//            payment.setType(PaymentType.B_TO_F_WITHHOLD.getValue());
-//            payment.setPayee("4j1u3r1efshq");
-            customOrder.setStatus(OrderStatus.TO_ADD_DESIGNFEE.getValue());
-//            payment.setFunds(PaymentFunds.DESSIGN_FEE.getValue());
-        }else{
-            customOrder.setStatus(OrderStatus.FACTORY_CONFIRMED_FPROCE.getValue());
-        }
+        customOrder.setStatus(OrderStatus.TO_PAID.getValue());
         customOrder.setCreated(DateUtil.getSystemDate());
         customOrder.setCreator(WebUtils.getCurrUserId());
-        customOrder.setNo(AppBeanInjector.uniquneCodeGenerator.getNoByTime(DateUtil.stringToDate(customOrder.getOrderTime())));
+        int prodLength = customOrderInfoDto.getOrderProducts().size();
+        String orderNo=WebConstant.FACTORY_NAME_CODE+AppBeanInjector.uniquneCodeGenerator.getNoByTime(DateUtil.stringToDate(customOrder.getOrderTime()))+"-"+prodLength;
+        customOrder.setNo(orderNo);
         customOrder.setImprest(new BigDecimal(0));
         customOrder.setRetainage(new BigDecimal(0));
-        customOrder.setMerchandiser(WebUtils.getCurrUserId());
+//        customOrder.setMerchandiser(WebUtils.getCurrUserId()); 跟单员需用户选择
         customOrder.setEarnest(0);
         customOrder.setFactoryPrice(new BigDecimal(0));
-        customOrder.setFactoryFinalPrice(new BigDecimal(0));
         customOrder.setDesignFee(0);
         customOrder.setMarketPrice(new BigDecimal(0));
         customOrder.setDiscounts(new BigDecimal(0));
@@ -461,11 +331,23 @@ public class CustomOrderController {
         customOrder.setAmount(new BigDecimal(0));
         customOrder.setConfirmFprice(false);
         customOrder.setConfirmCprice(false);
+        customOrder.setEstimatedDeliveryDate(null);
         customOrder.setCoordination(CustomOrderCoordination.UNWANTED_COORDINATION.getValue());
+        customOrder.setBranchId(WebUtils.getCurrBranchId());
         RequestResult result = customOrder.validateFields();
         JsonMapper jsonMapper = new JsonMapper();
         if (result != null) {
             return jsonMapper.toJson(result);
+        }
+        for(OrderProductDto orderProductDto :customOrderInfoDto.getOrderProducts()){
+        	orderProductDto.setCreator(WebUtils.getCurrUserId());
+        	orderProductDto.setCreated(DateUtil.getSystemDate());
+        	//临时赋值 订单ID 后面订单生成后 会覆盖 此值
+        	orderProductDto.setCustomOrderId("aa");
+            RequestResult result1 = orderProductDto.validateFields();
+            if(result1!=null){
+                return jsonMapper.toJson(result1);
+            }
         }
         return jsonMapper.toJson(this.orderFacade.factoryAddOrder(customOrderInfoDto, null,null));
     }
@@ -485,17 +367,6 @@ public class CustomOrderController {
             return result;
         }
         return this.orderFacade.factoryUpdateOrder(id, mapContext);
-    }
-
-    /**
-     * 根据订单 获取扣款详情
-     *
-     * @param orderId
-     * @return
-     */
-    @GetMapping("{orderId}/amount")
-    private RequestResult findAmountInfo(@PathVariable String orderId) {
-        return this.orderFacade.findAmountInfo(orderId);
     }
 
     /**
@@ -550,13 +421,25 @@ public class CustomOrderController {
             @ApiResponse(code = 200,message = "添加成功",response =ProduceOrderDto.class )
     })
     @ApiOperation(value = "新增生产拆单",notes = "新增生产拆单")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name = "id",value = "订单主键ID",dataType = "string",paramType = "path")
-	})
-    @PostMapping("/{id}/produces")
-    private RequestResult addProduceOrder(@PathVariable String id, @RequestBody ProduceOrderDto produceOrderDto){
+    @PostMapping("/{id}/produces/{productId}")
+    private RequestResult addProduceOrder(@PathVariable@ApiParam(value = "订单Id") String id,@PathVariable@ApiParam(value = "产品ID") String productId, @RequestBody ProduceOrderDto produceOrderDto){
+        produceOrderDto.setOrderProductId(productId);
+        produceOrderDto.setPermit(ProduceOrderPermit.NOT_ALLOW.getValue());
+        if (produceOrderDto.getWay()!=null&&produceOrderDto.getWay().equals(ProduceOrderWay.COORDINATION.getValue())) {
+            return this.orderFacade.addCorporateProduceOrder(id, produceOrderDto, produceOrderDto.getFileIds());
+        }else{
+            return this.orderFacade.addProduceOrder(id, produceOrderDto, produceOrderDto.getFileIds());
+        }
+    }
+
+    @ApiResponses({
+            @ApiResponse(code = 200,message = "添加成功",response =ProduceOrderDto.class )
+    })
+    @ApiOperation(value = "查询生产拆单详情",notes = "查询生产拆单详情")
+    @GetMapping("/{id}/produces/{produceId}")
+    private String findProduceOrderById(@PathVariable@ApiParam(value = "订单Id") String id,@PathVariable@ApiParam(value = "产品ID") String produceId){
         JsonMapper jsonMapper = new JsonMapper();
-        return this.orderFacade.addProduceOrder(id,produceOrderDto,produceOrderDto.getFileIds());
+        return jsonMapper.toJson(this.orderFacade.findProduceOrderById(id,produceId));
     }
 
 	/**
@@ -617,7 +500,7 @@ public class CustomOrderController {
             @ApiImplicitParam(name = "id",value = "订单主键ID",dataType = "string",paramType = "path")
     })
     @PostMapping("/{id}/products")
-    private RequestResult addOrderProduct(@PathVariable String id,@RequestBody OrderProduct orderProduct){
+    private RequestResult addOrderProduct(@PathVariable String id,@RequestBody OrderProductDto orderProduct){
         orderProduct.setCustomOrderId(id);
         orderProduct.setCreated(DateUtil.getSystemDate());
         orderProduct.setCreator(WebUtils.getCurrUserId());
@@ -627,6 +510,17 @@ public class CustomOrderController {
         }
         return this.orderFacade.addOrderProduct(id,orderProduct);
     }
+
+
+    @ApiOperation(value = "查询订单产品详情",notes = "查询订单产品详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id",value = "订单主键ID",dataType = "string",paramType = "path")
+    })
+    @GetMapping("/{id}/products/{pId}")
+    private RequestResult findProductInfo(@PathVariable@ApiParam(value = "订单ID") String id,@PathVariable@ApiParam(value = "产品ID") String pId){
+        return this.orderFacade.findProductInfo(id,pId);
+    }
+
 
     /**
      * 修改订单产品信息
@@ -700,19 +594,8 @@ public class CustomOrderController {
     ,@RequestParam(required = false)Integer plannedTime
     ,@RequestParam(required = false)@ApiParam(value = "true 已付款 false 未付款 不传查看全部")Boolean pay){
         MapContext mapContext = this.createProduceMapContext(no,orderNo,way,type,state,pay,plannedTime);
-        return this.orderFacade.findProducesList(mapContext,pageNum,pageSize);
+        return this.orderFacade.findProducesList(mapContext,pageNum,pageSize,new ArrayList<Map<String, String>>());
     }
-
-    /**
-     * 批量开始生产
-     * @param ids
-     * @return
-     */
-    @ApiOperation(value = "批量开始生产",notes = "批量开始生产")
-    @PutMapping("/produces/starts")
-	private RequestResult producesPlansListStart(@RequestBody @ApiParam(value = "生产单编号") List<String> ids){
-    	return this.orderFacade.producesPlansListStart(ids);
-	}
 
     /**
      * 查询生产执行的生产单
@@ -739,7 +622,7 @@ public class CustomOrderController {
     ,@RequestParam(required = false)@ApiParam(value = "生产状态 0 未开始 1 生产中 2 已完成") List<Integer> state
     ,@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize){
         MapContext mapContext = this.createProduceMapContext(no,orderNo,way,type,state,ProduceOrderPay.PAY.getValue(),2);
-        return this.orderFacade.findProducesList(mapContext,pageNum,pageSize);
+        return this.orderFacade.findProducesList(mapContext,pageNum,pageSize,new ArrayList<Map<String, String>>());
     }
     /**
      * 批量安排生产时间
@@ -782,31 +665,6 @@ public class CustomOrderController {
         return this.orderFacade.addProduceFlow(id,produceFlow);
     }
 
-    /**
-     * 生产单 打包
-     * @param id
-     * @param produceFlow
-     * @return
-     */
-    @ApiResponses({
-			@ApiResponse(code = 200,message = "打包完成",response = ProduceFlowDto.class)
-	})
-    @ApiOperation(value = "生产单 打包",notes = "生产单 打包")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "produceFlow",value = "生产流程明细",dataTypeClass = ProduceFlow.class,paramType = "body")
-    })
-    @PostMapping("/produces/processes/{id}/packing")
-    private RequestResult produceFlowPacking(@PathVariable String id,@RequestBody ProduceFlow produceFlow){
-        produceFlow.setProduceOrderId(id);
-        produceFlow.setOperator(WebUtils.getCurrUserId());
-        produceFlow.setOperationTime(DateUtil.getSystemDate());
-        produceFlow.setEndTime(DateUtil.getSystemDate());
-        RequestResult result = produceFlow.validateFields();
-        if(result!=null){
-            return result;
-        }
-        return this.orderFacade.produceFlowPacking(id,produceFlow);
-    }
 
     /**
      * 外协单完成
@@ -864,8 +722,7 @@ public class CustomOrderController {
 	private RequestResult uploadOrderFile(@PathVariable@ApiParam(value = "订单主键ID") String id,
 									 @PathVariable@ApiParam(value = "0(订单需求) 1(订单设计) 2(合同附件) 3(订单产品) 4(生产拆单) 5(生产流程)") Integer type,
 									 @PathVariable@ApiParam(value = "相关资源Id") String resId,
-									 @RequestBody@ApiParam(value = "文件集合") List<MultipartFile> multipartFileList) {
-		Map<String, String> result = new HashMap<>();
+									 @RequestBody@ApiParam(value = "文件集合") List<MultipartFile> multipartFileList) { Map<String, String> result = new HashMap<>();
 		if (multipartFileList == null || multipartFileList.size() == 0) {
 			result.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
 			return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, result);
@@ -873,7 +730,7 @@ public class CustomOrderController {
 		for (MultipartFile multipartFile : multipartFileList) {
 			if (multipartFile == null) {
 				result.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-			} else if (!FileMimeTypeUtil.isLegalImageType(multipartFile)) {
+			} else if (FileMimeTypeUtil.isLegalVideoFileType(multipartFile)) {
 				result.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_ILLEGAL_ARGUMENT"));
 			} else if (multipartFile.getSize() > 1024 * 1024 * AppBeanInjector.configuration.getUploadBackgroundMaxsize()) {
 				return ResultFactory.generateErrorResult(ErrorCodes.BIZ_FILE_SIZE_LIMIT_10031, LwxfStringUtils.format(AppBeanInjector.i18nUtil.getMessage("BIZ_FILE_SIZE_LIMIT_10031"), AppBeanInjector.configuration.getUploadBackgroundMaxsize()));
@@ -894,6 +751,72 @@ public class CustomOrderController {
     @DeleteMapping("/{id}/files/{fileId}")
     private RequestResult deleteCustomOrderFile(@PathVariable@ApiParam(value = "订单主键ID") String id,@PathVariable@ApiParam(value = "资源文件主键ID") String fileId){
         return this.orderFacade.deleteCustomOrderFile(id,fileId);
+    }
+
+    /**
+     * 删除订单
+     * @param orderId
+     * @return
+     */
+    @ApiOperation(value = "删除订单",notes = "删除订单")
+    @DeleteMapping("/{orderId}")
+    private RequestResult deleteOrderById(@PathVariable String orderId){
+        return this.orderFacade.deleteOrderById(orderId);
+    }
+
+    @ApiOperation(value = "生产批准",notes = "生产批准")
+    @PutMapping("/{orderId}/produce/{produceId}/permit")
+    private RequestResult producePermit(@PathVariable@ApiParam(value = "订单ID") String orderId,@PathVariable@ApiParam(value = "生产单ID") String produceId){
+        return this.orderFacade.producePermit(orderId,produceId);
+    }
+    @ApiOperation(value = "生产完成",notes = "生产完成")
+    @PutMapping("/{orderId}/produce/{produceId}/complete")
+    private RequestResult produceComplete(@PathVariable@ApiParam(value = "订单ID") String orderId,@PathVariable@ApiParam(value = "生产单ID") String produceId){
+        return this.orderFacade.produceComplete(orderId,produceId);
+    }
+    @ApiOperation(value = "提交设计费",notes = "提交设计费")
+    @PutMapping("/{orderId}/designfee")
+    private RequestResult submitDesignfee(@PathVariable String orderId,@RequestBody MapContext mapContext){
+        return this.orderFacade.submitDesignfee(orderId,mapContext);
+    }
+    @ApiOperation(value = "新建订单需求",notes = "新建订单需求")
+    @PostMapping("/{orderId}/demands")
+    private RequestResult addCustomOrderDemand(@PathVariable String orderId,@RequestBody CustomOrderDemand customOrderDemand){
+        customOrderDemand.setCreated(DateUtil.getSystemDate());
+        customOrderDemand.setCreator(WebUtils.getCurrUserId());
+        customOrderDemand.setCustomOrderId(orderId);
+        customOrderDemand.setNo(AppBeanInjector.uniquneCodeGenerator.getNextNo(UniquneCodeGenerator.UniqueResource.ORDER_DEMAND_NO));
+        RequestResult result = customOrderDemand.validateFields();
+        if(result!=null){
+            return result;
+        }
+        return this.orderFacade.addCustomOrderDemand(orderId,customOrderDemand);
+    }
+    @ApiOperation(value = "新建订单需求",notes = "新建订单需求")
+    @PutMapping("/{orderId}/demands/{demandId}")
+    private RequestResult updateCustomOrderDemand(@PathVariable String orderId,@PathVariable String demandId,@RequestBody MapContext mapContext){
+        RequestResult result = CustomOrderDemand.validateFields(mapContext);
+        if(result!=null){
+            return result;
+        }
+        return this.orderFacade.updateCustomOrderDemand(orderId,demandId,mapContext);
+    }
+    @ApiOperation(value = "删除订单需求",notes = "删除订单需求")
+    @DeleteMapping("/{orderId}/demands/{demandId}")
+    private RequestResult deleteCustomOrderDemand(@PathVariable String orderId,@PathVariable String demandId){
+        return this.orderFacade.deleteCustomOrderDemand(orderId,demandId);
+    }
+
+    @GetMapping("/designs/overview")
+    @ApiOperation(value = "查询设计概览",notes = "查询设计概览")
+    private RequestResult findDesignOverview(){
+        return this.orderFacade.findDesignOverview();
+    }
+
+    @GetMapping("/overview")
+    @ApiOperation(value = "查询订单概览",notes = "查询订单概览")
+    private RequestResult findCustomOrderOverview(){
+        return this.orderFacade.findCustomOrderOverview();
     }
 
     private MapContext createProduceMapContext(String no, String orderNo, List<Integer> way, List<Integer> type,List<Integer> state,Boolean pay,Integer plannedTime) {
@@ -922,7 +845,7 @@ public class CustomOrderController {
         return mapContext;
     }
 
-    private MapContext createMapContext(String no, String customerTel, List<Integer> status, String companyId, Boolean allocated, Boolean confirmFprice,String dealerTel) {
+    private MapContext createMapContext(String no, String customerTel, List<Integer> status, String companyId,String address, Boolean allocated, Boolean confirmFprice,String dealerTel,String startTime,String endTime,Integer design,String companyName,String customerName) {
         MapContext mapContext = MapContext.newOne();
         if (no != null && !no.trim().equals("")) {
             mapContext.put(WebConstant.STRING_NO, no);
@@ -952,6 +875,24 @@ public class CustomOrderController {
         }
         if(dealerTel!=null){
             mapContext.put("dealerTel",dealerTel);
+        }
+        if(address!=null){
+            mapContext.put("address",address);
+        }
+        if(startTime!=null){
+            mapContext.put("startTime",startTime);
+		}
+		if(endTime!=null){
+            mapContext.put("endTime",endTime);
+        }
+        if(design!=null){
+            mapContext.put("design",design);
+        }
+        if(companyName!=null){
+            mapContext.put("companyName",companyName);
+        }
+        if(customerName!=null){
+            mapContext.put("customerName",customerName);
         }
         return mapContext;
     }

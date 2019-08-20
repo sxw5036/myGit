@@ -76,6 +76,9 @@ public class UniquneCodeGenerator {
 	public String getNextNo(UniqueResource resource){
 		return this.getNextNo(resource,WebConstant.STRING_EMPTY);
 	}
+	public String getNextNoWithOutDate(UniqueResource resource){
+		return this.getNextNoWithOutDate(resource,WebConstant.STRING_EMPTY);
+	}
 
 	/**
 	 * 当需要特殊前缀时，调用该接口，比如订单需要将经销商的公司编号作为前缀
@@ -91,17 +94,36 @@ public class UniquneCodeGenerator {
 		return creator.createNextNo(startPrefixKey);
 	}
 
+	public String getNextNoWithOutDate(UniqueResource resource,String startPrefixKey){
+		INoCreator creator = this.creators.get(resource);
+		if(null == creator){
+			throw new LwxfIllegalArgumentException("未初始化的编号生成器："+resource.toString());
+		}
+		return creator.createNextNoWithOutDate(startPrefixKey);
+	}
+
 	/**
 	 * 订单包裹编号生成
 	 * @param customOrderId
 	 * @return
 	 */
 	public String getPackageNextNo(String customOrderId){
+		return this.getPackageNextNo(customOrderId,null);
+	}
+
+	/**
+	 * 订单包裹编号生成 有前缀
+	 * @param customOrderId
+	 * @param type
+	 * @return
+	 */
+	public String getPackageNextNo(String customOrderId,String type){
+
 		INoCreator creator = this.creators.get(UniqueResource.PACKAGE_NO);
 		if(null == creator){
 			throw new LwxfIllegalArgumentException("未初始化的编号生成器：PACKAGE_NO");
 		}
-		return creator.getPackageNextNo(customOrderId);
+		return creator.getPackageNextNo(customOrderId,type);
 	}
 
 	public String getNoByTime(Date date){
@@ -115,12 +137,14 @@ public class UniquneCodeGenerator {
 
 	interface INoCreator{
 		String createNextNo(String startPrefixKey);
-		String getPackageNextNo(String customOrderNo);
+		String createNextNoWithOutDate(String startPrefixKey);
+		String getPackageNextNo(String customOrderNo,String type);
 		String getNoByTime(Date date);
 	}
 
 	abstract class AbstractNoCreator implements INoCreator{
 		protected static final String dateFormat = "yyyyMMdd-";
+		protected static final String dateFormat1 = "yyyyMM";
 		protected static final String REDIS_KEY_PREFIX_TEMPLATE="{0}_PREFIX";
 		protected volatile  String prefix;
 		protected int noLen=2;
@@ -138,7 +162,12 @@ public class UniquneCodeGenerator {
 		}
 
 		@Override
-		public String getPackageNextNo(String customOrderNo) {
+		public String createNextNoWithOutDate(String startPrefixKey) {
+			return this.getNextNoWithOutDate(this.reset(), startPrefixKey);
+		}
+
+		@Override
+		public String getPackageNextNo(String customOrderNo,String type) {
 			//通过判断redis是否存在 该订单Id 来控制 编号是否初始化
 			String redisCurrDate = redisUtils.getString(customOrderNo);
 			if(LwxfStringUtils.isBlank(redisCurrDate)){
@@ -149,6 +178,9 @@ public class UniquneCodeGenerator {
 			logger.error("1 >>>>>>>>>> 订单编号 ={}，生成的包裹编号：{}",customOrderNo,noStr);
 			int noStrLen = noStr.length();
 			StringBuilder sb = new StringBuilder(customOrderNo+"-");
+			if(type!=null){
+				sb.append(type);
+			}
 			// 长度超过时
 			if(noStrLen < this.noLen){
 				int preFixLen = this.noLen - noStrLen;
@@ -164,14 +196,17 @@ public class UniquneCodeGenerator {
 
 		@Override
 		public String getNoByTime(Date date) {
+			//redis中存储的日期 年月
+			String currDate1 = DateUtil.dateTimeToString(date,dateFormat1);
+			//订单中使用的字符串 年月日
 			String currDate = DateUtil.dateTimeToString(date,dateFormat);
 			//通过判断redis是否存在 该日期 来控制 编号是否初始化
-			String redisCurrDate = redisUtils.getString(currDate);
+			String redisCurrDate = redisUtils.getString(currDate1);
 			if(LwxfStringUtils.isBlank(redisCurrDate)){
-				redisUtils.set(currDate,1);//放入1 代表 该订单 已存在包裹
-				sequenceGenerator.set(currDate,0);
+				redisUtils.set(currDate1,1);//放入1 代表 该日期 已存在
+				sequenceGenerator.set(currDate1,0);
 			}
-			String noStr = String.valueOf(sequenceGenerator.generate(currDate));
+			String noStr = String.valueOf(sequenceGenerator.generate(currDate1));
 			logger.error("1 >>>>>>>>>> redisKey ={}，生成的订单编号：{}",this.redisKey,noStr);
 			int noStrLen = noStr.length();
 			StringBuilder sb = new StringBuilder();
@@ -184,7 +219,8 @@ public class UniquneCodeGenerator {
 					sb.append(CommonConstant.STRING_ZERO);
 				}
 			}
-			String retNo = sb.append(noStr).toString();
+			String nostr2 = String.format("%04d", Integer.parseInt(noStr));
+			String retNo = sb.append(nostr2).toString();
 			logger.error("2 >>>>>>>>>> redisKey ={}，生成的编号：{}",this.redisKey,retNo);
 			return retNo;
 		}
@@ -211,6 +247,32 @@ public class UniquneCodeGenerator {
 			int noStrLen = noStr.length();
 			StringBuilder sb = new StringBuilder(startPrefixKey);
 			sb.append(this.createPrefix());
+			// 长度超过时
+			if(noStrLen < this.noLen){
+				int preFixLen = this.noLen - noStrLen;
+				// 长度未超过
+				for(int i=0;i<preFixLen;i++){
+					sb.append(CommonConstant.STRING_ZERO);
+				}
+			}
+			String retNo = sb.append(noStr).toString();
+			logger.error("2 >>>>>>>>>> redisKey ={}，生成的编号：{}",this.redisKey,retNo);
+			return retNo;
+		}
+
+		protected String getNextNoWithOutDate(int resetNo,String startPrefixKey){
+			String noStr;
+			if(resetNo > 0){
+				//重置的话  返回的 就是1 因此 可以直接拿来用
+				noStr = String.valueOf(resetNo);
+			}else{
+				//通过模块的key获取当前的值 然后+1得到noStr
+				noStr = String.valueOf(sequenceGenerator.generate(this.redisKey));
+			}
+			logger.error("1 >>>>>>>>>> redisKey ={}，生成的编号：{}",this.redisKey,noStr);
+			int noStrLen = noStr.length();
+			StringBuilder sb = new StringBuilder(startPrefixKey);
+		//	sb.append(this.createPrefix());
 			// 长度超过时
 			if(noStrLen < this.noLen){
 				int preFixLen = this.noLen - noStrLen;

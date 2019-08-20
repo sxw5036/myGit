@@ -17,23 +17,31 @@ import java.util.Map;
  */
 public enum OrderStatus {
 
-	NEW_ORDER(0,"新订单"),//待处理(新订单)
-	TO_ADD_DESIGNFEE(1,"设计费待评估"),//设计费待评估
-	TO_BE_CONFIRMED_DESIGNFEE(2,"设计费待确认"),//设计费待确认
-	TO_AUDIT_DESIGN(3,"设计费待审核"),//设计费待审核
-	TO_DESIGN(4,"待设计"),//待设计
-	DESIGNING(5,"设计中"),//设计中
-	TO_SUBMIT(6,"设计待确认"),//设计待确认(设计确认后的状态，将提交给工厂)
-	FACTORY_CONFIRMED_FPROCE(7,"出厂价待确认"),//出厂价待确认
-	DEALER_CONFIRMED_FPRICE(8,"经销商待确认出厂价"),//经销商待确认出厂价
-	TO_AUDIT(9,"货款支付审核"),//货款支付审核
-	TO_PRODUCTION(10,"待生产"),//待生产
-	IN_PRODUCTION(11,"生产中"),//生产中
-	TO_WAREHOUSE(12,"待入库"),//待入库
-	TO_OUT_STOCK(13,"待出库"),//待出库 暂不用
-	TO_DISPATCH(14,"待配送"),//待配送
-	DISPATCHING(15,"配送中"),//配送中
-	RECEIVED(16,"已完成");//已完成
+//	NEW_ORDER(0,"新订单"),//待处理(新订单)
+//	TO_ADD_DESIGNFEE(1,"设计费待评估"),//设计费待评估
+//	TO_BE_CONFIRMED_DESIGNFEE(2,"设计费待确认"),//设计费待确认
+//	TO_AUDIT_DESIGN(3,"设计费待审核"),//设计费待审核
+//	TO_DESIGN(4,"待设计"),//待设计
+//	DESIGNING(5,"设计中"),//设计中
+//	TO_SUBMIT(6,"设计待确认"),//设计待确认(设计确认后的状态，将提交给工厂)
+//	FACTORY_CONFIRMED_FPROCE(7,"出厂价待确认"),//出厂价待确认
+//	DEALER_CONFIRMED_FPRICE(8,"经销商待确认出厂价"),//经销商待确认出厂价
+//	TO_AUDIT(9,"货款支付审核"),//货款支付审核
+//	TO_PRODUCTION(10,"待生产"),//待生产
+//	IN_PRODUCTION(11,"生产中"),//生产中
+//	TO_WAREHOUSE(12,"待入库"),//待入库
+//	TO_OUT_STOCK(13,"待出库"),//待出库 暂不用
+//	TO_DISPATCH(14,"待配送"),//待配送
+//	DISPATCHING(15,"配送中"),//配送中
+//	RECEIVED(16,"已完成"),//已完成
+
+	TO_QUOTED(0,"待报价"),
+	TO_PAID(1,"待支付"),
+	TO_PRODUCED(2,"待生产"),
+	PRODUCTION(3,"生产中"),
+	TO_PACKAGED(4,"待包装"),
+	TO_SHIPPED(5,"待发货"),
+	SHIPPED(6,"已发货");
 
 	private Integer value;
 	private String name;

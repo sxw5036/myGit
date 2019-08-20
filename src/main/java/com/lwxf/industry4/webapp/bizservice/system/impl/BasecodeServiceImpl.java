@@ -44,4 +44,19 @@ public class BasecodeServiceImpl extends BaseServiceImpl<Basecode, String, Basec
 	public List<Basecode> findAll() {
 		return this.dao.findAll();
 	}
+
+	@Override
+	public Basecode findByTypeAndValue(String type, String value) {
+		return this.dao.findByTypeAndValue(type,value);
+	}
+
+	@Override
+	public List<Basecode> findByType(String type) {
+		return this.dao.findByType(type);
+	}
+
+	@Override
+	public Basecode findByTypeAndCode(String typeString, String code) {
+		return this.dao.findByTypeAndCode(typeString,code);
+	}
 }

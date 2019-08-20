@@ -20,6 +20,8 @@ public interface CityAreaFacade extends BaseFacade {
 
     CityArea findCityAreaById(String id);
 
+    RequestResult findParentCityById(String id);
+
     RequestResult selectCityAreaList(Integer pageNum,Integer pageSize,MapContext params);
 
 }

@@ -2,6 +2,7 @@ package com.lwxf.industry4.webapp.domain.dto.financing.dtoForApp;
 
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentFunds;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentType;
+import com.lwxf.industry4.webapp.common.enums.financing.PaymentTypeNew;
 import com.lwxf.industry4.webapp.common.enums.financing.PaymentWay;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -30,12 +31,32 @@ public class CompanyFinanceListDto {
      private Double amount;
     @ApiModelProperty(value="备注",name="notes")
     private String notes;
-    @ApiModelProperty(value="记账人",name="notes")
+    @ApiModelProperty(value="记账人id",name="holder")
+    private String holder;
+    @ApiModelProperty(value="记账人名称",name="holderName")
+    private String holderName;
+    @ApiModelProperty(value="创建人",name="creator")
     private String creator;
     @ApiModelProperty(value="支付方式名称",name="waysName")
     private String waysName;
     @ApiModelProperty(value="支付方式",name="way")
     private Integer way;
+
+    public String getHolderName() {
+        return holderName;
+    }
+
+    public void setHolderName(String holderName) {
+        this.holderName = holderName;
+    }
+
+    public String getHolder() {
+        return holder;
+    }
+
+    public void setHolder(String holder) {
+        this.holder = holder;
+    }
 
     public String getNotes() {
         return notes;
@@ -111,7 +132,7 @@ public class CompanyFinanceListDto {
 
     //bug 系统中没有收入和支出字段，需要确认业务，先这样处理
     public String getTypeName() {
-       return PaymentType.getByValue(this.getType()).getName();
+       return PaymentTypeNew.getByValue(this.getType()).getName();
     }
 
     public Integer getFunds() {

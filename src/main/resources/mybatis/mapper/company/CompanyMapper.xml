@@ -29,8 +29,13 @@
         <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
         <result column="contract_time" property="contractTime" jdbcType="DATE" />
         <result column="contract_expired_date" property="contractExpiredDate" jdbcType="DATE" />
+        <result column="retire_net_time" property="retireNetTime" jdbcType="DATE" />
         <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
         <result column="note" property="note" jdbcType="VARCHAR"/>
+        <result column="accountBalancesRemarks" property="accountBalancesRemarks" jdbcType="VARCHAR"/>
+        <result column="otherFundRemarks" property="otherFundRemarks" jdbcType="VARCHAR"/>
+        <result column="scope_business" property="scopeBusiness" jdbcType="VARCHAR"/>
+        <result column="branch_id" property="branchId"/>
     </resultMap>
     <resultMap id="CompanyDtoMap" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyDto">
         <id column="id" property="id" jdbcType="CHAR" />
@@ -67,19 +72,31 @@
         <result column="contract_time" property="contractTime" jdbcType="DATE" />
         <result column="contract_expired_date" property="contractExpiredDate" jdbcType="DATE" />
         <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="scope_business" property="scopeBusiness" jdbcType="VARCHAR" />
+        <result column="standby_links" property="standbyLinks" jdbcType="VARCHAR" />
         <result column="note" property="note" jdbcType="VARCHAR"/>
         <result column="businessManagerName" property="businessManagerName"/>
         <result column="provinceId" property="provinceId"/>
         <result column="cityId" property="cityId"/>
+        <result column="gradeName" property="gradeName"/>
+        <result column="logisticsCompanyId" property="logisticsCompanyId"/>
+        <result column="logisticsCompanyName" property="logisticsCompanyName"/>
     </resultMap>
     <resultMap id="MonthsOrdersDto" type="com.lwxf.industry4.webapp.domain.dto.company.MonthsOrdersDto">
-    <result column="signed" property="signed" jdbcType="INTEGER" />
-    <result column="unchecked" property="unchecked" jdbcType="INTEGER" />
-    <result column="quited" property="quited" jdbcType="INTEGER" />
+        <result column="signed" property="signed" jdbcType="INTEGER" />
+        <result column="unchecked" property="unchecked" jdbcType="INTEGER" />
+        <result column="quited" property="quited" jdbcType="INTEGER" />
     </resultMap>
     <resultMap id="CompanyAccountDto" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyAccountDto">
         <result column="type" property="type" jdbcType="INTEGER" />
         <result column="balance" property="balance" jdbcType="DECIMAL" />
+    </resultMap>
+    <resultMap id="CompanyAccountInfoDto" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyAccountInfoDto">
+        <result column="free_account" property="freeAccount" jdbcType="DECIMAL" />
+        <result column="design_fee" property="designFee" jdbcType="DECIMAL" />
+        <result column="bond" property="bond" jdbcType="DECIMAL" />
+        <result column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
     </resultMap>
 
     <resultMap id="CompanyInfoDtoForApp" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyInfoDtoForApp">
@@ -106,20 +123,113 @@
     <resultMap id="CompanyDtoForApp" type="com.lwxf.industry4.webapp.domain.dto.company.CompanyDtoForApp">
         <id column="id" property="id" jdbcType="CHAR" />
         <result column="name" property="companyName" jdbcType="VARCHAR" />
+        <result column="leader_name" property="leaderName" jdbcType="VARCHAR" />
         <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="type_name" property="typeName" jdbcType="VARCHAR" />
+        <result column="status_name" property="statusName" jdbcType="VARCHAR" />
         <result column="grade" property="grade" jdbcType="TINYINT" />
         <result column="cust_count" property="custCount" jdbcType="INTEGER" />
         <result column="business_manager_name" property="businessManagerName" jdbcType="VARCHAR" />
         <result column="contract_time" property="contractTime" jdbcType="DATE" />
         <result column="merger_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="dealer_mobile" property="dealerMobile" jdbcType="VARCHAR" />
+    </resultMap>
+    <resultMap id="WxCompanyDtoMap" type="com.lwxf.industry4.webapp.domain.dto.company.WxCompanyDto">
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="city_area_id" property="cityAreaId" jdbcType="CHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="lng" property="lng" jdbcType="FLOAT" />
+        <result column="lat" property="lat" jdbcType="FLOAT" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="leader_name" property="leaderName" jdbcType="CHAR" />
+        <result column="leader_tel" property="leaderTel" jdbcType="CHAR" />
+        <result column="business_manager_name" property="businessManagerName" />
+        <result column="orderId" property="orderId" jdbcType="INTEGER" />
+        <result column="order_prodyct_type" property="orderProdyctType" jdbcType="INTEGER" />
+        <result column="order_amount" property="orderAmount" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="merger_name" property="mergerName" jdbcType="VARCHAR" />
+        <result column="contract_time" property="contractTime" jdbcType="DATE" />
+        <result column="contract_expired_date" property="contractExpiredDate" jdbcType="DATE" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="note" property="note" jdbcType="VARCHAR"/>
+        <result column="other_fund_remarks" property="otherFundRemarks" jdbcType="VARCHAR"/>
+        <result column="account_balances_remarks" property="accountBalances" jdbcType="VARCHAR"/>
+        <result column="dealerId" property="dealerId"/>
+        <result column="gradeName" property="gradeName"/>
+    </resultMap>
+
+    <resultMap id="WxDealerDtoMap" type="com.lwxf.industry4.webapp.domain.dto.company.WxDealerDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="TINYINT" />
+        <result column="city_area_id" property="cityAreaId" jdbcType="CHAR" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="lng" property="lng" jdbcType="FLOAT" />
+        <result column="lat" property="lat" jdbcType="FLOAT" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="followers" property="followers" jdbcType="INTEGER" />
+        <result column="leader" property="leader" jdbcType="CHAR" />
+        <result column="leader_tel" property="leaderTel" jdbcType="CHAR" />
+        <result column="business_manager" property="businessManager" jdbcType="CHAR" />
+        <result column="deposit_bank" property="depositBank" jdbcType="VARCHAR" />
+        <result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+        <result column="scope_business" property="scopeBusiness" jdbcType="VARCHAR" />
+        <result column="bank_account_holder" property="bankAccountHolder" jdbcType="VARCHAR" />
+        <result column="shop_area" property="shopArea" jdbcType="VARCHAR" />
+        <result column="logo" property="logo" jdbcType="VARCHAR" />
+        <result column="grade" property="grade" jdbcType="TINYINT" />
+        <result column="service_tel" property="serviceTel" jdbcType="VARCHAR" />
+        <result column="service_staff" property="serviceStaff" jdbcType="CHAR" />
+        <result column="no" property="no" jdbcType="VARCHAR" />
+        <result column="founder_name" property="founderName" jdbcType="VARCHAR" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="contract_time" property="contractTime" jdbcType="DATE" />
+        <result column="contract_expired_date" property="contractExpiredDate" jdbcType="DATE" />
+        <result column="company_info" property="companyInfo" jdbcType="VARCHAR" />
+        <result column="note" property="note" jdbcType="VARCHAR"/>
+        <result column="standby_links" property="standbyLinks" jdbcType="VARCHAR" />
+        <result column="avatar" property="avatar"/>
+        <result column="dealerName" property="dealerName"/>
+        <result column="cityName" property="cityName"/>
+    </resultMap>
+    <resultMap id="WxDealerUserInfoDtoMap" type="com.lwxf.industry4.webapp.domain.dto.companyEmployee.WxDealerUserInfoDto">
+        <id column="id" property="id" jdbcType="CHAR" />
+        <result column="company_id" property="companyId" jdbcType="CHAR" />
+        <result column="user_id" property="userId" jdbcType="CHAR" />
+        <result column="role_id" property="roleId" jdbcType="CHAR" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="status" property="status" jdbcType="TINYINT" />
+        <result column="no" property="no" jdbcType="CHAR" />
+        <result column="is_supervisor" property="supervisor" jdbcType="TINYINT" />
+        <result column="avatar" property="avatar"/>
+        <result column="sexValue" property="sexValue"/>
+        <result column="sex" property="sex"/>
+        <result column="educationValue" property="educationValue"/>
+        <result column="birthday" property="birthday"  jdbcType="DATE"/>
+        <result column="mobile" property="mobile"/>
+        <result column="education" property="education"/>
+        <result column="identityNumber" property="identityNumber"/>
+        <result column="roleName" property="roleName"/>
+        <result column="entryTime" property="entryTime"  jdbcType="DATE"/>
+        <result column="statusName" property="statusName"/>
     </resultMap>
     <sql id="columns">
-id, name, type, city_area_id, address, lng, lat, created, creator, status, followers, leader, leader_tel, business_manager, deposit_bank, bank_account, bank_account_holder, shop_area, logo, grade, service_tel, service_staff, no,founder_name,company_info,contract_time,contract_expired_date,note
+id, name, type, city_area_id, address, lng, lat, created, creator, status, followers, leader, leader_tel, business_manager, deposit_bank, bank_account, bank_account_holder, shop_area, logo, grade, service_tel, service_staff, no,founder_name,company_info,contract_time,contract_expired_date,note,branch_id,scope_business,standby_links
 </sql>
     <sql id="columnDtos">
-c.id, c.name, c.type, c.city_area_id, c.address, c.lng, c.lat, c.created, c.creator, c.status, c.followers, c.leader, c.leader_tel, c.business_manager, c.deposit_bank, c.bank_account, c.bank_account_holder, c.shop_area, c.logo, c.grade, c.service_tel, c.service_staff, c.no,c.leaderName,c.founder_name,c.company_info,c.contract_time,c.contract_expired_date,c.note
+c.id, c.name, c.type, c.city_area_id, c.address, c.lng, c.lat, c.created, c.creator, c.status, c.followers, c.leader, c.leader_tel, c.business_manager, c.deposit_bank, c.bank_account, c.bank_account_holder, c.shop_area, c.logo, c.grade, c.service_tel, c.service_staff, c.no,c.leaderName,c.founder_name,c.company_info,c.contract_time,c.contract_expired_date,c.note,c.scope_business,c.standby_links
 </sql>
+    <sql id="WxDealerUserInfoDtos">
+        c.*,u.avatar,b.value sexValue,u.birthday,u.mobile,bb.value educationValue,basis.identity_number identityNumber,r.name roleName,info.entry_time entryTime,bbb.value statusName
+    </sql>
 
+    <sql id="WxDealerDtos">
+        c.*,u.avatar,u.name dealerName,CONCAT(a.short_name,'-',aa.short_name) cityName
+    </sql>
     <select id="selectById" resultMap="CompanyMap" parameterType="String">
 SELECT <include refid="columns" />
 FROM   company
@@ -128,9 +238,9 @@ WHERE  id = #{id}
 
     <select id="selectByFilter" resultMap="CompanyDtoMap">
         SELECT ce.* from (select ce.*,m.user_id from(
-        SELECT<include refid="columnDtos"/>,u.name creatorName,uu.name businessManagerName,da.balance balance,daa.balance depositBalance,c.cityId,c.provinceId
+        SELECT<include refid="columnDtos"/>,u.name creatorName,uu.name businessManagerName,da.balance balance,daa.balance depositBalance,daaa.balance designBalance,c.cityId,c.provinceId
         FROM
-        (select c.*,u.name leaderName,cc.parent_id provinceId,ccc.parent_id cityId from company c
+        (select c.*,u.name leaderName,cc.parent_id cityId,ccc.parent_id provinceId from company c
         left join user u on c.leader = u.id
         left join city_area cc on c.city_area_id = cc.id
         left join city_area ccc on cc.parent_id = ccc.id
@@ -143,6 +253,9 @@ WHERE  id = #{id}
                 <foreach collection="type" separator="," open="(" close=")" item="ty">
                     #{ty}
                 </foreach>
+            </if>
+            <if test="branchId != null">
+                AND c.branch_id = #{branchId}
             </if>
             <if test="cityAreaId != null">
                 AND c.city_area_id = #{cityAreaId}
@@ -225,7 +338,8 @@ WHERE  id = #{id}
         left join user uu on c.business_manager = uu.id
         left join dealer_account da on c.id= da.company_id
         left join dealer_account daa on daa.company_id = c.id
-        where (da.type = #{accountType} or da.id is null) and (daa.type = #{depositType} or daa.id is null)
+        left join dealer_account daaa on daaa.company_id = c.id
+        where (da.type = #{accountType} or da.id is null) and (daa.type = #{depositType} or daa.id is null) and (daaa.type = #{designType} or daaa.id is null)
         ) ce
         left join (select u.mobile,ce.company_id,ce.user_id from (select ce.user_id,ce.company_id from company_employee ce left join role r on ce.role_id = r.id
         <if test="key!=null">
@@ -246,8 +360,8 @@ WHERE  id = #{id}
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-company(id, name, type, city_area_id, address, lng, lat, created, creator, status, followers, leader, leader_tel, business_manager, deposit_bank, bank_account, bank_account_holder, shop_area, logo, grade, service_tel, service_staff, no,founder_name,company_info,contract_time,contract_expired_date,note)
- VALUES(#{id}, #{name}, #{type}, #{cityAreaId}, #{address}, #{lng}, #{lat}, #{created}, #{creator}, #{status}, #{followers}, #{leader}, #{leaderTel}, #{businessManager}, #{depositBank}, #{bankAccount}, #{bankAccountHolder}, #{shopArea}, #{logo}, #{grade}, #{serviceTel}, #{serviceStaff}, #{no},#{founderName},#{companyInfo},#{contractTime},#{contractExpiredDate},#{note})
+company(id, name, type, city_area_id, address, lng, lat, created, creator, status, followers, leader, leader_tel, business_manager, deposit_bank, bank_account, bank_account_holder, shop_area, logo, grade, service_tel, service_staff, no,founder_name,company_info,contract_time,contract_expired_date,note,branch_id,retire_net_time,scope_business,standby_links)
+ VALUES(#{id}, #{name}, #{type}, #{cityAreaId}, #{address}, #{lng}, #{lat}, #{created}, #{creator}, #{status}, #{followers}, #{leader}, #{leaderTel}, #{businessManager}, #{depositBank}, #{bankAccount}, #{bankAccountHolder}, #{shopArea}, #{logo}, #{grade}, #{serviceTel}, #{serviceStaff}, #{no},#{founderName},#{companyInfo},#{contractTime},#{contractExpiredDate},#{note},#{branchId},#{retireNetTime},#{scopeBusiness},#{standbyLinks})
 </insert>
 
     <update id="updateByMapContext">
@@ -326,8 +440,18 @@ UPDATE company
         contract_expired_date = #{contractExpiredDate},
     </if>
     <if test="_parameter.containsKey('note')">
-        note = #{note}
+        note = #{note},
     </if>
+    <if test="_parameter.containsKey('retireNetTime')">
+        retire_net_time = #{retireNetTime},
+    </if>
+    <if test="_parameter.containsKey('scopeBusiness')">
+        scope_business = #{scopeBusiness},
+    </if>
+    <if test="_parameter.containsKey('standbyLinks')">
+        standby_links = #{standbyLinks}
+    </if>
+
 </trim></set>
 WHERE  id = #{id}
 </update>
@@ -339,7 +463,11 @@ WHERE  id = #{id}
 
 
     <select id="selectByNo" resultMap="CompanyMap">
-        select <include refid="columns"/> from company  where no = #{no}
+        select <include refid="columns"/> from company  where no = #{no} and branch_id=#{branchId}
+    </select>
+
+    <select id="findByTelAndName" resultMap="CompanyMap">
+        select <include refid="columns"/> from company  where leader_tel = #{tel} and name =#{name} and branch_id=#{branchId}
     </select>
 
   <select id="findShopList" resultMap="CompanyMap">
@@ -353,13 +481,18 @@ WHERE  id = #{id}
 
     <select id="findByCompanyId" resultMap="CompanyDtoMap" parameterType="String">
         SELECT ce.* from (select ce.*,m.user_id from(
-        SELECT<include refid="columnDtos"/>,u.name creatorName,uu.name businessManagerName,cc.parent_id provinceId,ccc.parent_id cityId
+        SELECT<include refid="columnDtos"/>,u.name creatorName,uu.name businessManagerName,cc.parent_id cityId,ccc.parent_id provinceId,
+        cc.merger_name mergerName,b.value gradeName,lc.id logisticsCompanyId,lc.name logisticsCompanyName
         FROM
         (select c.*,u.name leaderName from company c left join user u on c.leader = u.id where  c.id = #{companyId})
         c left join user u on c.creator = u.id
         left join user uu on uu.id = c.business_manager
         left join city_area cc on c.city_area_id = cc.id
         left join city_area ccc on cc.parent_id = ccc.id
+        left join basecode b on b.code = c.grade
+        left join dealer_shipping_logistics ds on ds.company_id = c.id
+        left join logistics_company lc on lc.id = ds.logistics_company_id
+        where b.type = 'companyGrade'
         ) ce
         left join (select u.mobile,ce.company_id,ce.user_id,ce.created from (select ce.user_id,ce.company_id,ce.created from company_employee ce left join role r on ce.role_id = r.id) ce left join user u on ce.user_id = u.id ) m on ce.id = m.company_id  order by m.created limit 1) ce
     </select>
@@ -481,6 +614,9 @@ WHERE  id = #{id}
             <if test="dealerName!=null">
                 and name like '%${dealerName}%'
             </if>
+            <if test="branchId!=null">
+                and branch_id = #{branchId}
+            </if>
             <if test="status!=null">
                 and status =#{status}
             </if>
@@ -503,7 +639,7 @@ WHERE  id = #{id}
     <!--增加工厂账户余额 -->
     <update id="balancePlusForFactory" >
         update  dealer_account  set balance = balance+#{amount}
-        where type = #{type} and company_id = (select id from company where type = 0)
+        where type = #{type} and branch_id = #{branchId}
     </update>
     <!--减少工厂账户余额 -->
     <update id="balanceMinusForFactory" >
@@ -580,4 +716,121 @@ WHERE  id = #{id}
         </trim></where>
     </select>
 
+    <!--分页查询经销商余额信息 -->
+    <select id="findAccountListInfo" resultMap="CompanyAccountInfoDto">
+        select
+        c.id,
+        c.name,
+        (select balance from dealer_account where type = 1 and company_id=a.company_id) as free_account,
+        (select balance from dealer_account where type = 2 and company_id=a.company_id) as design_fee,
+        (select balance from dealer_account where type = 3 and company_id=a.company_id) as bond from dealer_account a
+        left join company c on c.id = a.company_id
+        <where><trim prefixOverrides="and">
+            <if test="companyName!=null">
+                c.name like CONCAT('%',#{companyName},'%')
+            </if>
+            <if test="branchId!=null">
+                AND c.branch_id = #{branchId}
+            </if>
+        </trim></where>
+        group by company_id order by free_account desc
+    </select>
+
+    <select id="findWxDealers" resultMap="CompanyDtoForApp" >
+        select c.id ,c.name ,
+        c.type,c.grade,
+        c.status,c.founder_name leader_name,c.leader_tel dealer_mobile,us.name business_manager_name,
+        substring(ca.merger_name,4) as merger_name
+        from company c
+             left join user us on c.business_manager=us.id
+              left join city_area ca on c.city_area_id = ca.id
+        <where><trim prefixOverrides="and">
+            <if test="cityId!=null">
+                and c.city_area_id =#{cityId}
+            </if>
+            <if test="type!=null">
+                and c.type=#{type}
+            </if>
+            <if test="status!=null">
+                and c.status =#{status}
+            </if>
+            <if test="condation!=null">
+                and c.name like '%${condation}%' or c.leader in (select id from user where name like '%${condation}%')
+            </if>
+            <if test="branchId!=null">
+                and c.branch_id=#{branchId}
+            </if>
+          and c.type <![CDATA[ != ]]> 0
+        </trim></where>
+        order by c.created desc
+    </select>
+    <select id="findAllCompanyCount" resultType="integer" >
+        select count(id) from company where branch_id=#{branchId} and type <![CDATA[ != ]]> 0 and to_days(created) = to_days(now())
+    </select>
+    <select id="findIntentionDealer" resultType="integer" >
+        select count(id) from company where branch_id=#{branchId} and type <![CDATA[ != ]]> 0 and status=#{status} and to_days(created) = to_days(now())
+    </select>
+    <select id="findSignedDealer" resultType="integer" >
+        select count(id) from company where branch_id=#{branchId}  and type <![CDATA[ != ]]> 0 and status=#{status} and to_days(created) = to_days(now())
+    </select>
+
+    <select id="findByBranchIdAndDealerId" resultMap="WxCompanyDtoMap" >
+        select co.id dealerId,co.name,co.type,co.status,co.founder_name leader_name,co.leader_tel,substring(ca.merger_name,4) as merger_name,
+          co.address,co.lat,co.lng,us.name business_manager_name,co.contract_time,co.contract_expired_date,co.other_fund_remarks,co.account_balances_remarks,co.note
+          ,b.value gradeName
+               from company co
+        left join user us on us.id=co.business_manager
+        left join city_area ca on co.city_area_id = ca.id
+        left join basecode b on b.code = co.grade
+        where co.branch_id=#{branchId} and co.id=#{dealerId} and b.type = 'companyGrade'
+    </select>
+
+    <select id="findWxDealersAddCustomer" resultType="map" >
+        select id companyId,name companyName from company
+        <where><trim prefixOverrides="and">
+            <if test="branchId!=null">
+                and branch_id=#{branchId}
+            </if>
+            <if test="type!=null">
+                and type in
+                <foreach collection="typeList" item="type" index="index" open="(" close=")" separator=",">
+                    #{type}
+                </foreach>
+            </if>
+            <if test="cityId!=null">
+                and city_area_id=#{cityId}
+            </if>
+        </trim></where>
+    </select>
+
+    <select id="findWxDealerInfoByCId" resultMap="WxDealerDtoMap">
+        select <include refid="WxDealerDtos"/> from company c
+        left join user u on c.leader = u.id
+        left join city_area aaa on aaa.id = c.city_area_id
+        left join city_area aa on aa.id = aaa.parent_id
+        left join city_area a on a.id = aa.parent_id
+        where c.id = #{currCompanyId}
+    </select>
+
+    <select id="findDealerUserInfoByUid" resultMap="WxDealerUserInfoDtoMap">
+        select <include refid="WxDealerUserInfoDtos"/>,u.sex,basis.education from company_employee c
+        left join user u on c.user_id = u.id
+        left join user_basis basis on u.id = basis.user_id
+        left join role r on c.role_id = r.id
+        left join employee_info info on c.id = info.company_employee_id
+        left join basecode b on u.sex = b.code
+        left join basecode bb on basis.education = bb.code
+        left join basecode bbb on c.status = bbb.code
+        where (b.type = 'userSex' or b.type is null)
+        and (bb.type = 'userEducation' or bb.type is null)
+        and (bbb.type = 'employeeStatus' or bbb.type is null)
+        and u.id = #{currUserId}
+    </select>
+
+    <select id="findDealerCount" resultType="com.lwxf.mybatis.utils.MapContext">
+        select
+            (select count(*) from company where date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} and status=0)as intentionNum,
+            (select count(*) from company where date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} and status=1)as SignNum,
+            (select count(*) from company where id in (select company_id from custom_order where date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') )and branch_id=#{branchId})as placeOrder
+    </select>
 </mapper>

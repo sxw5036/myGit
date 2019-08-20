@@ -8,6 +8,7 @@ import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.activity.ActivityDto;
 import com.lwxf.industry4.webapp.bizservice.base.BaseService;
+import com.lwxf.industry4.webapp.domain.dto.activity.ActivityInfoDto;
 import com.lwxf.industry4.webapp.domain.entity.activity.ActivityInfo;
 
 
@@ -36,4 +37,6 @@ public interface ActivityInfoService extends BaseService <ActivityInfo, String> 
 	int addActivityInfo(ActivityDto activityDto);
 
 	PaginatedList<Map> findByFCompanyId(PaginatedFilter paginatedFilter);
+
+	ActivityInfoDto findOneById(String id);
 }

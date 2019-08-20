@@ -1,12 +1,14 @@
 package com.lwxf.industry4.webapp.controller.admin.factory.contentmng;
 
 import com.lwxf.commons.exception.ErrorCodes;
+import com.lwxf.commons.json.JsonMapper;
 import com.lwxf.commons.utils.LwxfStringUtils;
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.Pagination;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
 import com.lwxf.industry4.webapp.common.result.ResultFactory;
 import com.lwxf.industry4.webapp.common.utils.FileMimeTypeUtil;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.contentmng.ContentsDto;
 import com.lwxf.industry4.webapp.domain.entity.contentmng.Contents;
 import com.lwxf.industry4.webapp.facade.AppBeanInjector;
@@ -60,6 +62,7 @@ public class ContentMngController {
         pagination.setPageSize(pageSize);
         pagination.setPageNum(pageNum);
         MapContext mapContent = this.createMapContent(name, code, publisher,contentTypeId,status);
+        mapContent.put(WebConstant.KEY_ENTITY_BRANCH_ID, WebUtils.getCurrBranchId());
         return this.contentsFacade.findContents(mapContent,pageNum,pageSize);
     }
 
@@ -146,33 +149,28 @@ public class ContentMngController {
     }
     /**
      * 添加封面/内容中的图片
-     * @param multipartFileList
+     * @param file
      * @return
      */
     @ApiOperation(value="文本编辑器图片上传",notes="文本编辑器图片上传")
     @PostMapping(value = "/uploadContentImages")
-    public RequestResult uploadContentsImages(@RequestBody List<MultipartFile> multipartFileList,
+    public String uploadContentsImages(@RequestBody MultipartFile file,
                                      @RequestParam(required = false) String contentId){
+        JsonMapper jsonMapper=JsonMapper.createAllToStringMapper();
         Map<String, Object> errorInfo = new HashMap<>();
-        if (multipartFileList==null){
+        if (file==null){
             errorInfo.put("multipartFile", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
         }
-        for (MultipartFile multipartFile : multipartFileList) {
-            if (multipartFile == null) {
-                errorInfo.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_NOTNULL"));
-            } else if (!FileMimeTypeUtil.isLegalImageType(multipartFile)) {
-                errorInfo.put("file", AppBeanInjector.i18nUtil.getMessage("VALIDATE_ILLEGAL_ARGUMENT"));
-            } else if (multipartFile.getSize() > 1024 * 1024 * AppBeanInjector.configuration.getUploadBackgroundMaxsize()) {
-                return ResultFactory.generateErrorResult(ErrorCodes.BIZ_FILE_SIZE_LIMIT_10031, LwxfStringUtils.format(AppBeanInjector.i18nUtil.getMessage("BIZ_FILE_SIZE_LIMIT_10031"), AppBeanInjector.configuration.getUploadBackgroundMaxsize()));
-            }
-            if (errorInfo.size() > 0) {
-                return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, errorInfo);
-            }
+        if (!FileMimeTypeUtil.isLegalImageType(file)) {
+            errorInfo.put("multipartFile", AppBeanInjector.i18nUtil.getMessage("VALIDATE_ILLEGAL_ARGUMENT"));
+        }
+        if (file.getSize() > 1024L * 1024L * AppBeanInjector.configuration.getUploadBackgroundMaxsize()) {
+            return jsonMapper.toJson(LwxfStringUtils.format(AppBeanInjector.i18nUtil.getMessage("BIZ_FILE_SIZE_LIMIT_10031"), AppBeanInjector.configuration.getUploadBackgroundMaxsize()));
         }
         if (errorInfo.size() > 0) {
-            return ResultFactory.generateErrorResult(ErrorCodes.VALIDATE_ERROR, errorInfo);
+            return jsonMapper.toJson(errorInfo);
         }
-        return this.contentsFacade.uploadContentsImages(multipartFileList,contentId);
+        return jsonMapper.toJson(this.contentsFacade.uploadContentsImages(file,contentId));
     }
 
     /**

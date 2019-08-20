@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
+import com.lwxf.industry4.webapp.common.enums.storage.FinishedStockItemType;
 import com.lwxf.industry4.webapp.domain.entity.warehouse.FinishedStock;
 import com.lwxf.industry4.webapp.domain.entity.warehouse.FinishedStockItem;
 
@@ -23,6 +24,12 @@ public class FinishedStockDto extends FinishedStock {
 	private String estimatedDeliveryDate;
 	@ApiModelProperty(value = "包裹信息")
 	private List<FinishedStockItemDto> finishedStockItemDtos;
+	@ApiModelProperty(value = "产品类型",hidden = true)
+	private Integer productType;
+	@ApiModelProperty(value = "包裹数量",hidden = true)
+	private Integer finishedItemNum;
+
+
 
 	public String getCreatorName() {
 		return creatorName;
@@ -47,4 +54,21 @@ public class FinishedStockDto extends FinishedStock {
 	public void setEstimatedDeliveryDate(String estimatedDeliveryDate) {
 		this.estimatedDeliveryDate = estimatedDeliveryDate;
 	}
+
+	public Integer getProductType() {
+		return productType;
+	}
+
+	public void setProductType(Integer productType) {
+		this.productType = productType;
+	}
+
+	public Integer getFinishedItemNum() {
+		return finishedItemNum;
+	}
+
+	public void setFinishedItemNum(Integer finishedItemNum) {
+		this.finishedItemNum = finishedItemNum;
+	}
+
 }

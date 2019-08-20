@@ -13,6 +13,8 @@
         <result column="order_no" property="orderNo" jdbcType="VARCHAR" />
         <result column="way" property="way" jdbcType="TINYINT" />
         <result column="flag" property="flag" jdbcType="VARCHAR" />
+        <result column="branch_id" property="branchId"/>
+        <result column="resource_type" property="resourceType" jdbcType="INTEGER" />
     </resultMap>
     <resultMap id="FinishedStockDtoMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockDto">
         <id column="id" property="id" jdbcType="CHAR" />
@@ -28,6 +30,8 @@
         <result column="flag" property="flag" jdbcType="VARCHAR" />
         <result column="creatorName" property="creatorName"/>
         <result column="estimatedDeliveryDate" property="estimatedDeliveryDate"/>
+        <result column="branch_id" property="branchId"/>
+        <result column="resource_type" property="resourceType" jdbcType="INTEGER" />
     </resultMap>
     <resultMap id="FinishedStockItemMap" type="com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockItemDto">
         <id column="id" property="id" jdbcType="CHAR" />
@@ -49,13 +53,13 @@
         <result column="creatorName" property="creatorName"/>
     </resultMap>
     <sql id="columns">
-id, storage_id, order_id, packages, status, notes, creator, created, order_no, way, flag
+id, storage_id, order_id, packages, status, notes, creator, created, order_no, way, flag,branch_id,resource_type
 </sql>
     <sql id="columnFinishedDtoItems">
-        f.id, f.finished_stock_id, f.type, f.creator, f.created, f.delivered, f.deliverer, f.barcode, f.is_shipped, f.notes, f.is_in, f.location, f.operator, f.operated,f.delivererName,f.creatorName,u.name operatorName
+        f.id, f.finished_stock_id, f.type, f.creator, f.created, f.delivered, f.deliverer, f.barcode, f.is_shipped, f.notes, f.is_in, f.location, f.operator, f.operated,f.delivererName,f.creatorName,u.name operatorName,f.branch_id
     </sql>
     <sql id="columnDtos">
-        f.id, f.storage_id, f.order_id, f.packages, f.status, f.notes, f.creator, f.created, f.order_no, f.way, f.flag,u.name creatorName,f.estimatedDeliveryDate
+        f.id, f.storage_id, f.order_id, f.packages, f.status, f.notes, f.creator, f.created, f.order_no, f.way, f.flag,u.name creatorName,f.estimatedDeliveryDate,f.resource_type
     </sql>
     <sql id="columnFinishedItems">
 id, finished_stock_id, `type`, creator, created, delivered, deliverer, barcode, is_shipped, notes, is_in, location, operator, operated
@@ -104,6 +108,12 @@ FROM
             <if test="flag != null">
                 AND f.flag = #{flag}
             </if>
+            <if test="branchId != null">
+                AND f.branch_id = #{branchId}
+            </if>
+            <if test="resource_type != null">
+                AND f.resource_type = #{resourceType}
+            </if>
         </trim></where>
         )
         f left join user u on f.creator = u.id
@@ -111,8 +121,8 @@ FROM
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO 
-finished_stock(id, storage_id, order_id, packages, status, notes, creator, created, order_no, way, flag)
-        VALUES(#{id}, #{storageId}, #{orderId}, #{packages}, #{status}, #{notes}, #{creator}, #{created}, #{orderNo}, #{way}, #{flag})
+finished_stock(id, storage_id, order_id, packages, status, notes, creator, created, order_no, way, flag,branch_id,resource_type)
+        VALUES(#{id}, #{storageId}, #{orderId}, #{packages}, #{status}, #{notes}, #{creator}, #{created}, #{orderNo}, #{way}, #{flag},#{branchId},#{resourceType})
 </insert>
 
     <update id="updateByMapContext">
@@ -178,16 +188,6 @@ WHERE  id = #{id}
         where fs.order_id #{orderId}
         limit 1
     </select>
-    <select id="findGoStockByOIdAndType" resultType="java.util.Map">
-        select
-        s.name as storageName,fs.created,u.name as creatorName,fs.packages,fs.notes,po.no
-        from finished_stock fs
-        left join user u on fs.creator = u.id
-        left join storage s on fs.storage_id = s.id
-        left join produce_order po on po.id = #{produceOrderId}
-        where produce_order_id = #{produceOrderId}
-        limit 1
-    </select>
 
     <select id="findDispathcBillList" resultMap="FinishedStockDtoMap">
         SELECT <include refid="columnDtos" />
@@ -227,8 +227,33 @@ WHERE  id = #{id}
             <if test="flag != null">
                 AND f.flag = #{flag}
             </if>
+            <if test="branchId != null">
+                AND f.branch_id = #{branchId}
+            </if>
+            <if test="resource_type != null">
+                AND f.resource_type = #{resourceType}
+            </if>
         </trim></where>
         )
         f left join user u on f.creator = u.id
+    </select>
+
+    <delete id="deleteByOrderId">
+        delete from finished_stock where order_id = #{orderId}
+    </delete>
+
+    <select id="findWxFinishedList" resultMap="FinishedStockDtoMap">
+        SELECT fs.id ,fs.created,fs.notes,u.name creatorName
+        FROM   finished_stock fs
+        left join user u on fs.creator = u.id
+         where fs.order_id=#{orderId}
+
+    </select>
+
+    <select id="findCountByBranchId" resultType="com.lwxf.mybatis.utils.MapContext">
+        SELECT (select count(*) from finished_stock_item where finished_stock_id in (select id from finished_stock where date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} ))as baoZhuang,
+               (select count(*) from (select DISTINCT(order_id )from finished_stock where date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} )c)as orderNum,
+               (select count(*) from finished_stock_item where finished_stock_id in (select id from finished_stock where date_format(created,'%Y-%m-%d') = date_format(now(),'%Y-%m-%d') and branch_id=#{branchId} ) and is_in=1)as ruKu
+
     </select>
 </mapper>

@@ -27,9 +27,9 @@ public interface DeptDao extends BaseDao<Dept, String> {
 
 	PaginatedList<Dept> selectByFilter(PaginatedFilter paginatedFilter);
 
-	Dept findDeptByNameAndParentId(String name,String parentId);
+	Dept findDeptByNameAndParentId(String name,String parentId,String branchId);
 
-	Dept findDeptByKey(String key);
+	Dept findDeptByKey(String key,String branchId);
 
 	Dept selectByEmpId(String empId);
 
@@ -48,4 +48,6 @@ public interface DeptDao extends BaseDao<Dept, String> {
 	List<Dept> findListByEmployeeId(String id);
 
 	List<Dept> findListByCompanyIdAndParent(String companyId);
+
+	List<Dept> findListByUserId(String currUserId);
 }

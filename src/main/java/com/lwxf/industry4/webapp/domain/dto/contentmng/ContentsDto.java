@@ -16,8 +16,18 @@ public class ContentsDto extends Contents {
 	private String typeName;
 	private String fullPath;
 	private String content;
+	private String publisherName;
 	private String coverId;
 	private String[] contentdImgsId;
+	private String creatorName;
+
+	public String getPublisherName() {
+		return publisherName;
+	}
+
+	public void setPublisherName(String publisherName) {
+		this.publisherName = publisherName;
+	}
 
 	public String getCoverId() {
 		return coverId;
@@ -54,4 +64,12 @@ public class ContentsDto extends Contents {
 	public String getContent() {return content;}
 
 	public void setContent(String content) {this.content = content;}
+
+	public String getCreatorName() {
+		return creatorName;
+	}
+
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
+	}
 }

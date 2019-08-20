@@ -25,4 +25,6 @@ public interface DealerShippingLogisticsService extends BaseNoIdService<DealerSh
 	PaginatedList<DealerShippingLogistics> selectByFilter(PaginatedFilter paginatedFilter);
 
 	DealerShippingLogistics findOneByCompanyId(String companyId);
+
+	int updateByCompanyId(MapContext updateDealerShipping);
 }

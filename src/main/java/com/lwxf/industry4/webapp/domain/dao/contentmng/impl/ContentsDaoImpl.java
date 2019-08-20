@@ -11,8 +11,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 
+import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.contentmng.ContentsDto;
 import com.lwxf.industry4.webapp.domain.entity.contentmng.ContentsContent;
 import com.lwxf.mybatis.utils.MapContext;
@@ -72,9 +74,12 @@ public class ContentsDaoImpl extends BaseDaoImpl<Contents, String> implements Co
 		return this.toPaginatedList(pageList);
 	}
 	@Override
-	public List<ContentsDto> findContentsList(String typeId) {
-		String sqlId=this.getNamedSqlId("findContentsList");
-		return this.getSqlSession().selectList(sqlId,typeId);
+	public List<ContentsDto> findTopContentsList(String typeId,String branchId) {
+		String sqlId=this.getNamedSqlId("findTopContentsList");
+		MapContext mapContext = new MapContext();
+		mapContext.put("typeId",typeId);
+		mapContext.put(WebConstant.KEY_ENTITY_BRANCH_ID,branchId);
+		return this.getSqlSession().selectList(sqlId,mapContext);
 	}
 
 	@Override

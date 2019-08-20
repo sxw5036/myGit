@@ -7,6 +7,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.support.ErrorPageFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
@@ -32,7 +33,7 @@ import com.lwxf.industry4.webapp.web.filter.LwxfFirstFilter;
  */
 @Configuration
 public class FilterConfig implements WebMvcConfigurer {
-
+	static final String ORIGINS[] = new String[] { "GET", "POST", "PUT", "DELETE" };
 	@Bean
 	public ErrorPageFilter errorPageFilter() {
 		return new ErrorPageFilter();
@@ -85,20 +86,25 @@ public class FilterConfig implements WebMvcConfigurer {
 
 		return bean;
 	}
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/**").allowedOrigins("*").allowCredentials(true).allowedMethods(ORIGINS)
+				.maxAge(3600);
+	}
 
 	/**
 	 * csrf filter
 	 */
-	@Bean
-	public FilterRegistrationBean CSRFGuard() {
-		FilterRegistrationBean bean = new FilterRegistrationBean();
-		String name = "CSRFGuard";
-		bean.setFilter(new LwxfCsrfGuardFilter());
-		bean.addUrlPatterns("/*");
-		bean.setName(name);
-		bean.setOrder(3);
-		return bean;
-	}
+//	@Bean
+//	public FilterRegistrationBean CSRFGuard() {
+//		FilterRegistrationBean bean = new FilterRegistrationBean();
+//		String name = "CSRFGuard";
+//		bean.setFilter(new LwxfCsrfGuardFilter());
+//		bean.addUrlPatterns("/*");
+//		bean.setName(name);
+//		bean.setOrder(3);
+//		return bean;
+//	}
 	@Bean
 	public FilterRegistrationBean epmCharacterEncodingFilter() {
 		FilterRegistrationBean bean = new FilterRegistrationBean();

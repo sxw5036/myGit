@@ -4,7 +4,6 @@
     <resultMap id="ContentsMap" type="com.lwxf.industry4.webapp.domain.entity.contentmng.Contents">
         <id column="id" property="id" jdbcType="CHAR" />
         <result column="name" property="name" jdbcType="VARCHAR" />
-        <result column="code" property="code" jdbcType="VARCHAR" />
         <result column="cover" property="cover" jdbcType="VARCHAR" />
         <result column="summary" property="summary" jdbcType="VARCHAR" />
         <result column="status" property="status" jdbcType="TINYINT" />
@@ -13,18 +12,19 @@
         <result column="is_top" property="top" jdbcType="TINYINT" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creator" property="creator" jdbcType="CHAR" />
+        <result column="branch_id" property="branchId" jdbcType="CHAR" />
         <result column="contents_type_id" property="contentsTypeId" jdbcType="CHAR" />
         <result column="link" property="link" jdbcType="VARCHAR" />
     </resultMap>
     <resultMap id="ContentsDtoMap" type="com.lwxf.industry4.webapp.domain.dto.contentmng.ContentsDto">
         <id column="id" property="id" jdbcType="CHAR" />
         <result column="name" property="name" jdbcType="VARCHAR" />
-        <result column="code" property="code" jdbcType="VARCHAR" />
         <result column="cover" property="cover" jdbcType="VARCHAR" />
         <result column="summary" property="summary" jdbcType="VARCHAR" />
         <result column="status" property="status" jdbcType="TINYINT" />
         <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP" />
         <result column="publisher" property="publisher" jdbcType="CHAR" />
+        <result column="publisher_name" property="publisherName" jdbcType="VARCHAR" />
         <result column="is_top" property="top" jdbcType="BIT" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creator" property="creator" jdbcType="CHAR" />
@@ -34,16 +34,17 @@
         <result column="content" property="content" jdbcType="VARCHAR" />
         <result column="contents_type_id" property="contentsTypeId" jdbcType="CHAR" />
         <result column="link" property="link" jdbcType="VARCHAR" />
+        <result column="creatorName" property="creatorName"/>
     </resultMap>
     <resultMap id="ContentsContentMap" type="com.lwxf.industry4.webapp.domain.entity.contentmng.ContentsContent">
         <result column="contents_id" property="contentsId" jdbcType="CHAR" />
         <result column="content" property="content" jdbcType="LONGVARCHAR" />
     </resultMap>
     <sql id="columns">
-id, name, code, cover, summary, status, publish_time, publisher, is_top, created, creator,contents_type_id,link
+id, name, cover, summary, status, publish_time, publisher, is_top, created, creator,contents_type_id,link
 </sql>
     <sql id="columnsDto">
-id, name, code, cover, summary, status, publish_time, publisher, is_top, created, creator,contents_type_id,link,typeName
+id, name, cover, summary, status, publish_time, publisher, is_top, created, creator,contents_type_id,link,typeName
 </sql>
 
     <select id="selectById" resultMap="ContentsMap" parameterType="String">
@@ -52,19 +53,19 @@ FROM   contents
 WHERE  id = #{id}
 </select>
 
-    <select id="findContentsList" resultMap="ContentsDtoMap">
+    <select id="findTopContentsList" resultMap="ContentsDtoMap">
         SELECT c.*,ct.name typeName from
-        (SELECT <include refid="columns" /> from contents where contents_type_id in(
-            SELECT id from contents_type
-            where parent_id=#{typeId})) c LEFT JOIN contents_type ct on c.code=ct.code
-
+        (SELECT <include refid="columns" />
+        from contents where contents_type_id =#{typeId} and is_top = true and branch_id = #{branchId}) c
+          LEFT JOIN contents_type ct on c.contents_type_id=ct.id
     </select>
 
     <select id="findByContentId" resultMap="ContentsDtoMap" parameterType="String">
-        SELECT c.*,ct.name typeName,content.content
+        SELECT c.*,ct.name typeName,content.content,u.name creatorName
         FROM  contents c
         LEFT JOIN contents_type ct on ct.id=c.contents_type_id
         LEFT JOIN contents_content content on content.contents_id = c.id
+        left join user u on c.creator = u.id
         WHERE c.id=#{id}
     </select>
 
@@ -74,7 +75,8 @@ WHERE  id = #{id}
     </select>
 
     <select id="selectByFilter" resultMap="ContentsDtoMap">
-SELECT c.*,ct.name as typeName
+SELECT c.*,ct.name as typeName,
+IFNULL((select name from user where id = c.publisher),'') as publisher_name
 FROM   contents c
 left join contents_type ct on ct.id = c.contents_type_id
 <where><trim prefixOverrides="AND">
@@ -82,10 +84,7 @@ left join contents_type ct on ct.id = c.contents_type_id
     c.id = #{id}
 </if>
 <if test="name != null">
-    AND c.name = #{name}
-</if>
-<if test="code != null">
-    AND c.code = #{code}
+    AND c.name like CONCAT('%',#{name},'%')
 </if>
 <if test="cover != null">
     AND c.cover = #{cover}
@@ -102,7 +101,7 @@ left join contents_type ct on ct.id = c.contents_type_id
 <if test="publisher != null">
     AND c.publisher = #{publisher}
 </if>
-<if test="top != null">
+<if test="top ==true">
     AND c.is_top = #{top}
 </if>
 <if test="created != null">
@@ -114,6 +113,9 @@ left join contents_type ct on ct.id = c.contents_type_id
     <if test="contentsTypeId != null">
         AND c.contents_type_id = #{contentsTypeId}
     </if>
+    <if test="branchId != null">
+        AND c.branch_id = #{branchId}
+    </if>
 </trim></where>
 
 </select>
@@ -124,13 +126,16 @@ left join contents_type ct on ct.id = c.contents_type_id
         where code = #{code}
         and status = #{status}
         and is_top = 1
+        <if test="branchId != null">
+            AND branch_id = #{branchId}
+        </if>
         order by publish_time desc
     </select>
 
     <insert id="insert" useGeneratedKeys="false">
 INSERT INTO
-contents(id, name, code, cover, summary, status, publish_time, publisher, is_top, created, creator,contents_type_id,link)
-  VALUES(#{id}, #{name}, #{code}, #{cover}, #{summary}, #{status}, #{publishTime}, #{publisher}, #{top}, #{created}, #{creator},#{contentsTypeId},#{link})
+contents(id, name, cover, summary, status, publish_time, publisher, is_top, created, creator,contents_type_id,link,branch_id)
+  VALUES(#{id}, #{name}, #{cover}, #{summary}, #{status}, #{publishTime}, #{publisher}, #{top}, #{created}, #{creator},#{contentsTypeId},#{link},#{branchId})
 </insert>
 
     <update id="updateByMapContext">
@@ -138,9 +143,6 @@ UPDATE contents
 <set><trim suffixOverrides=",">
 <if test="_parameter.containsKey('name') and name != null">
     name = #{name},
-</if>
-    <if test="_parameter.containsKey('code') and code != null">
-    code = #{code},
 </if>
     <if test="_parameter.containsKey('cover')">
     cover = #{cover},
@@ -183,7 +185,7 @@ WHERE  id = #{id}
 
     <select id="findListByCodeAndStatus" resultType="java.util.Map">
         select
-        cs.id,cs.name,cs.summary,cs.cover,
+        cs.id,cs.name,cs.summary,cs.cover,cs.link,
         cs.publish_time as created,u.name as userName,u.avatar as userAvatar
         from contents cs
         left join user u on u.id = cs.publisher
@@ -193,6 +195,9 @@ WHERE  id = #{id}
             </if>
             <if test="status!=null">
                 and status = #{status}
+            </if>
+            <if test="branchId!=null">
+                and branch_id = #{branchId}
             </if>
         </trim></where>
          order by is_top desc,

@@ -87,16 +87,28 @@ public class FinishedStockDaoImpl extends BaseDaoImpl<FinishedStock, String> imp
 	}
 
 	@Override
-	public Map findGoStockByPOId(String produceOrderId) {
-		String sqlId = this.getNamedSqlId("findGoStockByPOId");
-		return this.getSqlSession().selectOne(sqlId,produceOrderId);
-	}
-
-	@Override
 	public PaginatedList<MapContext> findDispathcBillList(PaginatedFilter paginatedFilter) {
 		String sqlId = this.getNamedSqlId("findDispathcBillList");
 		PageBounds pageBounds = this.toPageBounds(paginatedFilter.getPagination(), paginatedFilter.getSorts());
 		PageList<MapContext> pageList = (PageList) this.getSqlSession().selectList(sqlId, paginatedFilter.getFilters(), pageBounds);
 		return this.toPaginatedList(pageList);
+	}
+
+	@Override
+	public int deleteByOrderId(String orderId) {
+		String sqlId = this.getNamedSqlId("deleteByOrderId");
+		return this.getSqlSession().delete(sqlId,orderId);
+	}
+
+	@Override
+	public List<FinishedStockDto> findWxFinishedList(String orderId) {
+		String sqlId = this.getNamedSqlId("findWxFinishedList");
+		return this.getSqlSession().selectList(sqlId,orderId);
+	}
+
+	@Override
+	public MapContext findCountByBranchId(String branchId) {
+		String sqlId = this.getNamedSqlId("findCountByBranchId");
+		return this.getSqlSession().selectOne(sqlId,branchId);
 	}
 }

@@ -3,16 +3,13 @@ package com.lwxf.industry4.webapp.bizservice.dept;
 
 import java.util.List;
 
-
+import com.lwxf.industry4.webapp.bizservice.base.BaseService;
 import com.lwxf.industry4.webapp.common.model.PaginatedFilter;
 import com.lwxf.industry4.webapp.common.model.PaginatedList;
 import com.lwxf.industry4.webapp.domain.dto.companyEmployee.CompanyEmployeeDto;
 import com.lwxf.industry4.webapp.domain.dto.dept.EmployeeDeptDto;
-import com.lwxf.industry4.webapp.domain.entity.org.Dept;
-import com.lwxf.industry4.webapp.domain.entity.user.User;
-import com.lwxf.mybatis.utils.MapContext;
-import com.lwxf.industry4.webapp.bizservice.base.BaseService;
 import com.lwxf.industry4.webapp.domain.entity.org.DeptMember;
+import com.lwxf.mybatis.utils.MapContext;
 
 
 /**
@@ -42,4 +39,6 @@ public interface DeptMemberService extends BaseService <DeptMember, String> {
 	List<DeptMember> findDeptMemberListByEmployeeId(String employeeId);
 
 	List<String> findDeptNameByEmployeeId(String employeeId);
+
+	List selectUserIdByDeptId(String deptId);
 }

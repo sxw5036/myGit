@@ -4,16 +4,19 @@ import io.swagger.annotations.*;
 
 import javax.annotation.Resource;
 
+import java.time.Year;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
 import com.lwxf.industry4.webapp.common.constant.WebConstant;
 import com.lwxf.industry4.webapp.common.result.RequestResult;
+import com.lwxf.industry4.webapp.common.result.ResultFactory;
+import com.lwxf.industry4.webapp.common.utils.WebUtils;
 import com.lwxf.industry4.webapp.domain.dto.customorder.CustomOrderDto;
 import com.lwxf.industry4.webapp.domain.dto.warehouse.FinishedStockItemDto;
 import com.lwxf.industry4.webapp.domain.entity.warehouse.FinishedStockItem;
-import com.lwxf.industry4.webapp.facade.app.dealer.order.OrderFacade;
+import com.lwxf.industry4.webapp.facade.admin.factory.dealer.OrderFacade;
 import com.lwxf.mybatis.utils.MapContext;
 
 /**
@@ -38,13 +41,31 @@ public class OrderPackController {
 	 * @param finishedStockItemDtoList
 	 * @return
 	 */
-	@PostMapping("/{id}")
-	@ApiOperation(value = "订单下打包包裹",notes = "订单下打包包裹")
+	@PostMapping("/{id}/{type}")
+	@ApiOperation(value = "打包包裹",notes = "打包包裹")
 	@ApiImplicitParams({
-			@ApiImplicitParam(value = "订单主键ID",name = "id",dataType = "string",paramType = "path")
+			@ApiImplicitParam(value = "订单主键ID",name = "id",dataType = "string",paramType = "path"),
+			@ApiImplicitParam(value = "资源类型 0 订单 1 售后单",name = "type",dataType = "int",paramType = "path")
 	})
-	private RequestResult addOrderPack(@PathVariable String id, @RequestBody@ApiParam(value = "包裹") List<FinishedStockItemDto> finishedStockItemDtoList){
-		return this.orderFacade.addOrderPack(id,finishedStockItemDtoList);
+	private RequestResult addOrderPack(@PathVariable String id,@PathVariable int type,@RequestBody@ApiParam(value = "包裹") List<FinishedStockItemDto> finishedStockItemDtoList){
+		//判断包裹数量是否为空
+		if(finishedStockItemDtoList.size()==0){
+			return ResultFactory.generateResNotFoundResult();
+		}
+		for (FinishedStockItemDto finishedStockItem : finishedStockItemDtoList) {
+			finishedStockItem.setBranchId(WebUtils.getCurrBranchId());
+			//暂时赋值此值 验证使用 后面 会赋值 会覆盖此值
+			finishedStockItem.setFinishedStockId("aa");
+			finishedStockItem.setShipped(false);
+			finishedStockItem.setOperator(finishedStockItem.getCreator());//入库人为包裹创建
+			finishedStockItem.setOperated(finishedStockItem.getCreated());//入库时间为包裹创建时间
+			finishedStockItem.setIn(true);//默认已入库
+			RequestResult result = finishedStockItem.validateFields();
+			if(result!=null){
+				return result;
+			}
+		}
+		return this.orderFacade.addOrderPack(id,finishedStockItemDtoList,type);
 	}
 
 	/**
@@ -62,39 +83,20 @@ public class OrderPackController {
 	}
 
 	/**
-	 * 查询尚未打包完毕的 订单
-	 * @param pageNum
-	 * @param pageSize
-	 * @param orderNo
-	 * @return
-	 */
-	@ApiResponses({
-			@ApiResponse(code = 200, message = "查询成功", response = CustomOrderDto.class)
-	})
-	@ApiOperation(value = "查询尚未打包完毕的 订单",notes = "查询尚未打包完毕的 订单")
-	@ApiImplicitParams({
-			@ApiImplicitParam(value = "页码",name = "pageNum",dataType = "string",paramType = "query"),
-			@ApiImplicitParam(value = "大小",name = "pageSize",dataType = "string",paramType = "query")
-	})
-	@GetMapping("/packs")
-	private RequestResult findPacksOrderList(@RequestParam(required = false,defaultValue = "1")Integer pageNum,@RequestParam(required = false,defaultValue = "10")Integer pageSize
-	,@RequestParam(required = false)String orderNo){
-		MapContext mapContext = this.createMapContext(orderNo);
-		return this.orderFacade.findPacksOrderList(pageNum,pageSize,mapContext);
-	}
-
-	/**
 	 * 查询当前订单的下一个包裹编号
 	 * @param id
 	 * @return
 	 */
-	@GetMapping("/{id}/no")
+	@GetMapping("/{id}/no/{resType}")
 	@ApiOperation(value = "查询当前订单的下一个包裹编号",notes = "查询当前订单的下一个包裹编号")
 	@ApiImplicitParams({
-			@ApiImplicitParam(value = "订单Id",name = "id",dataType = "string",paramType = "path")
+			@ApiImplicitParam(value = "订单Id",name = "id",dataType = "string",paramType = "path"),
+			@ApiImplicitParam(value = "资源类型:0 订单 1 售后单",name = "resType",dataType = "int",paramType = "path"),
+			@ApiImplicitParam(value = "包裹类型,A 柜体 B 门板 BZ 自产 BW 外协 BT 特供实木 C 五金",name = "type",dataType = "string",paramType = "query"),
+			@ApiImplicitParam(value = "数量",name = "count",dataType = "int",paramType = "query")
 	})
-	private RequestResult findOrderPackagesNo(@PathVariable String id){
-		return this.orderFacade.findOrderPackagesNo(id);
+	private RequestResult findOrderPackagesNo(@PathVariable String id,@PathVariable int resType,@RequestParam(required = false)String type,@RequestParam(required = false)Integer count){
+		return this.orderFacade.findOrderPackagesNo(id,type,count,resType);
 	}
 
 	private MapContext createMapContext(String orderNo) {

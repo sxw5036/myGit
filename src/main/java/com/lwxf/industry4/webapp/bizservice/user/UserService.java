@@ -79,12 +79,6 @@ public interface UserService extends BaseService<User, String> {
 	 */
 	User findByLoginName(String loginName);
 
-	/**
-	 * 根据用户启用状态和用户的角色查询用户集合
-	 * @param mapContext
-	 * @return
-	 */
-	List<User> findClerkListByStateAndRole(MapContext mapContext);
 
 	/**
 	 * 根据用户的ID查询用户的信息
@@ -102,12 +96,10 @@ public interface UserService extends BaseService<User, String> {
 
 	Map<String, Object> findUserById(String id);
 
-	List<String> findIdByName(String name);
 
 
 	UserAreaDto selectUserAreaDtoById(String id);
 
-	PaginatedList<User> findUserListByLikeName(PaginatedFilter paginatedFilter);
 	int addFollowers(String userId);
 
 	int closeFollowers(String userId);
@@ -124,10 +116,6 @@ public interface UserService extends BaseService<User, String> {
 	UserAreaDto findUserMessageById(String userId);
 
 
-	List<Map<String,String>> findEmpIdAndEmpNameByCid(MapContext params);
-
-	List<UserAreaDto> findCustomerByCompanyIdAndCustomer(MapContext mapContext);
-
 	UserAreaDto findCityNameByUID(String userId);
 
 	List<User> findByUserIds(List<String> values);
@@ -137,16 +125,13 @@ public interface UserService extends BaseService<User, String> {
 
 	UserAreaDto findByUid (String userId);
 
-	List<UserAreaDto> findCustInfoByCompanyIdAndStatus(MapContext mapContext);
-
-	PaginatedList<UserAreaDto> findShareMemberByPidAndStatusAndIdentity(PaginatedFilter paginatedFilter);
-
-	PaginatedList<User> findEmpInfoByCompanyIdAndStatus(PaginatedFilter paginatedFilter);
-
-
     Map factoryUserPersonalInfo(MapContext params);
 
 	List<MapContext> findFactoryUserDeptName(String companyId,String userId);
 
 	Map findFactoryUserAccountInfo(String companyId,String userId);
+
+	List<String> findAllUserIdByBranchId(String branchId);
+
+	User findByMobileAndBranchId(String mobile, String branchId);
 }

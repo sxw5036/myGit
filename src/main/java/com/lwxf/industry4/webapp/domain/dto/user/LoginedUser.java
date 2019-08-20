@@ -32,6 +32,7 @@ public class LoginedUser extends User {
 		super.setLoginName(user.getLoginName());
 		super.setChangedLoginName(user.getChangedLoginName());
 		super.setType(user.getType());
+		super.setBranchId(user.getBranchId());
 	}
 
 	public CompanyEmployee getCompanyEmployee() {
